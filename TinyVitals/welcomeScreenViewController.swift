@@ -9,21 +9,35 @@ import UIKit
 
 class welcomeScreenViewController: UIViewController {
 
+    @IBOutlet var gradientView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupGradient()
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func setupGradient() {
+        let gradientLayer = CAGradientLayer()
+        let colorTop = UIColor(red: 0.1, green: 0.5, blue: 0.9, alpha: 1.0).cgColor // Blue
+        let colorBottom = UIColor(red: 0.9, green: 0.1, blue: 0.5, alpha: 1.0).cgColor // Pink
+        gradientLayer.colors = [colorTop, colorBottom]
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.0) // Top-Left
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)   // Bottom-Right (Diagonal gradient)
+        gradientLayer.frame = gradientView.bounds
+        gradientView.layer.insertSublayer(gradientLayer, at: 0)
     }
-    */
+//    func setupGradient() {
+//        let gradientLayer = CAGradientLayer()
+//        let colorTop = UIColor(red: 80.0/255.0, green: 180.0/255.0, blue: 255.0/255.0, alpha: 1.0).cgColor
+//        let colorBottom = UIColor(red: 200.0/255.0, green: 50.0/255.0, blue: 255.0/255.0, alpha: 1.0).cgColor
+//        gradientLayer.colors = [colorTop, colorBottom]
+//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+//        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+//        gradientLayer.frame = gradientView.bounds
+//        if gradientView.layer.sublayers?.isEmpty ?? true {
+//            gradientView.layer.insertSublayer(gradientLayer, at: 0)
+//        } else {
+//            (gradientView.layer.sublayers?.first as? CAGradientLayer)?.colors = [colorTop, colorBottom]
+//        }
+//    }
 
 }
