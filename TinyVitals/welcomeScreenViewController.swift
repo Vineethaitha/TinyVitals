@@ -11,9 +11,12 @@ class welcomeScreenViewController: UIViewController {
 
     @IBOutlet var gradientView: UIView!
     
+    @IBOutlet var tinyvitalsTitle: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGradient()
+        tinyvitalsTitle.font=UIFont(name: "Sigmar-Regular", size: 40)
     }
     func setupGradient() {
         let gradientLayer = CAGradientLayer()

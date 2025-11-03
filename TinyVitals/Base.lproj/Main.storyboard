@@ -125,8 +125,8 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TinyVitals" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dnL-fb-ypm">
-                                        <rect key="frame" x="102" y="43.666666666666657" width="166" height="43"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                        <rect key="frame" x="102.66666666666667" y="43.666666666666657" width="164.66666666666663" height="43"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="36"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -295,6 +295,11 @@
                                 <buttonConfiguration key="configuration" style="plain" title="Continue">
                                     <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="17"/>
                                 </buttonConfiguration>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <integer key="value" value="12"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="do8-GX-SzT"/>
@@ -303,11 +308,11 @@
                             <constraint firstItem="mjW-nl-uAJ" firstAttribute="top" secondItem="do8-GX-SzT" secondAttribute="top" constant="20" id="FvM-FX-Q9f"/>
                             <constraint firstItem="mjW-nl-uAJ" firstAttribute="leading" secondItem="do8-GX-SzT" secondAttribute="leading" constant="16" id="I48-4q-F1O"/>
                             <constraint firstItem="do8-GX-SzT" firstAttribute="trailing" secondItem="mjW-nl-uAJ" secondAttribute="trailing" constant="16" id="NO8-Rg-Kna"/>
+                            <constraint firstItem="Git-vh-mnp" firstAttribute="centerX" secondItem="sjp-xo-JIx" secondAttribute="centerX" id="SPd-WW-W8u"/>
                             <constraint firstItem="Git-vh-mnp" firstAttribute="top" secondItem="mjW-nl-uAJ" secondAttribute="bottom" constant="10" id="Yr1-3c-TfQ"/>
                             <constraint firstItem="6zo-Ja-2WE" firstAttribute="top" secondItem="Git-vh-mnp" secondAttribute="bottom" constant="10" id="fF8-t6-Se7"/>
                             <constraint firstItem="6zo-Ja-2WE" firstAttribute="centerX" secondItem="sjp-xo-JIx" secondAttribute="centerX" id="fZg-MT-EMN"/>
                             <constraint firstItem="iOR-C7-ZST" firstAttribute="top" secondItem="WqM-xH-O1f" secondAttribute="bottom" constant="70" id="hNG-CV-L9R"/>
-                            <constraint firstItem="Git-vh-mnp" firstAttribute="leading" secondItem="do8-GX-SzT" secondAttribute="leading" constant="16" id="pJc-uu-coS"/>
                             <constraint firstItem="WqM-xH-O1f" firstAttribute="centerX" secondItem="sjp-xo-JIx" secondAttribute="centerX" id="pQs-4w-dpx"/>
                             <constraint firstItem="iOR-C7-ZST" firstAttribute="centerX" secondItem="sjp-xo-JIx" secondAttribute="centerX" id="q1g-B2-pxj"/>
                             <constraint firstItem="WqM-xH-O1f" firstAttribute="top" secondItem="6zo-Ja-2WE" secondAttribute="bottom" constant="10" id="wse-5a-4xk"/>
@@ -315,6 +320,7 @@
                     </view>
                     <connections>
                         <outlet property="gradientView" destination="sjp-xo-JIx" id="7qH-iA-fRg"/>
+                        <outlet property="tinyvitalsTitle" destination="dnL-fb-ypm" id="NsJ-GR-ZqD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AKu-qf-zzw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
