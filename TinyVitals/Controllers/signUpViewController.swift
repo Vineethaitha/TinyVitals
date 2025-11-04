@@ -21,5 +21,10 @@ class signUpViewController: UIViewController {
         )
         
     }
-
+    
+    @IBAction func signUpButtonTapped(_ sender: UIButton) {
+        let homeVC = self.storyboard?.instantiateViewController(withIdentifier: "tabBarViewController") as! tabBarViewController
+        self.navigationController?.pushViewController(homeVC, animated: true)
+    }
+    
 }

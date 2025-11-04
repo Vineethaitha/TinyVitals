@@ -9,9 +9,11 @@ import UIKit
 
 class homeViewController: UIViewController {
 
+    @IBOutlet var childProfileImageView: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        childProfileImageView.layer.borderColor = UIColor.systemPink.cgColor
         // Do any additional setup after loading the view.
     }
     

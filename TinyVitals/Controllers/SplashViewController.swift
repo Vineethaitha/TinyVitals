@@ -5,7 +5,6 @@ class SplashViewController: UIViewController {
     let gradientBlock = UIView()
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
-    let logoCircle = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,34 +22,17 @@ class SplashViewController: UIViewController {
         gradientLayer.frame = gradientBlock.bounds
         gradientLayer.colors = [
             UIColor.systemBlue.cgColor,
-            UIColor.systemPurple.cgColor
+            UIColor(red: 0.75, green: 0.55, blue: 1.0, alpha: 1.0).cgColor // softer, lighter purple
         ]
         gradientLayer.startPoint = CGPoint(x: 0, y: 0)
         gradientLayer.endPoint = CGPoint(x: 1, y: 1)
         gradientBlock.layer.insertSublayer(gradientLayer, at: 0)
         view.addSubview(gradientBlock)
         
-        // Logo circle (for final frame)
-        logoCircle.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        logoCircle.center = CGPoint(x: view.center.x, y: view.center.y - 40) // moved closer
-        logoCircle.layer.cornerRadius = 25
-        logoCircle.isHidden = true
-        
-        let circleGradient = CAGradientLayer()
-        circleGradient.frame = logoCircle.bounds
-        circleGradient.colors = [
-            UIColor.systemBlue.cgColor,
-            UIColor.systemPurple.cgColor
-        ]
-        circleGradient.startPoint = CGPoint(x: 0, y: 0)
-        circleGradient.endPoint = CGPoint(x: 1, y: 1)
-        logoCircle.layer.insertSublayer(circleGradient, at: 0)
-        view.addSubview(logoCircle)
-        
         // Title
         titleLabel.text = "TinyVitals"
         titleLabel.font = UIFont.systemFont(ofSize: 36, weight: .heavy)
-        titleLabel.textColor = UIColor.purple
+        titleLabel.textColor = UIColor(red: 0.6, green: 0.25, blue: 0.85, alpha: 1.0)
         titleLabel.textAlignment = .center
         titleLabel.alpha = 0
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -59,7 +41,7 @@ class SplashViewController: UIViewController {
         // Subtitle
         subtitleLabel.text = "TRACK. PROTECT. GROW"
         subtitleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        subtitleLabel.textColor = UIColor.systemBlue.withAlphaComponent(0.7)
+        subtitleLabel.textColor = UIColor.systemBlue.withAlphaComponent(0.75)
         subtitleLabel.textAlignment = .center
         subtitleLabel.alpha = 0
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -67,25 +49,26 @@ class SplashViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 40), // closer
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 6),
+            titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 2),
             subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
     func startAnimationSequence() {
-        // 1️⃣ Appear from bottom (faster)
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+        // Step 1: Slide the block upward
+        UIView.animate(withDuration: 0.8, delay: 0, options: .curveEaseOut, animations: {
             self.gradientBlock.center.y = self.view.center.y - 40
         }) { _ in
-            // 2️⃣ Rotate + enlarge (faster)
-            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
-                self.gradientBlock.transform = CGAffineTransform(rotationAngle: .pi * 3/4).scaledBy(x: 1.8, y: 1.8)
+            // Step 2: Rotate and scale slightly
+            UIView.animate(withDuration: 0.65, delay: 0.1, options: .curveEaseInOut, animations: {
+                self.gradientBlock.transform = CGAffineTransform(rotationAngle: .pi * 3/4).scaledBy(x: 1.4, y: 1.4)
             }) { _ in
-                // 3️⃣ Shrink small
-                UIView.animate(withDuration: 0.35, delay: 0, options: .curveEaseInOut, animations: {
-                    self.gradientBlock.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-                    self.gradientBlock.alpha = 0
+                // Step 3: Morph into small circle right above logo
+                UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut, animations: {
+                    self.gradientBlock.layer.cornerRadius = 25
+                    self.gradientBlock.transform = CGAffineTransform.identity.scaledBy(x: 0.45, y: 0.45)
+                    self.gradientBlock.center.y = self.view.center.y - 30 // ends up just above the text
                 }) { _ in
                     self.showFinalLogo()
                 }
@@ -94,14 +77,11 @@ class SplashViewController: UIViewController {
     }
     
     func showFinalLogo() {
-        self.gradientBlock.isHidden = true
-        self.logoCircle.isHidden = false
-        self.logoCircle.alpha = 0
-        
-        UIView.animate(withDuration: 0.4, animations: {
-            self.logoCircle.alpha = 1
+        UIView.animate(withDuration: 0.65, delay: 0.15, options: .curveEaseInOut, animations: {
             self.titleLabel.alpha = 1
             self.subtitleLabel.alpha = 1
+            self.titleLabel.transform = CGAffineTransform(translationX: 0, y: -20)
+            self.subtitleLabel.transform = CGAffineTransform(translationX: 0, y: -20)
         })
     }
 }

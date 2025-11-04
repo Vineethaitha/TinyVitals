@@ -28,19 +28,11 @@ class welcomeScreenViewController: UIViewController {
         gradientLayer.frame = gradientView.bounds
         gradientView.layer.insertSublayer(gradientLayer, at: 0)
     }
-//    func setupGradient() {
-//        let gradientLayer = CAGradientLayer()
-//        let colorTop = UIColor(red: 80.0/255.0, green: 180.0/255.0, blue: 255.0/255.0, alpha: 1.0).cgColor
-//        let colorBottom = UIColor(red: 200.0/255.0, green: 50.0/255.0, blue: 255.0/255.0, alpha: 1.0).cgColor
-//        gradientLayer.colors = [colorTop, colorBottom]
-//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
-//        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-//        gradientLayer.frame = gradientView.bounds
-//        if gradientView.layer.sublayers?.isEmpty ?? true {
-//            gradientView.layer.insertSublayer(gradientLayer, at: 0)
-//        } else {
-//            (gradientView.layer.sublayers?.first as? CAGradientLayer)?.colors = [colorTop, colorBottom]
-//        }
-//    }
+    
+    @IBAction func continueButtonTapped(_ sender: UIButton) {
+        let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "loginScreenViewController") as! loginScreenViewController
+        self.navigationController?.pushViewController(loginVC, animated: true)
+    }
 
+    
 }

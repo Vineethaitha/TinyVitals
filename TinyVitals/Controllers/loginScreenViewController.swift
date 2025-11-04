@@ -20,7 +20,11 @@ class loginScreenViewController: UIViewController {
         tinyVitalsCaption.font=UIFont(name: "Sigmar-Regular", size: 24)
     }
     
-
+    @IBAction func signInBottonTapped(_ sender: UIButton) {
+        let signUpVC = self.storyboard?.instantiateViewController(withIdentifier: "signUpViewController") as! signUpViewController
+        self.navigationController?.pushViewController(signUpVC, animated: true)
+    }
+    
     /*
     // MARK: - Navigation
 
