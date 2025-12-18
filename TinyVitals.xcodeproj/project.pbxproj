@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B01069002EF423C300F1FA7B /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B01068FF2EF423C300F1FA7B /* Lottie */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B01068962EF3D4F300F1FA7B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B01069002EF423C300F1FA7B /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 			);
 			name = TinyVitals;
 			packageProductDependencies = (
+				B01068FF2EF423C300F1FA7B /* Lottie */,
 			);
 			productName = TinyVitals;
 			productReference = B010687F2EF3D4F200F1FA7B /* TinyVitals.app */;
@@ -208,6 +214,9 @@
 			);
 			mainGroup = B01068762EF3D4F200F1FA7B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B01068802EF3D4F200F1FA7B /* Products */;
 			projectDirPath = "";
@@ -583,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B01068FF2EF423C300F1FA7B /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B01068772EF3D4F200F1FA7B /* Project object */;
 }
