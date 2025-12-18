@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AgeFilterCell" id="gTV-IL-0wX" customClass="AgeFilterCell" customModule="TinyVitalsVaccinations">
+            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DYs-Mg-RF2">
+                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S4I-Xw-DIS">
+                                <rect key="frame" x="4" y="4" width="42" height="42"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="S4I-Xw-DIS" firstAttribute="leading" secondItem="DYs-Mg-RF2" secondAttribute="leading" constant="4" id="4dK-ov-0y6"/>
+                            <constraint firstItem="S4I-Xw-DIS" firstAttribute="top" secondItem="DYs-Mg-RF2" secondAttribute="top" constant="4" id="52G-SX-D4m"/>
+                            <constraint firstAttribute="trailing" secondItem="S4I-Xw-DIS" secondAttribute="trailing" constant="4" id="KJ5-1z-9Tf"/>
+                            <constraint firstAttribute="bottom" secondItem="S4I-Xw-DIS" secondAttribute="bottom" constant="4" id="lqF-dw-leJ"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="DYs-Mg-RF2" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="3dx-jB-WUk"/>
+                <constraint firstAttribute="trailing" secondItem="DYs-Mg-RF2" secondAttribute="trailing" id="ayP-yH-0oQ"/>
+                <constraint firstAttribute="bottom" secondItem="DYs-Mg-RF2" secondAttribute="bottom" id="n2r-X8-ce8"/>
+                <constraint firstItem="DYs-Mg-RF2" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="nty-E3-wXH"/>
+            </constraints>
+            <connections>
+                <outlet property="containerView" destination="DYs-Mg-RF2" id="e7u-bh-lPk"/>
+                <outlet property="titleLabel" destination="S4I-Xw-DIS" id="w7L-R7-V1E"/>
+            </connections>
+            <point key="canvasLocation" x="-8" y="118"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
