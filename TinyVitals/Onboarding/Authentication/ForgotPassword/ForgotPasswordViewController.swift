@@ -12,6 +12,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var emailTextField: UITextField!
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.title = "Password Recovery"
