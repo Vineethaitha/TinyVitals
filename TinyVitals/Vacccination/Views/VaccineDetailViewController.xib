@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VaccineDetailViewController" customModule="TinyVitalsVaccinations" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VaccineDetailViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
                 <outlet property="addPhotoButton" destination="9vv-3I-ygS" id="4jb-Br-1Za"/>
                 <outlet property="datePicker" destination="ixA-Zk-Vms" id="GuP-FS-hFw"/>
@@ -32,11 +32,11 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <rect key="frame" x="0.0" y="0.0" width="393" height="1500"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J6Q-Li-9H8">
-                    <rect key="frame" x="0.0" y="118" width="393" height="666"/>
+                    <rect key="frame" x="0.0" y="118" width="393" height="1314"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MIz-sa-biR" userLabel="contentView">
                             <rect key="frame" x="0.0" y="0.0" width="393" height="1099"/>
@@ -72,6 +72,11 @@
                                                 <constraint firstItem="4sf-Rm-dPJ" firstAttribute="top" secondItem="sky-az-FFQ" secondAttribute="top" constant="16" id="sWy-oX-58E"/>
                                                 <constraint firstItem="4sf-Rm-dPJ" firstAttribute="leading" secondItem="sky-az-FFQ" secondAttribute="leading" constant="16" id="utR-AV-Vel"/>
                                             </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="20"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Iid-6E-DGW" userLabel="dateTimeCardView">
                                             <rect key="frame" x="0.0" y="116.99999999999999" width="361" height="161.66666666666663"/>
@@ -131,6 +136,11 @@
                                                 <constraint firstItem="RTB-tt-twG" firstAttribute="top" secondItem="Iid-6E-DGW" secondAttribute="top" constant="8" id="dBz-g5-bTD"/>
                                                 <constraint firstAttribute="bottom" secondItem="RTB-tt-twG" secondAttribute="bottom" constant="8" id="y7f-4Y-3cd"/>
                                             </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="20"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3pm-I2-wf2" userLabel="notesCardView">
                                             <rect key="frame" x="0.0" y="294.66666666666669" width="361" height="164"/>
@@ -156,6 +166,11 @@
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                    <integer key="value" value="20"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
                                                         </textView>
                                                     </subviews>
                                                 </stackView>
@@ -167,6 +182,11 @@
                                                 <constraint firstItem="WTa-c0-RTk" firstAttribute="leading" secondItem="3pm-I2-wf2" secondAttribute="leading" constant="16" id="XiN-le-hyN"/>
                                                 <constraint firstAttribute="bottom" secondItem="WTa-c0-RTk" secondAttribute="bottom" constant="16" id="y6m-Q4-5yr"/>
                                             </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="20"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aW1-ke-Ydv" userLabel="photoCardView">
                                             <rect key="frame" x="0.0" y="474.66666666666663" width="361" height="280"/>
@@ -221,6 +241,11 @@
                                                 <constraint firstItem="x5p-hO-OjF" firstAttribute="leading" secondItem="aW1-ke-Ydv" secondAttribute="leading" constant="16" id="TUH-ZC-f6Y"/>
                                                 <constraint firstAttribute="bottom" secondItem="x5p-hO-OjF" secondAttribute="bottom" constant="16" id="roj-W5-Za4"/>
                                             </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="20"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cQ5-Oo-OvS" userLabel="statusCardView">
                                             <rect key="frame" x="0.0" y="770.66666666666663" width="361" height="232.33333333333337"/>
@@ -405,6 +430,7 @@
                 <constraint firstItem="J6Q-Li-9H8" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="hM6-R6-Z6m"/>
                 <constraint firstItem="J6Q-Li-9H8" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="xhL-ts-DiI"/>
             </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="136.64122137404578" y="117.60563380281691"/>
         </view>
     </objects>
