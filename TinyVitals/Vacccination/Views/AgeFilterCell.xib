@@ -34,6 +34,11 @@
                             <constraint firstAttribute="trailing" secondItem="S4I-Xw-DIS" secondAttribute="trailing" constant="4" id="KJ5-1z-9Tf"/>
                             <constraint firstAttribute="bottom" secondItem="S4I-Xw-DIS" secondAttribute="bottom" constant="4" id="lqF-dw-leJ"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                <integer key="value" value="20"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </view>
                 </subviews>
             </view>
