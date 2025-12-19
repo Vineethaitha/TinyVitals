@@ -8,6 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		B01069002EF423C300F1FA7B /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B01068FF2EF423C300F1FA7B /* Lottie */; };
+		B093FD382EF5151E00359122 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD372EF5151E00359122 /* FirebaseAnalytics */; };
+		B093FD3A2EF5151E00359122 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD392EF5151E00359122 /* FirebaseAnalyticsCore */; };
+		B093FD3C2EF5151E00359122 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD3B2EF5151E00359122 /* FirebaseAuth */; };
+		B093FD3E2EF5151E00359122 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD3D2EF5151E00359122 /* FirebaseCore */; };
+		B093FD402EF5151E00359122 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD3F2EF5151E00359122 /* FirebaseDatabase */; };
+		B093FD422EF5151E00359122 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD412EF5151E00359122 /* FirebaseFirestore */; };
+		B093FD442EF5151E00359122 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD432EF5151E00359122 /* FirebaseStorage */; };
+		B093FD472EF5159B00359122 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD462EF5159B00359122 /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +77,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B093FD402EF5151E00359122 /* FirebaseDatabase in Frameworks */,
+				B093FD382EF5151E00359122 /* FirebaseAnalytics in Frameworks */,
+				B093FD3E2EF5151E00359122 /* FirebaseCore in Frameworks */,
+				B093FD3A2EF5151E00359122 /* FirebaseAnalyticsCore in Frameworks */,
 				B01069002EF423C300F1FA7B /* Lottie in Frameworks */,
+				B093FD442EF5151E00359122 /* FirebaseStorage in Frameworks */,
+				B093FD3C2EF5151E00359122 /* FirebaseAuth in Frameworks */,
+				B093FD422EF5151E00359122 /* FirebaseFirestore in Frameworks */,
+				B093FD472EF5159B00359122 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +147,14 @@
 			name = TinyVitals;
 			packageProductDependencies = (
 				B01068FF2EF423C300F1FA7B /* Lottie */,
+				B093FD372EF5151E00359122 /* FirebaseAnalytics */,
+				B093FD392EF5151E00359122 /* FirebaseAnalyticsCore */,
+				B093FD3B2EF5151E00359122 /* FirebaseAuth */,
+				B093FD3D2EF5151E00359122 /* FirebaseCore */,
+				B093FD3F2EF5151E00359122 /* FirebaseDatabase */,
+				B093FD412EF5151E00359122 /* FirebaseFirestore */,
+				B093FD432EF5151E00359122 /* FirebaseStorage */,
+				B093FD462EF5159B00359122 /* GoogleSignIn */,
 			);
 			productName = TinyVitals;
 			productReference = B010687F2EF3D4F200F1FA7B /* TinyVitals.app */;
@@ -216,6 +240,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B093FD452EF5159B00359122 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B01068802EF3D4F200F1FA7B /* Products */;
@@ -602,6 +628,22 @@
 				minimumVersion = 4.5.2;
 			};
 		};
+		B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
+		B093FD452EF5159B00359122 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -609,6 +651,46 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		B093FD372EF5151E00359122 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		B093FD392EF5151E00359122 /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
+		};
+		B093FD3B2EF5151E00359122 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B093FD3D2EF5151E00359122 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		B093FD3F2EF5151E00359122 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		B093FD412EF5151E00359122 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		B093FD432EF5151E00359122 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		B093FD462EF5159B00359122 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FD452EF5159B00359122 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

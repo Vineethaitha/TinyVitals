@@ -1,10 +1,9 @@
 //
 //  EmptyStateAnimationView.swift
-//  HomeScreen_Feat
+//  MedicalRecords_Feat
 //
-//  Created by admin0 on 12/17/25.
+//  Created by admin0 on 12/15/25.
 //
-
 import Foundation
 import UIKit
 import Lottie
@@ -118,4 +117,3 @@ final class EmptyStateAnimationView: UIView {
         }
     }
 }
-

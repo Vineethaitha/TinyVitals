@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="158" id="KGk-i7-Jjw" customClass="RecordListCell" customModule="MedicalRecords_Feat" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="374" height="158"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="374" height="158"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S8h-GV-Xgs">
+                        <rect key="frame" x="10" y="26.666666666666671" width="354" height="105.00000000000001"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FG8-hN-Yls">
+                                <rect key="frame" x="20" y="10" width="50" height="85"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="KoC-N0-LlD"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9RQ-2d-lF1">
+                                <rect key="frame" x="95" y="20" width="28.666666666666671" height="20.333333333333329"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="location.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="36c-G8-TjT">
+                                <rect key="frame" x="95" y="45.999999999999993" width="20" height="18.666666666666664"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="4dc-aX-WDD"/>
+                                    <constraint firstAttribute="width" constant="20" id="ZrU-Nu-tVZ"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hospital" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SRd-qF-qNY">
+                                <rect key="frame" x="120.00000000000001" y="47.333333333333329" width="56.666666666666671" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="visit date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J6c-9G-V8l">
+                                <rect key="frame" x="95" y="73.333333333333329" width="48" height="13.333333333333329"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tUE-6c-vJf">
+                                <rect key="frame" x="295.33333333333331" y="9.9999999999999964" width="48.666666666666686" height="34.333333333333329"/>
+                                <color key="tintColor" red="0.82352941180000006" green="0.37254901959999998" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="sparkles" catalog="system"/>
+                                <connections>
+                                    <action selector="aiButtonTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="gWr-0L-1eu"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="9RQ-2d-lF1" firstAttribute="leading" secondItem="FG8-hN-Yls" secondAttribute="trailing" constant="25" id="14i-Qe-kgj"/>
+                            <constraint firstItem="J6c-9G-V8l" firstAttribute="top" secondItem="36c-G8-TjT" secondAttribute="bottom" constant="8" symbolic="YES" id="7QZ-Vq-xaQ"/>
+                            <constraint firstItem="36c-G8-TjT" firstAttribute="top" secondItem="9RQ-2d-lF1" secondAttribute="bottom" constant="5" id="Glc-P0-u0t"/>
+                            <constraint firstItem="FG8-hN-Yls" firstAttribute="top" secondItem="S8h-GV-Xgs" secondAttribute="top" constant="10" id="HWH-Bq-bqS"/>
+                            <constraint firstItem="36c-G8-TjT" firstAttribute="leading" secondItem="FG8-hN-Yls" secondAttribute="trailing" constant="25" id="Lre-jR-K8A"/>
+                            <constraint firstAttribute="height" constant="105" id="U5P-5v-ahN"/>
+                            <constraint firstItem="tUE-6c-vJf" firstAttribute="top" secondItem="S8h-GV-Xgs" secondAttribute="top" constant="10" id="XQg-1C-E54"/>
+                            <constraint firstItem="36c-G8-TjT" firstAttribute="top" secondItem="SRd-qF-qNY" secondAttribute="bottom" constant="-20" id="eBp-NU-EIt"/>
+                            <constraint firstAttribute="bottom" secondItem="FG8-hN-Yls" secondAttribute="bottom" constant="10" id="hvR-gU-XpZ"/>
+                            <constraint firstItem="SRd-qF-qNY" firstAttribute="leading" secondItem="36c-G8-TjT" secondAttribute="trailing" constant="5" id="jmW-To-gBI"/>
+                            <constraint firstAttribute="trailing" secondItem="tUE-6c-vJf" secondAttribute="trailing" constant="10" id="kat-1z-aRI"/>
+                            <constraint firstItem="9RQ-2d-lF1" firstAttribute="top" secondItem="S8h-GV-Xgs" secondAttribute="top" constant="20" id="moF-ZJ-jnR"/>
+                            <constraint firstItem="J6c-9G-V8l" firstAttribute="leading" secondItem="FG8-hN-Yls" secondAttribute="trailing" constant="25" id="sXI-gL-jwL"/>
+                            <constraint firstItem="FG8-hN-Yls" firstAttribute="leading" secondItem="S8h-GV-Xgs" secondAttribute="leading" constant="20" id="z7l-7f-gEQ"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                <integer key="value" value="12"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="S8h-GV-Xgs" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="tms-hn-Qpc"/>
+                    <constraint firstAttribute="trailing" secondItem="S8h-GV-Xgs" secondAttribute="trailing" constant="10" id="vsO-GC-f6P"/>
+                    <constraint firstItem="S8h-GV-Xgs" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="zWb-QV-pIP"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="aiButton" destination="tUE-6c-vJf" id="WSt-vN-d4e"/>
+                <outlet property="dateLabel" destination="J6c-9G-V8l" id="62u-3a-Ytp"/>
+                <outlet property="hospitalLabel" destination="SRd-qF-qNY" id="MLj-mL-IVO"/>
+                <outlet property="thumbnailView" destination="FG8-hN-Yls" id="WGZ-8g-eER"/>
+                <outlet property="titleLabel" destination="9RQ-2d-lF1" id="kw7-Ef-ZRJ"/>
+            </connections>
+            <point key="canvasLocation" x="180.15267175572518" y="190.84507042253523"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="location.circle" catalog="system" width="128" height="123"/>
+        <image name="sparkles" catalog="system" width="115" height="128"/>
+    </resources>
+</document>

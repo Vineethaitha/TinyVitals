@@ -19,17 +19,26 @@ class MainTabBarController: UITabBarController {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-//        let profile = HomeViewController()
-//        profile.tabBarItem = UITabBarItem(
-//            title: "Profile",
-//            image: UIImage(systemName: "person"),
-//            selectedImage: UIImage(systemName: "person.fill")
-//        )
+        let records = RecordManagerViewController()
+        records.tabBarItem = UITabBarItem(
+            title: "Records",
+            image: UIImage(systemName: "cross.case"),
+            selectedImage: UIImage(systemName: "cross.case.fill")
+        )
+
+        let vaccine = VaccinationManagerViewController()
+        vaccine.tabBarItem = UITabBarItem(
+            title: "Vaccines",
+            image: UIImage(systemName: "syringe"),
+            selectedImage: UIImage(systemName: "syringe.fill")
+        )
 
         viewControllers = [
+            UINavigationController(rootViewController: records),
             UINavigationController(rootViewController: home),
-//            UINavigationController(rootViewController: profile)
+            UINavigationController(rootViewController: vaccine)
         ]
     }
 }
+
 
