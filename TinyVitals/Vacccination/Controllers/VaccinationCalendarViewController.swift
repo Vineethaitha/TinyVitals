@@ -71,7 +71,14 @@ final class VaccinationCalendarViewController : UIViewController {
         calendarView.fontDesign = .rounded
 
         // Accent color (optional)
-        calendarView.tintColor = .systemBlue
+//        calendarView.tintColor = .systemBlue
+        calendarView.tintColor =
+        UIColor(
+                red: 204/255,
+                green: 142/255,
+                blue: 224/255,
+                alpha: 1
+            )
 
         // REQUIRED FOR DOTS
         calendarView.delegate = self
@@ -137,7 +144,7 @@ final class VaccinationCalendarViewController : UIViewController {
     }
     
     private func setupEmptyStateAnimation() {
-        let animation = LottieAnimation.named("nodata")
+        let animation = LottieAnimation.named("Injection")
         let animationView = LottieAnimationView(animation: animation)
 
         animationView.translatesAutoresizingMaskIntoConstraints = false
@@ -249,7 +256,16 @@ extension VaccinationCalendarViewController : UICalendarViewDelegate {
             return nil
         }
 
-        return .default(color: .systemBlue, size: .small)
+        return .default(
+            color: UIColor(
+                red: 204/255,
+                green: 142/255,
+                blue: 224/255,
+                alpha: 1
+            ),
+            size: .small
+        )
+
     }
 }
 
