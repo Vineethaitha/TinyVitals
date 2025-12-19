@@ -533,7 +533,7 @@ UITableViewDelegate, UITextFieldDelegate
         let description: String
         let ageGroup: String
         var status: VaccineStatus
-        let dueDate: Date
+        let date: Date
     }
 
     enum VaccineStatus {
@@ -547,10 +547,10 @@ UITableViewDelegate, UITextFieldDelegate
     let calendar = Calendar.current
 
     let allVaccines: [VaccineItem] = [
-        VaccineItem(name: "BCG", description: "Tuberculosis vaccine", ageGroup: "At Birth", status: .completed,  dueDate: Date()),
-        VaccineItem(name: "OPV", description: "Polio vaccine", ageGroup: "6 Weeks", status: .upcoming, dueDate: Date()),
-        VaccineItem(name: "Pentavalent", description: "DTP + HepB + Hib", ageGroup: "6 Weeks", status: .upcoming, dueDate: Date()),
-        VaccineItem(name: "Rotavirus", description: "Diarrhea prevention", ageGroup: "10 Weeks", status: .rescheduled, dueDate: Date())
+        VaccineItem(name: "BCG", description: "Tuberculosis vaccine", ageGroup: "At Birth", status: .completed,  date: Date()),
+        VaccineItem(name: "OPV", description: "Polio vaccine", ageGroup: "6 Weeks", status: .upcoming,date: Calendar.current.date(byAdding: .day, value: 3, to: Date())!),
+        VaccineItem(name: "Pentavalent", description: "DTP + HepB + Hib", ageGroup: "6 Weeks", status: .upcoming, date: Calendar.current.date(byAdding: .day, value: 7, to: Date())!),
+        VaccineItem(name: "Rotavirus", description: "Diarrhea prevention", ageGroup: "10 Weeks", status: .rescheduled, date: Calendar.current.date(byAdding: .day, value: 10 , to: Date())!)
     ]
     
     enum SortOption {
@@ -899,6 +899,7 @@ UITableViewDelegate, UITextFieldDelegate
             bundle: nil
         )
 
+        vc.allVaccines = allVaccines   // ✅ THIS IS KEY
 //        vc.allVaccines = allVaccines   // ✅ IMPORTANT
 //            present(vc, animated: true)
         

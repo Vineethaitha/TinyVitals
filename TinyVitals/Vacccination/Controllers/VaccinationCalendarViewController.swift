@@ -7,161 +7,193 @@
 
 import UIKit
 
-class VaccinationCalendarViewController: UIViewController,
-UICollectionViewDataSource,
-UICollectionViewDelegateFlowLayout {
+final class VaccinationCalendarViewController : UIViewController {
 
-    // MARK: - Outlets
-    @IBOutlet weak var monthLabel: UILabel!
-    @IBOutlet weak var calendarCollectionView: UICollectionView!
+    @IBOutlet weak var calendarContainerView: UIView!
     @IBOutlet weak var tableView: UITableView!
-//    @IBOutlet weak var vaccinesLabel: UILabel!
 
 
-    // MARK: - Calendar State
-    private var calendar = Calendar.current
-    private var currentDate = Date()
-    private var dates: [Date?] = []
+    private let calendarView = UICalendarView()
+    
+    var vaccinesByDate: [Date: [VaccinationManagerViewController.VaccineItem]] = [:]
+    var selectedVaccines: [VaccinationManagerViewController.VaccineItem] = []
 
-    // Sample vaccination dates (later you’ll replace with real data)
-    private var vaccinationDates: [Date] = []
+    let calendar = Calendar.current
+
+    // 🔗 reference passed from VaccinationManagerViewController
+    var allVaccines: [VaccinationManagerViewController.VaccineItem] = []
+
+
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupCollectionView()
-        generateSampleVaccines()
-        reloadCalendar()
+        view.backgroundColor = .systemBackground
+        title = "Calendar"
+        
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "VaccineCell")
+        
+        tableView.tableFooterView = UIView()
+        groupVaccinesByDate()
+        setupCalendar()
+        selectToday()
     }
 
-    // MARK: - Setup
-    private func setupCollectionView() {
-        calendarCollectionView.dataSource = self
-        calendarCollectionView.delegate = self
+    private func setupCalendar() {
 
-        let nib = UINib(nibName: "CalendarDayCell", bundle: nil)
-        calendarCollectionView.register(nib, forCellWithReuseIdentifier: "CalendarDayCell")
+        calendarView.translatesAutoresizingMaskIntoConstraints = false
+        calendarContainerView.addSubview(calendarView)
 
-        if let layout = calendarCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.minimumInteritemSpacing = 4
-            layout.minimumLineSpacing = 4
+        NSLayoutConstraint.activate([
+            calendarView.topAnchor.constraint(equalTo: calendarContainerView.topAnchor),
+            calendarView.leadingAnchor.constraint(equalTo: calendarContainerView.leadingAnchor),
+            calendarView.trailingAnchor.constraint(equalTo: calendarContainerView.trailingAnchor),
+            calendarView.bottomAnchor.constraint(equalTo: calendarContainerView.bottomAnchor)
+        ])
+
+        // Native configuration
+        calendarView.calendar = Calendar.current
+        calendarView.locale = Locale.current
+        calendarView.fontDesign = .rounded
+
+        // Accent color (optional)
+        calendarView.tintColor = .systemBlue
+
+        // Selection
+        let selection = UICalendarSelectionSingleDate(delegate: self)
+        calendarView.selectionBehavior = selection
+    }
+
+    private func selectToday() {
+        let today = Calendar.current.dateComponents(
+            [.year, .month, .day],
+            from: Date()
+        )
+
+        if let selection = calendarView.selectionBehavior
+            as? UICalendarSelectionSingleDate {
+            selection.setSelected(today, animated: false)
         }
     }
+    
+    func groupVaccinesByDate() {
+        vaccinesByDate.removeAll()
 
-    // MARK: - Sample Data
-    private func generateSampleVaccines() {
-        // Example: vaccines spread across years
-        vaccinationDates = [
-            calendar.date(byAdding: .day, value: 2, to: Date())!,
-            calendar.date(byAdding: .day, value: 10, to: Date())!,
-            calendar.date(byAdding: .month, value: 1, to: Date())!,
-            calendar.date(byAdding: .year, value: 1, to: Date())!
-        ]
-    }
-
-    // MARK: - Calendar Logic
-    private func reloadCalendar() {
-        dates.removeAll()
-
-        let components = calendar.dateComponents([.year, .month], from: currentDate)
-        let startOfMonth = calendar.date(from: components)!
-
-        let range = calendar.range(of: .day, in: .month, for: startOfMonth)!
-        let firstWeekday = calendar.component(.weekday, from: startOfMonth)
-
-        // Empty slots before first day
-        for _ in 0..<(firstWeekday - 1) {
-            dates.append(nil)
+        for vaccine in allVaccines {
+            let day = calendar.startOfDay(for: vaccine.date)
+            vaccinesByDate[day, default: []].append(vaccine)
         }
 
-        // Actual days
-        for day in range {
-            let date = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)!
-            dates.append(date)
+        let components = vaccinesByDate.keys.map {
+            calendar.dateComponents([.year, .month, .day], from: $0)
         }
 
-        updateMonthLabel()
-        calendarCollectionView.reloadData()
+        calendarView.reloadDecorations(forDateComponents: components, animated: true)
     }
 
-    private func updateMonthLabel() {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        monthLabel.text = formatter.string(from: currentDate)
-    }
-
-    // MARK: - Actions
-    @IBAction func previousMonthTapped(_ sender: UIButton) {
-        currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate)!
-        reloadCalendar()
-    }
-
-    @IBAction func nextMonthTapped(_ sender: UIButton) {
-        currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate)!
-        reloadCalendar()
-    }
-
-    @IBAction func closeTapped(_ sender: UIButton) {
-        dismiss(animated: true)
-    }
-
-    // MARK: - CollectionView
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        dates.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "CalendarDayCell",
-            for: indexPath
-        ) as! CalendarDayCell
-
-        if let date = dates[indexPath.item] {
-            let day = calendar.component(.day, from: date)
-            let hasVaccine = vaccinationDates.contains {
-                calendar.isDate($0, inSameDayAs: date)
-            }
-
-            cell.configure(day: day, hasVaccine: hasVaccine)
-        } else {
-            cell.configureEmpty()
-        }
-
-        return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let date = dates[indexPath.item] else { return }
-
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-
-        let hasVaccine = vaccinationDates.contains {
-            calendar.isDate($0, inSameDayAs: date)
-        }
-
-        let message = hasVaccine
-            ? "Vaccination available on \(formatter.string(from: date))"
-            : "No vaccination on \(formatter.string(from: date))"
-
+    
+    func showNoVaccineAlert() {
         let alert = UIAlertController(
-            title: "Vaccination Info",
-            message: message,
+            title: "No Vaccination",
+            message: "No vaccination available on this date.",
             preferredStyle: .alert
         )
+
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
 
 
-    // MARK: - Layout
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+}
 
-        let width = (collectionView.bounds.width - 24) / 7
-        return CGSize(width: width, height: width)
+//extension VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate {
+//
+//    func dateSelection(
+//        _ selection: UICalendarSelectionSingleDate,
+//        didSelectDate dateComponents: DateComponents?
+//    ) {
+//        guard
+//            let components = dateComponents,
+//            let date = Calendar.current.date(from: components)
+//        else { return }
+//
+//        let formatter = DateFormatter()
+//        formatter.dateStyle = .medium
+//
+//        print("Selected date:", formatter.string(from: date))
+//    }
+//}
+
+extension  VaccinationCalendarViewController : UICalendarViewDelegate {
+
+    func calendarView(
+        _ calendarView: UICalendarView,
+        decorationFor dateComponents: DateComponents
+    ) -> UICalendarView.Decoration? {
+
+        guard let date = Calendar.current.date(from: dateComponents) else {
+            return nil
+        }
+
+        let day = Calendar.current.startOfDay(for: date)
+
+        guard vaccinesByDate[day] != nil else {
+            return nil
+        }
+
+        return .default(color: .systemBlue, size: .small)
+    }
+}
+
+extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate, UITableViewDelegate {
+
+    func dateSelection(
+        _ selection: UICalendarSelectionSingleDate,
+        didSelectDate dateComponents: DateComponents?
+    ) {
+        guard
+            let components = dateComponents,
+            let date = Calendar.current.date(from: components)
+        else { return }
+
+        let day = Calendar.current.startOfDay(for: date)
+
+        if let vaccines = vaccinesByDate[day], !vaccines.isEmpty {
+            selectedVaccines = vaccines
+            tableView.reloadData()
+        } else {
+            selectedVaccines = []
+            tableView.reloadData()
+            showNoVaccineAlert()
+        }
+    }
+}
+
+
+extension  VaccinationCalendarViewController : UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        selectedVaccines.count
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: "VaccineCell",
+            for: indexPath
+        )
+
+        let vaccine = selectedVaccines[indexPath.row]
+        cell.textLabel?.text = vaccine.name
+        cell.selectionStyle = .none
+
+        return cell
     }
 }
