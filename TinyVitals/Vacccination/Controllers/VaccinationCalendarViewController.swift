@@ -23,9 +23,6 @@ final class VaccinationCalendarViewController : UIViewController {
     // 🔗 reference passed from VaccinationManagerViewController
     var allVaccines: [VaccinationManagerViewController.VaccineItem] = []
 
-
-
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -38,7 +35,9 @@ final class VaccinationCalendarViewController : UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "VaccineCell")
         
         tableView.tableFooterView = UIView()
+        scrollToFirstUpcomingVaccine()
         groupVaccinesByDate()
+        scrollToLastVaccine()
         setupCalendar()
         selectToday()
     }
@@ -57,12 +56,16 @@ final class VaccinationCalendarViewController : UIViewController {
 
         // Native configuration
         calendarView.calendar = Calendar.current
+
         calendarView.locale = Locale.current
         calendarView.fontDesign = .rounded
 
         // Accent color (optional)
         calendarView.tintColor = .systemBlue
 
+        // REQUIRED FOR DOTS
+        calendarView.delegate = self
+        
         // Selection
         let selection = UICalendarSelectionSingleDate(delegate: self)
         calendarView.selectionBehavior = selection
@@ -106,48 +109,27 @@ final class VaccinationCalendarViewController : UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+    
+    private func scrollToLastVaccine() {
 
+        guard let lastDate = allVaccines
+            .map({ $0.date })
+            .sorted()
+            .last
+        else { return }
 
-}
+        let components = calendar.dateComponents(
+            [.year, .month],
+            from: lastDate
+        )
 
-//extension VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate {
-//
-//    func dateSelection(
-//        _ selection: UICalendarSelectionSingleDate,
-//        didSelectDate dateComponents: DateComponents?
-//    ) {
-//        guard
-//            let components = dateComponents,
-//            let date = Calendar.current.date(from: components)
-//        else { return }
-//
-//        let formatter = DateFormatter()
-//        formatter.dateStyle = .medium
-//
-//        print("Selected date:", formatter.string(from: date))
-//    }
-//}
-
-extension  VaccinationCalendarViewController : UICalendarViewDelegate {
-
-    func calendarView(
-        _ calendarView: UICalendarView,
-        decorationFor dateComponents: DateComponents
-    ) -> UICalendarView.Decoration? {
-
-        guard let date = Calendar.current.date(from: dateComponents) else {
-            return nil
-        }
-
-        let day = Calendar.current.startOfDay(for: date)
-
-        guard vaccinesByDate[day] != nil else {
-            return nil
-        }
-
-        return .default(color: .systemBlue, size: .small)
+        calendarView.setVisibleDateComponents(components, animated: true)
     }
+
+
 }
+
+
 
 extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate, UITableViewDelegate {
 
@@ -196,4 +178,82 @@ extension  VaccinationCalendarViewController : UITableViewDataSource {
 
         return cell
     }
+    
+    private func scrollToFirstUpcomingVaccine() {
+
+        guard let firstDate = allVaccines
+            .map({ $0.date })
+            .sorted()
+            .first
+        else { return }
+
+        let components = calendar.dateComponents(
+            [.year, .month],
+            from: firstDate
+        )
+
+        calendarView.setVisibleDateComponents(components, animated: true)
+    }
+
 }
+
+extension VaccinationCalendarViewController : UICalendarViewDelegate {
+
+    func calendarView(
+        _ calendarView: UICalendarView,
+        decorationFor dateComponents: DateComponents
+    ) -> UICalendarView.Decoration? {
+
+        guard let date = calendar.date(from: dateComponents) else {
+            return nil
+        }
+
+        let day = calendar.startOfDay(for: date)
+
+        guard vaccinesByDate[day] != nil else {
+            return nil
+        }
+
+        return .default(color: .systemBlue, size: .small)
+    }
+}
+
+
+//extension VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate {
+//
+//    func dateSelection(
+//        _ selection: UICalendarSelectionSingleDate,
+//        didSelectDate dateComponents: DateComponents?
+//    ) {
+//        guard
+//            let components = dateComponents,
+//            let date = Calendar.current.date(from: components)
+//        else { return }
+//
+//        let formatter = DateFormatter()
+//        formatter.dateStyle = .medium
+//
+//        print("Selected date:", formatter.string(from: date))
+//    }
+//}
+
+//extension  VaccinationCalendarViewController : UICalendarViewDelegate {
+//
+//    func calendarView(
+//        _ calendarView: UICalendarView,
+//        decorationFor dateComponents: DateComponents
+//    ) -> UICalendarView.Decoration? {
+//
+//        guard let date = Calendar.current.date(from: dateComponents) else {
+//            return nil
+//        }
+//
+//        let day = Calendar.current.startOfDay(for: date)
+//
+//        guard vaccinesByDate[day] != nil else {
+//            return nil
+//        }
+//
+//        return .default(color: .systemBlue, size: .small)
+//    }
+//}
