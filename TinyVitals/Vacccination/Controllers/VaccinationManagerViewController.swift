@@ -510,6 +510,7 @@ import UIKit
 class VaccinationManagerViewController: UIViewController,
 UICollectionViewDataSource,
 UICollectionViewDelegate,
+UICollectionViewDelegateFlowLayout,
 UITableViewDataSource,
 UITableViewDelegate, UITextFieldDelegate
  {
@@ -606,9 +607,9 @@ UITableViewDelegate, UITextFieldDelegate
         )
 
         setupCollectionView()
-            setupTableView()
+        setupTableView()
 
-            setupSearchClearButton()
+        setupSearchClearButton()
         
     }
 
@@ -655,6 +656,18 @@ UITableViewDelegate, UITextFieldDelegate
         applyFilter()
         
         collectionView.reloadData()
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+
+        return CGSize(
+            width: 120,
+            height: 30
+        )
     }
 
 //    func applyFilter() {

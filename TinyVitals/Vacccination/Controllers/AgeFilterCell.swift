@@ -21,17 +21,18 @@ class AgeFilterCell: UICollectionViewCell {
             containerView.backgroundColor = .systemGray6
             containerView.clipsToBounds = true
 
-            titleLabel.textAlignment = .center
-            titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
-//            layoutSubviews()
+//            titleLabel.textAlignment = .center
+//            titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
         }
 
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            
-            containerView.layer.cornerRadius = 20
-            // ✅ APPLY RADIUS AFTER FRAME IS FINAL
-//            containerView.layer.cornerRadius = containerView.bounds.height / 2
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        //            let radius = 19
+        //
+        //            if containerView.layer.cornerRadius != radius {
+        //                containerView.layer.cornerRadius = radius
+        //            }
+            containerView.layer.cornerRadius = 15
         }
 
         func configure(with title: String, isSelected: Bool) {

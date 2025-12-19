@@ -21,31 +21,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S4I-Xw-DIS">
-                                <rect key="frame" x="4" y="4" width="42" height="42"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <rect key="frame" x="7" y="16.666666666666668" width="36" height="17.000000000000004"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="S4I-Xw-DIS" firstAttribute="leading" secondItem="DYs-Mg-RF2" secondAttribute="leading" constant="4" id="4dK-ov-0y6"/>
-                            <constraint firstItem="S4I-Xw-DIS" firstAttribute="top" secondItem="DYs-Mg-RF2" secondAttribute="top" constant="4" id="52G-SX-D4m"/>
-                            <constraint firstAttribute="trailing" secondItem="S4I-Xw-DIS" secondAttribute="trailing" constant="4" id="KJ5-1z-9Tf"/>
-                            <constraint firstAttribute="bottom" secondItem="S4I-Xw-DIS" secondAttribute="bottom" constant="4" id="lqF-dw-leJ"/>
+                            <constraint firstItem="S4I-Xw-DIS" firstAttribute="centerX" secondItem="DYs-Mg-RF2" secondAttribute="centerX" id="H3M-Sv-GAc"/>
+                            <constraint firstItem="S4I-Xw-DIS" firstAttribute="centerY" secondItem="DYs-Mg-RF2" secondAttribute="centerY" id="jkl-dZ-X2P"/>
                         </constraints>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                <integer key="value" value="20"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
                     </view>
                 </subviews>
             </view>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
                 <constraint firstItem="DYs-Mg-RF2" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="3dx-jB-WUk"/>
-                <constraint firstAttribute="trailing" secondItem="DYs-Mg-RF2" secondAttribute="trailing" id="ayP-yH-0oQ"/>
+                <constraint firstAttribute="trailing" secondItem="DYs-Mg-RF2" secondAttribute="trailing" id="C8i-wu-Q9h"/>
                 <constraint firstAttribute="bottom" secondItem="DYs-Mg-RF2" secondAttribute="bottom" id="n2r-X8-ce8"/>
                 <constraint firstItem="DYs-Mg-RF2" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="nty-E3-wXH"/>
             </constraints>
