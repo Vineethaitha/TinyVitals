@@ -6,13 +6,18 @@
 //
 
 import UIKit
+import Lottie
 
 final class VaccinationCalendarViewController : UIViewController {
 
     @IBOutlet weak var calendarContainerView: UIView!
     @IBOutlet weak var tableView: UITableView!
+    
+    @IBOutlet weak var emptyStateView: UIView!
+    @IBOutlet weak var animationContainerView: UIView!
 
 
+    private var emptyAnimationView: LottieAnimationView?
     private let calendarView = UICalendarView()
     
     var vaccinesByDate: [Date: [VaccinationManagerViewController.VaccineItem]] = [:]
@@ -40,6 +45,11 @@ final class VaccinationCalendarViewController : UIViewController {
         scrollToLastVaccine()
         setupCalendar()
         selectToday()
+        
+        setupEmptyStateAnimation()
+        emptyStateView.isHidden = true
+        tableView.isHidden = false
+
     }
 
     private func setupCalendar() {
@@ -99,16 +109,16 @@ final class VaccinationCalendarViewController : UIViewController {
     }
 
     
-    func showNoVaccineAlert() {
-        let alert = UIAlertController(
-            title: "No Vaccination",
-            message: "No vaccination available on this date.",
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
+//    func showNoVaccineAlert() {
+//        let alert = UIAlertController(
+//            title: "No Vaccination",
+//            message: "No vaccination available on this date.",
+//            preferredStyle: .alert
+//        )
+//
+//        alert.addAction(UIAlertAction(title: "OK", style: .default))
+//        present(alert, animated: true)
+//    }
     
     private func scrollToLastVaccine() {
 
@@ -125,6 +135,33 @@ final class VaccinationCalendarViewController : UIViewController {
 
         calendarView.setVisibleDateComponents(components, animated: true)
     }
+    
+    private func setupEmptyStateAnimation() {
+        let animation = LottieAnimation.named("nodata")
+        let animationView = LottieAnimationView(animation: animation)
+
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.contentMode = .scaleAspectFit
+        animationView.loopMode = .loop
+
+        animationContainerView.addSubview(animationView)
+
+        NSLayoutConstraint.activate([
+            animationView.leadingAnchor.constraint(equalTo: animationContainerView.leadingAnchor),
+            animationView.trailingAnchor.constraint(equalTo: animationContainerView.trailingAnchor),
+            animationView.topAnchor.constraint(equalTo: animationContainerView.topAnchor),
+            animationView.bottomAnchor.constraint(equalTo: animationContainerView.bottomAnchor)
+        ])
+
+        animationView.play()
+        emptyAnimationView = animationView
+    }
+    
+    private func updateEmptyState() {
+        let hasVaccines = !selectedVaccines.isEmpty
+        tableView.isHidden = !hasVaccines
+        emptyStateView.isHidden = hasVaccines
+    }
 
 
 }
@@ -139,19 +176,14 @@ extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDele
     ) {
         guard
             let components = dateComponents,
-            let date = Calendar.current.date(from: components)
+            let date = calendar.date(from: components)
         else { return }
 
-        let day = Calendar.current.startOfDay(for: date)
+        let day = calendar.startOfDay(for: date)
 
-        if let vaccines = vaccinesByDate[day], !vaccines.isEmpty {
-            selectedVaccines = vaccines
-            tableView.reloadData()
-        } else {
-            selectedVaccines = []
-            tableView.reloadData()
-            showNoVaccineAlert()
-        }
+        selectedVaccines = vaccinesByDate[day] ?? []
+        tableView.reloadData()
+        updateEmptyState()
     }
 }
 
@@ -159,7 +191,10 @@ extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDele
 extension  VaccinationCalendarViewController : UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        selectedVaccines.count
+//        selectedVaccines.count
+        let count = selectedVaccines.count
+//            emptyStateView.isHidden = count > 0
+            return count
     }
 
     func tableView(
