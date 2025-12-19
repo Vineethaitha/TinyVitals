@@ -16,6 +16,7 @@
 		B01069AB2EF42A1900F1FA7B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B01069AA2EF42A1900F1FA7B /* FirebaseStorage */; };
 		B01069AE2EF42B9700F1FA7B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B01069AD2EF42B9700F1FA7B /* GoogleSignIn */; };
 		B01069B02EF42B9700F1FA7B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B01069AF2EF42B9700F1FA7B /* GoogleSignInSwift */; };
+		B093FADF2EF5076C00359122 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B093FADE2EF5076C00359122 /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,7 @@
 				B01069AE2EF42B9700F1FA7B /* GoogleSignIn in Frameworks */,
 				B010699F2EF42A1900F1FA7B /* FirebaseAnalytics in Frameworks */,
 				B01069A32EF42A1900F1FA7B /* FirebaseAuth in Frameworks */,
+				B093FADF2EF5076C00359122 /* Lottie in Frameworks */,
 				B01069A52EF42A1900F1FA7B /* FirebaseCore in Frameworks */,
 				B01069AB2EF42A1900F1FA7B /* FirebaseStorage in Frameworks */,
 				B01069A12EF42A1900F1FA7B /* FirebaseAnalyticsCore in Frameworks */,
@@ -155,6 +157,7 @@
 				B01069AA2EF42A1900F1FA7B /* FirebaseStorage */,
 				B01069AD2EF42B9700F1FA7B /* GoogleSignIn */,
 				B01069AF2EF42B9700F1FA7B /* GoogleSignInSwift */,
+				B093FADE2EF5076C00359122 /* Lottie */,
 			);
 			productName = TinyVitals;
 			productReference = B010687F2EF3D4F200F1FA7B /* TinyVitals.app */;
@@ -241,6 +244,7 @@
 			packageReferences = (
 				B010699D2EF42A1900F1FA7B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B01069AC2EF42B9700F1FA7B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				B093FADD2EF5076C00359122 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B01068802EF3D4F200F1FA7B /* Products */;
@@ -635,6 +639,14 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		B093FADD2EF5076C00359122 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -682,6 +694,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B01069AC2EF42B9700F1FA7B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		B093FADE2EF5076C00359122 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B093FADD2EF5076C00359122 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

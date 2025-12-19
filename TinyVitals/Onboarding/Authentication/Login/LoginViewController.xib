@@ -8,10 +8,12 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LoginViewController" customModule="sample_work" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LoginViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
+                <outlet property="appleSignUpButton" destination="0JV-OR-dhw" id="m64-fl-WPZ"/>
                 <outlet property="emailTextField" destination="UoH-1B-roM" id="wrW-IU-lJC"/>
-                <outlet property="googleSignUpButton" destination="WXk-BT-sXs" id="2Zk-JT-gmD"/>
+                <outlet property="googleSignUpButton" destination="WXk-BT-sXs" id="UGm-vR-4zq"/>
+                <outlet property="loginButton" destination="hrK-Xp-FcK" id="y0f-cO-bw3"/>
                 <outlet property="passwordTextField" destination="kRq-qg-S9W" id="tvK-4x-rqr"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -334,18 +336,6 @@
                 <constraint firstItem="4EB-XT-8aQ" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="j83-34-0L1"/>
             </constraints>
             <point key="canvasLocation" x="136.64122137404578" y="-8.4507042253521139"/>
-        </view>
-        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="JKr-Sx-OF5">
-            <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <point key="canvasLocation" x="-408" y="-213"/>
-        </imageView>
-        <view contentMode="scaleToFill" id="ArF-Ty-yi7">
-            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <viewLayoutGuide key="safeArea" id="ETx-Sz-vtm"/>
-            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-            <point key="canvasLocation" x="824" y="-50"/>
         </view>
     </objects>
     <resources>

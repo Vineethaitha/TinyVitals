@@ -17,10 +17,50 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
+    @IBOutlet weak var loginButton: UIButton!
+    
+    @IBOutlet weak var appleSignUpButton: UIButton!
+    
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loginButton.configuration = nil
+        loginButton.layer.cornerRadius = loginButton.frame.height / 2
+        loginButton.clipsToBounds = true
+        loginButton.setTitle("Login", for: .normal)
+//        loginButton.tintColor = UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1)
+        loginButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        
+        appleSignUpButton.configuration = nil
+        appleSignUpButton.layer.cornerRadius = appleSignUpButton.frame.height / 2
+        appleSignUpButton.clipsToBounds = true
+        appleSignUpButton.setTitle("  Sign up with Apple", for: .normal)
+        appleSignUpButton.setImage(UIImage(systemName: "apple.logo"), for: .normal)
+        appleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        
+//        googleSignUpButton.configuration = nil
+//        googleSignUpButton.layer.cornerRadius = googleSignUpButton.frame.height / 2
+//        googleSignUpButton.clipsToBounds = true
+//        googleSignUpButton.setTitle("  Sign up with Google", for: .normal)
+////        googleSignUpButton.setImage(UIImage(named: "GoogleLogo"), for: .normal)
+//        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        
+        googleSignUpButton.configuration = nil
+        googleSignUpButton.clipsToBounds = true
+        googleSignUpButton.setTitle("  Sign up with Google", for: .normal)
+        googleSignUpButton.setTitleColor(.label, for: .normal)
+        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+
+//        let size = CGSize(width: 24, height: 24)
+//        let googleImage = UIImage(named: "GoogleLogo")?
+//            .withRenderingMode(.alwaysOriginal)
+//            .resize(to: size)
+
+//        googleSignUpButton.setImage(googleImage, for: .normal)
+//        googleSignUpButton.imageView?.contentMode = .scaleAspectFit
+
+        
         setupLoader()
 //        if Auth.auth().currentUser != nil {
 //            self.navigateToHome()
@@ -29,7 +69,7 @@ class LoginViewController: UIViewController {
         view.addGestureRecognizer(tap)
         
         let size = CGSize(width: 24, height: 24)
-        let image = UIImage(named: "google-logo-png-webinar-optimizing-for-success-google-business-webinar-13")?.resize(to: size)
+        let image = UIImage(named: "GoogleLogo")?.resize(to: size)
         
         googleSignUpButton.setImage(image, for: .normal)
         googleSignUpButton.imageView?.contentMode = .scaleAspectFit

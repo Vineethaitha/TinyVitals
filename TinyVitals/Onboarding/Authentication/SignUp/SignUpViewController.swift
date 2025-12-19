@@ -15,6 +15,8 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var fullNameTextField: UITextField!
     
+    @IBOutlet weak var createAccount: UIButton!
+    
     private let matchImageView = UIImageView()
     private let eyeImageView = UIImageView()
     private var isPasswordVisible = false
@@ -31,6 +33,12 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
 
         passwordTextField.textContentType = .none
         confirmPasswordTextField.textContentType = .none
+        
+        createAccount.configuration = nil
+        createAccount.layer.cornerRadius = createAccount.frame.height / 2
+        createAccount.clipsToBounds = true
+        createAccount.setTitle("Create Account", for: .normal)
+        createAccount.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
         
