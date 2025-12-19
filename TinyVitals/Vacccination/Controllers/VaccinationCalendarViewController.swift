@@ -170,6 +170,52 @@ final class VaccinationCalendarViewController : UIViewController {
         emptyStateView.isHidden = hasVaccines
     }
 
+    private func dotColors(
+        for vaccines: [VaccinationManagerViewController.VaccineItem]
+    ) -> [UIColor] {
+
+        let completedCount = vaccines.filter { $0.status == .completed }.count
+        let skippedCount = vaccines.filter { $0.status == .skipped }.count
+        let rescheduledCount = vaccines.filter { $0.status == .rescheduled }.count
+        let upcomingCount = vaccines.filter { $0.status == .upcoming }.count
+
+        var colors: [UIColor] = []
+
+        // ✅ Completed should ALWAYS show green
+        if completedCount > 0 {
+            colors.append(.systemGreen)
+        }
+
+        // ❌ Skipped → red
+        if skippedCount > 0 {
+            colors.append(.systemRed)
+        }
+
+        // 🟠 Rescheduled only if NO completed
+        if completedCount == 0 && rescheduledCount > 0 {
+            colors.append(.systemOrange)
+        }
+
+        // 🟣 Upcoming only if nothing else exists
+        if colors.isEmpty && upcomingCount > 0 {
+            colors.append(
+                UIColor(
+                    red: 204/255,
+                    green: 142/255,
+                    blue: 224/255,
+                    alpha: 1
+                )
+            )
+        }
+
+        return colors
+    }
+    
+    private func refreshCalendarDot(for date: Date) {
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        calendarView.reloadDecorations(forDateComponents: [components], animated: true)
+    }
+
 
 }
 
@@ -252,21 +298,40 @@ extension VaccinationCalendarViewController : UICalendarViewDelegate {
 
         let day = calendar.startOfDay(for: date)
 
-        guard vaccinesByDate[day] != nil else {
+        guard let vaccines = vaccinesByDate[day] else {
             return nil
         }
 
-        return .default(
-            color: UIColor(
-                red: 204/255,
-                green: 142/255,
-                blue: 224/255,
-                alpha: 1
-            ),
-            size: .small
-        )
+        let colors = dotColors(for: vaccines)
 
+        if colors.count == 1 {
+            return .default(color: colors[0], size: .small)
+        }
+
+        // Multiple dots (green + red etc.)
+        return .customView {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.spacing = 2
+
+            for color in colors {
+                let dot = UIView()
+                dot.backgroundColor = color
+                dot.layer.cornerRadius = 3
+                dot.translatesAutoresizingMaskIntoConstraints = false
+
+                NSLayoutConstraint.activate([
+                    dot.widthAnchor.constraint(equalToConstant: 6),
+                    dot.heightAnchor.constraint(equalToConstant: 6)
+                ])
+
+                stack.addArrangedSubview(dot)
+            }
+
+            return stack
+        }
     }
+
 }
 
 
