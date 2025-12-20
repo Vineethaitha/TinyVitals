@@ -8,15 +8,25 @@
 import UIKit
 
 class HomeScreenViewController: UIViewController {
-
-    @IBOutlet weak var graphContainer: UIView!
-    @IBOutlet weak var metricSegment: UISegmentedControl!
     
     @IBOutlet weak var articlesCollectionView: UICollectionView!
     @IBOutlet weak var pageControl: UIPageControl!
+    
+    @IBOutlet weak var weightCardView: UIView!
+    @IBOutlet weak var heightCardView: UIView!
+
+    @IBOutlet weak var weightValueLabel: UILabel!
+    @IBOutlet weak var heightValueLabel: UILabel!
+    
+    @IBOutlet weak var weightSparklineContainer: UIView!
+    @IBOutlet weak var heightSparklineContainer: UIView!
 
 
-    private let graph = GrowthTrendGraphView()
+    private let weightSparkline = SparklineView()
+    private let heightSparkline = SparklineView()
+
+
+    
     
     let articles: [Article] = [
         Article(
@@ -44,12 +54,10 @@ class HomeScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Home"
-        graph.frame = graphContainer.bounds
-        graph.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        graphContainer.addSubview(graph)
-
-        showWeight()
         
+        setupSummaryCards()
+        setupCardGestures()
+    
         articlesCollectionView.delegate = self
         articlesCollectionView.dataSource = self
         
@@ -71,6 +79,9 @@ class HomeScreenViewController: UIViewController {
         pageControl.currentPage = 0
         startAutoScroll()
 
+        
+        setupSparklines()
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -78,39 +89,13 @@ class HomeScreenViewController: UIViewController {
         stopAutoScroll()
     }
     
+    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         stopAutoScroll()
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         startAutoScroll()
-    }
-
-    
-    @IBAction func segmentChanged(_ sender: UISegmentedControl) {
-        sender.selectedSegmentIndex == 0 ? showWeight() : showHeight()
-    }
-
-    private func showWeight() {
-        graph.metric = .weight
-        graph.data = [
-            GrowthPoint(month: 0, value: 3.3),
-            GrowthPoint(month: 3, value: 6.4),
-            GrowthPoint(month: 6, value: 7.9),
-            GrowthPoint(month: 9, value: 8.9),
-            GrowthPoint(month: 12, value: 9.4)
-        ]
-    }
-
-    private func showHeight() {
-        graph.metric = .height
-        graph.data = [
-            GrowthPoint(month: 0, value: 49.8),
-            GrowthPoint(month: 3, value: 61.4),
-            GrowthPoint(month: 6, value: 67.5),
-            GrowthPoint(month: 9, value: 71.8),
-            GrowthPoint(month: 12, value: 75.7)
-        ]
     }
     
     private func startAutoScroll() {
@@ -143,6 +128,69 @@ class HomeScreenViewController: UIViewController {
         )
 
         pageControl.currentPage = currentPage
+    }
+
+    private func setupSummaryCards() {
+        weightValueLabel.text = "9.4 kg"
+        heightValueLabel.text = "75.7 cm"
+    }
+
+    private func setupCardGestures() {
+        let weightTap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(openWeightGraph)
+        )
+        weightCardView.addGestureRecognizer(weightTap)
+
+        let heightTap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(openHeightGraph)
+        )
+        heightCardView.addGestureRecognizer(heightTap)
+    }
+
+    @objc private func openWeightGraph() {
+        presentGraph(initialMetric: .weight)
+    }
+
+    @objc private func openHeightGraph() {
+        presentGraph(initialMetric: .height)
+    }
+
+    private func presentGraph(initialMetric: GrowthMetric) {
+        let vc = GrowthGraphViewController(
+            nibName: "GrowthGraphViewController",
+            bundle: nil
+        )
+
+        vc.initialMetric = initialMetric
+        vc.modalPresentationStyle = .pageSheet
+
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+
+        present(vc, animated: true)
+    }
+
+    private func setupSparklines() {
+
+        // Weight sparkline
+        weightSparkline.frame = weightSparklineContainer.bounds
+        weightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        weightSparkline.lineColor = UIColor(
+            red: 204/255, green: 142/255, blue: 224/255, alpha: 1
+        )
+        weightSparkline.values = [8.2, 8.6, 8.9, 9.1, 9.4]
+        weightSparklineContainer.addSubview(weightSparkline)
+
+        // Height sparkline
+        heightSparkline.frame = heightSparklineContainer.bounds
+        heightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        heightSparkline.lineColor = UIColor.systemBlue
+        heightSparkline.values = [72.0, 73.1, 74.4, 75.0, 75.7]
+        heightSparklineContainer.addSubview(heightSparkline)
     }
 
 
