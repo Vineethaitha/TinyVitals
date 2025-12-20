@@ -520,8 +520,10 @@ UITableViewDelegate, UITextFieldDelegate
     @IBOutlet weak var vaccinesTableView: UITableView!
     @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var calendarButton: UIButton!
-    @IBOutlet weak var progressView: UIProgressView!
-    @IBOutlet weak var progressLabel: UILabel!
+//    @IBOutlet weak var progressView: UIProgressView!
+//    @IBOutlet weak var progressRingView: VaccinationProgressRingView!
+
+//    @IBOutlet weak var progressLabel: UILabel!
 
 
 
@@ -570,6 +572,8 @@ UITableViewDelegate, UITextFieldDelegate
         case skipped
         case rescheduled
     }
+
+//    private weak var headerView: VaccinationHeaderView?
 
     var filteredVaccines: [VaccineItem] = []
 
@@ -817,6 +821,7 @@ UITableViewDelegate, UITextFieldDelegate
 
         setupCollectionView()
         setupTableView()
+        setupTableHeader()
 
         if allVaccines.isEmpty {
                 allVaccines = buildVaccines()
@@ -842,6 +847,15 @@ UITableViewDelegate, UITextFieldDelegate
         
         vaccinesTableView.showsVerticalScrollIndicator = false
         vaccinesTableView.showsHorizontalScrollIndicator = false
+        
+//        progressRingView.onTap = { [weak self] in
+//            self?.showProgressDetails()
+//        }
+
+        
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(showDetails))
+//        progressRingView.isUserInteractionEnabled = true
+//        progressRingView.addGestureRecognizer(tap)
 
         
     }
@@ -1197,7 +1211,8 @@ UITableViewDelegate, UITextFieldDelegate
 
             self.allVaccines[index].status = newStatus
             self.applyFilter()
-            self.updateProgressUI()
+//            self.updateProgressUI()
+            self.setupTableHeader()
         }
 
 
@@ -1350,6 +1365,37 @@ UITableViewDelegate, UITextFieldDelegate
         clearSearchButton.isHidden = searchQuery.isEmpty
         applyFilter()
     }
+    
+    @objc private func showDetails() {
+
+        let completed = allVaccines.filter { $0.status == .completed }.count
+        let upcoming = allVaccines.filter { $0.status == .upcoming }.count
+        let skipped = allVaccines.filter { $0.status == .skipped }.count
+        let rescheduled = allVaccines.filter { $0.status == .rescheduled }.count
+
+        let message = """
+        Completed: \(completed)
+        Upcoming: \(upcoming)
+        Skipped: \(skipped)
+        Rescheduled: \(rescheduled)
+        """
+
+        let alert = UIAlertController(
+            title: "Vaccination Summary",
+            message: message,
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+
+//        if let pop = alert.popoverPresentationController {
+//            pop.sourceView = progressRingView
+//            pop.sourceRect = progressRingView.bounds
+//        }
+
+        present(alert, animated: true)
+    }
+
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -1399,10 +1445,19 @@ UITableViewDelegate, UITextFieldDelegate
     }
     
     func updateProgressUI() {
-        progressView.progress = Float(completionProgress)
-        let percent = Int(completionProgress * 100)
-        progressLabel.text = "Vaccination Progress: \(percent)%"
+
+        let completed = allVaccines.filter { $0.status == .completed }.count
+        let upcoming = allVaccines.filter { $0.status == .upcoming }.count
+        let skipped = allVaccines.filter { $0.status == .skipped }.count
+        let rescheduled = allVaccines.filter { $0.status == .rescheduled }.count
+
+        setupTableHeader()
+
+        let total = allVaccines.count
+        let percent = total == 0 ? 0 : Int((Double(completed) / Double(total)) * 100)
+//        progressLabel.text = "Vaccination Progress: \(percent)%"
     }
+
     
     func requestNotificationPermission() {
         UNUserNotificationCenter.current()
@@ -1443,5 +1498,105 @@ UITableViewDelegate, UITextFieldDelegate
     func scheduleAllReminders() {
         allVaccines.forEach { scheduleReminder(for: $0) }
     }
+
+    private func setupTableHeader() {
+
+        guard let header = Bundle.main.loadNibNamed(
+            "VaccinationHeaderView",
+            owner: nil,
+            options: nil
+        )?.first as? VaccinationHeaderView else {
+            return
+        }
+        
+        header.frame = CGRect(
+                x: 0,
+                y: 0,
+                width: vaccinesTableView.bounds.width,
+                height: 220   // reduced wasted space
+            )
+
+        header.configure(
+            completed: completedVaccines.count,
+            upcoming: upcomingVaccines.count,
+            skipped: skippedVaccines.count,
+            rescheduled: rescheduledVaccines.count
+        )
+
+        // 🔥 THIS IS THE KEY PART
+        header.setNeedsLayout()
+        header.layoutIfNeeded()
+
+        let targetSize = CGSize(
+            width: vaccinesTableView.bounds.width,
+            height: UIView.layoutFittingCompressedSize.height
+        )
+
+        let height = header.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
+
+        var frame = header.frame
+        frame.size.height = height
+        header.frame = frame
+
+        vaccinesTableView.tableHeaderView = header
+        
+        header.onRingTap = { [weak self] in
+               self?.showProgressDetails()
+           }
+
+        vaccinesTableView.tableHeaderView = header
+    }
+    
+    private func showProgressDetails() {
+
+        let completed = allVaccines.filter { $0.status == .completed }.count
+        let upcoming = allVaccines.filter { $0.status == .upcoming }.count
+        let skipped = allVaccines.filter { $0.status == .skipped }.count
+        let rescheduled = allVaccines.filter { $0.status == .rescheduled }.count
+
+        let message = """
+        Completed: \(completed)
+        Upcoming: \(upcoming)
+        Missed: \(skipped)
+        Rescheduled: \(rescheduled)
+        """
+
+        let alert = UIAlertController(
+            title: "Vaccination Summary",
+            message: message,
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(title: "Done", style: .cancel))
+
+        if let pop = alert.popoverPresentationController {
+
+            // Anchor to table (stable reference)
+            pop.sourceView = vaccinesTableView
+
+            let headerHeight =
+                vaccinesTableView.tableHeaderView?.bounds.height ?? 220
+
+            // ⬆️ Ring is roughly centered in header → subtract some space
+            let ringBottomOffset = headerHeight * 0.7
+
+            pop.sourceRect = CGRect(
+                x: vaccinesTableView.bounds.midX,
+                y: ringBottomOffset,
+                width: 1,
+                height: 1
+            )
+
+            // 🔼 This creates the small "speech-bubble" arrow
+            pop.permittedArrowDirections = .up
+        }
+
+        present(alert, animated: true)
+    }
+
 
 }
