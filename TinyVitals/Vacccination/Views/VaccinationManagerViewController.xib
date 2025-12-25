@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -12,6 +12,8 @@
             <connections>
                 <outlet property="calendarButton" destination="5p3-2x-E9d" id="5hY-7f-GZz"/>
                 <outlet property="filtersCollectionView" destination="yw7-vP-Rlb" id="f8Y-US-XTY"/>
+                <outlet property="progressLabel" destination="8TX-Oo-CcL" id="qNl-Xq-c3c"/>
+                <outlet property="progressView" destination="18D-IU-hpE" id="L8F-0a-bIX"/>
                 <outlet property="searchTextField" destination="vU3-1s-EcR" id="0VD-ne-JI2"/>
                 <outlet property="vaccinesTableView" destination="32G-jk-2kI" id="qqE-Ig-J1d"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="GCz-d2-83D"/>
@@ -126,9 +128,18 @@
                                 <constraint firstAttribute="height" constant="40" id="0KB-sn-mZ4"/>
                             </constraints>
                         </stackView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8TX-Oo-CcL">
+                            <rect key="frame" x="0.0" y="94" width="353" height="20.333333333333329"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="18D-IU-hpE">
+                            <rect key="frame" x="0.0" y="126.33333333333334" width="353" height="4"/>
+                        </progressView>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="32G-jk-2kI">
-                            <rect key="frame" x="0.0" y="94" width="353" height="572"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <rect key="frame" x="0.0" y="142.33333333333331" width="353" height="523.66666666666674"/>
+                            <color key="backgroundColor" systemColor="systemGray6Color"/>
                         </tableView>
                     </subviews>
                     <constraints>
@@ -137,7 +148,7 @@
                 </stackView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
-            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <color key="backgroundColor" systemColor="systemGray6Color"/>
             <constraints>
                 <constraint firstItem="2aq-Jd-9Kg" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="Hcx-9t-R3h"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="2aq-Jd-9Kg" secondAttribute="bottom" id="Kmi-cg-FdS"/>
@@ -152,9 +163,6 @@
         <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="123"/>
         <image name="plus.circle" catalog="system" width="128" height="123"/>
         <image name="siri" catalog="system" width="128" height="123"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
         <systemColor name="systemGray6Color">
             <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

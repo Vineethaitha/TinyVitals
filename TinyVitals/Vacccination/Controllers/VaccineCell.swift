@@ -59,27 +59,44 @@ class VaccineCell: UITableViewCell {
         titleLabel.textColor = .label
         subtitleLabel.textColor = .secondaryLabel
 
-        guard
-            let searchText = searchText,
-            !searchText.isEmpty
-        else {
+        // ---------- TEXT / SEARCH ----------
+        if let searchText = searchText, !searchText.isEmpty {
+            titleLabel.attributedText =
+                highlightText(
+                    fullText: vaccine.name,
+                    searchText: searchText
+                )
+
+            subtitleLabel.attributedText =
+                highlightText(
+                    fullText: vaccine.description,
+                    searchText: searchText
+                )
+        } else {
             titleLabel.text = vaccine.name
             subtitleLabel.text = vaccine.description
-            return
         }
 
-        titleLabel.attributedText =
-            highlightText(
-                fullText: vaccine.name,
-                searchText: searchText
-            )
+        // ---------- ✅ STATUS COLOR (ADD HERE) ----------
+        switch vaccine.status {
+        case .completed:
+            cardView.backgroundColor =
+                UIColor.systemGreen.withAlphaComponent(0.15)
 
-        subtitleLabel.attributedText =
-            highlightText(
-                fullText: vaccine.description,
-                searchText: searchText
-            )
+        case .skipped:
+            cardView.backgroundColor =
+                UIColor.systemRed.withAlphaComponent(0.15)
+
+        case .rescheduled:
+            cardView.backgroundColor =
+                UIColor.systemOrange.withAlphaComponent(0.15)
+
+        case .upcoming:
+            cardView.backgroundColor =
+                UIColor.systemBlue.withAlphaComponent(0.15)
+        }
     }
+
 
     private func highlightText(
         fullText: String,

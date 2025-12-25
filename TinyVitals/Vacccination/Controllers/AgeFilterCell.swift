@@ -35,6 +35,7 @@ class AgeFilterCell: UICollectionViewCell {
             containerView.layer.cornerRadius = 15
         }
 
+    
         func configure(with title: String, isSelected: Bool) {
             titleLabel.text = title
 

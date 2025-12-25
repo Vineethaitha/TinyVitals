@@ -85,16 +85,16 @@
                                                     <rect key="frame" x="8" y="8" width="337" height="145.66666666666666"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date and time of vaccine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z2h-bJ-9LM">
-                                                            <rect key="frame" x="0.0" y="0.0" width="337" height="18"/>
-                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="337" height="21.666666666666668"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="mPY-Hz-9Ib" userLabel="dateRowStack">
-                                                            <rect key="frame" x="0.0" y="23" width="337" height="67.666666666666671"/>
+                                                            <rect key="frame" x="0.0" y="26.666666666666686" width="337" height="64"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6cI-Xw-0aD">
-                                                                    <rect key="frame" x="0.0" y="23.666666666666686" width="120" height="20.333333333333329"/>
+                                                                    <rect key="frame" x="0.0" y="22" width="120" height="20.333333333333329"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="120" id="wLS-h3-tLu"/>
                                                                     </constraints>
@@ -103,7 +103,7 @@
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <datePicker contentMode="scaleToFill" horizontalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="compact" translatesAutoresizingMaskIntoConstraints="NO" id="ixA-Zk-Vms">
-                                                                    <rect key="frame" x="132" y="9" width="205" height="50"/>
+                                                                    <rect key="frame" x="132" y="7" width="205" height="50"/>
                                                                     <color key="backgroundColor" systemColor="systemGray6Color"/>
                                                                 </datePicker>
                                                             </subviews>
@@ -153,7 +153,7 @@
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="20" id="uWL-5E-Bfk"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
@@ -199,7 +199,7 @@
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="20" id="WHW-k2-f0g"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
@@ -255,7 +255,7 @@
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vaccination Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qU0-HN-ETh">
                                                             <rect key="frame" x="0.0" y="0.0" width="321" height="41.333333333333336"/>
-                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>

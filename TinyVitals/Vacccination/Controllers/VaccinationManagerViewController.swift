@@ -520,13 +520,40 @@ UITableViewDelegate, UITextFieldDelegate
     @IBOutlet weak var vaccinesTableView: UITableView!
     @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var calendarButton: UIButton!
+    @IBOutlet weak var progressView: UIProgressView!
+    @IBOutlet weak var progressLabel: UILabel!
+
 
 
     // MARK: - Filters
-    let filterOptions = ["All", "At Birth", "6 Weeks", "10 Weeks", "14 Weeks"]
+    let filterOptions = [
+        "All",
+        "At Birth",
+        "6 Weeks",
+        "10 Weeks",
+        "14 Weeks",
+        "9 Months",
+        "12 Months",
+        "15 Months",
+        "16–24 Months",
+        "5–6 Years",
+        "10 Years",
+        "16 Years",
+        "Pregnancy"
+    ]
+
     var selectedFilterIndex = 0
     private let clearSearchButton = UIButton(type: .system)
+    
+    // MARK: - Child DOB
+    var childDOB: Date = Date()   // default, replace later from profile screen
 
+    // STATUS COMPLETION
+    var completionProgress: Double {
+        let total = allVaccines.count
+        let completed = allVaccines.filter { $0.status == .completed }.count
+        return total == 0 ? 0 : Double(completed) / Double(total)
+    }
 
     // MARK: - Data Model
     struct VaccineItem {
@@ -540,6 +567,7 @@ UITableViewDelegate, UITextFieldDelegate
     enum VaccineStatus {
         case upcoming
         case completed
+        case skipped
         case rescheduled
     }
 
@@ -547,12 +575,202 @@ UITableViewDelegate, UITextFieldDelegate
 
     let calendar = Calendar.current
 
-    let allVaccines: [VaccineItem] = [
-        VaccineItem(name: "BCG", description: "Tuberculosis vaccine", ageGroup: "At Birth", status: .completed,  date: Date()),
-        VaccineItem(name: "OPV", description: "Polio vaccine", ageGroup: "6 Weeks", status: .upcoming,date: Calendar.current.date(byAdding: .day, value: 3, to: Date())!),
-        VaccineItem(name: "Pentavalent", description: "DTP + HepB + Hib", ageGroup: "6 Weeks", status: .upcoming, date: Calendar.current.date(byAdding: .day, value: 7, to: Date())!),
-        VaccineItem(name: "Rotavirus", description: "Diarrhea prevention", ageGroup: "10 Weeks", status: .rescheduled, date: Calendar.current.date(byAdding: .day, value: 10 , to: Date())!)
-    ]
+//    let allVaccines: [VaccineItem] = [
+//        VaccineItem(name: "BCG", description: "Tuberculosis vaccine", ageGroup: "At Birth", status: .completed,  date: Date()),
+//        VaccineItem(name: "OPV", description: "Polio vaccine", ageGroup: "6 Weeks", status: .upcoming,date: Calendar.current.date(byAdding: .day, value: 3, to: Date())!),
+//        VaccineItem(name: "Pentavalent", description: "DTP + HepB + Hib", ageGroup: "6 Weeks", status: .upcoming, date: Calendar.current.date(byAdding: .day, value: 7, to: Date())!),
+//        VaccineItem(name: "Rotavirus", description: "Diarrhea prevention", ageGroup: "10 Weeks", status: .rescheduled, date: Calendar.current.date(byAdding: .day, value: 10 , to: Date())!)
+//    ]
+    var allVaccines: [VaccineItem] = []
+
+//    var allVaccines: [VaccineItem] {
+//
+//        let dob = childDOB
+//        let cal = calendar
+//
+//        return [
+//
+//            // MARK: - At Birth
+//            VaccineItem(
+//                name: "BCG",
+//                description: "Tuberculosis vaccine",
+//                ageGroup: "At Birth",
+//                status: .completed,
+//                date: dob
+//            ),
+//
+//            VaccineItem(
+//                name: "OPV-0",
+//                description: "Oral Polio Vaccine (Birth dose)",
+//                ageGroup: "At Birth",
+//                status: .completed,
+//                date: dob
+//            ),
+//
+//            VaccineItem(
+//                name: "Hepatitis B (Birth)",
+//                description: "Hepatitis B birth dose",
+//                ageGroup: "At Birth",
+//                status: .completed,
+//                date: dob
+//            ),
+//
+//            // MARK: - 6 Weeks
+//            VaccineItem(
+//                name: "Pentavalent-1",
+//                description: "DTP + HepB + Hib",
+//                ageGroup: "6 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "OPV-1",
+//                description: "Oral Polio Vaccine",
+//                ageGroup: "6 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "Rotavirus-1",
+//                description: "Diarrhea prevention",
+//                ageGroup: "6 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "IPV-1",
+//                description: "Injectable Polio Vaccine",
+//                ageGroup: "6 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+//            ),
+//
+//            // MARK: - 10 Weeks
+//            VaccineItem(
+//                name: "Pentavalent-2",
+//                description: "DTP + HepB + Hib",
+//                ageGroup: "10 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "OPV-2",
+//                description: "Oral Polio Vaccine",
+//                ageGroup: "10 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "Rotavirus-2",
+//                description: "Diarrhea prevention",
+//                ageGroup: "10 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+//            ),
+//
+//            // MARK: - 14 Weeks
+//            VaccineItem(
+//                name: "Pentavalent-3",
+//                description: "DTP + HepB + Hib",
+//                ageGroup: "14 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "OPV-3",
+//                description: "Oral Polio Vaccine",
+//                ageGroup: "14 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "IPV-2",
+//                description: "Injectable Polio Vaccine",
+//                ageGroup: "14 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+//            ),
+//
+//            // MARK: - 9 Months
+//            VaccineItem(
+//                name: "MR-1",
+//                description: "Measles & Rubella",
+//                ageGroup: "9 Months",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .month, value: 9, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "JE-1",
+//                description: "Japanese Encephalitis",
+//                ageGroup: "9 Months",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .month, value: 9, to: dob)!
+//            ),
+//
+//            // MARK: - 16–24 Months
+//            VaccineItem(
+//                name: "DPT Booster-1",
+//                description: "Diphtheria, Pertussis, Tetanus",
+//                ageGroup: "16–24 Months",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .month, value: 18, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "OPV Booster",
+//                description: "Oral Polio Booster",
+//                ageGroup: "16–24 Months",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .month, value: 18, to: dob)!
+//            ),
+//
+//            VaccineItem(
+//                name: "MR-2",
+//                description: "Measles & Rubella (2nd dose)",
+//                ageGroup: "16–24 Months",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .month, value: 18, to: dob)!
+//            ),
+//
+//            // MARK: - 5–6 Years
+//            VaccineItem(
+//                name: "DPT Booster-2",
+//                description: "Diphtheria, Pertussis, Tetanus",
+//                ageGroup: "5–6 Years",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .year, value: 5, to: dob)!
+//            ),
+//
+//            // MARK: - 10 Years
+//            VaccineItem(
+//                name: "Td",
+//                description: "Tetanus & Diphtheria",
+//                ageGroup: "10 Years",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .year, value: 10, to: dob)!
+//            ),
+//
+//            // MARK: - 16 Years
+//            VaccineItem(
+//                name: "Td Booster",
+//                description: "Tetanus & Diphtheria",
+//                ageGroup: "16 Years",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .year, value: 16, to: dob)!
+//            )
+//        ]
+//    }
+
+
+
     
     enum SortOption {
         case nameAZ
@@ -563,6 +781,7 @@ UITableViewDelegate, UITextFieldDelegate
         case all
         case upcoming
         case completed
+        case skipped       // ✅ ADD THIS
         case rescheduled
     }
 
@@ -583,6 +802,10 @@ UITableViewDelegate, UITextFieldDelegate
         filteredVaccines.filter { $0.status == .rescheduled }
     }
 
+    var skippedVaccines: [VaccineItem] {
+        filteredVaccines.filter { $0.status == .skipped }
+    }
+
     var searchQuery: String = ""
 
     
@@ -595,6 +818,10 @@ UITableViewDelegate, UITextFieldDelegate
         setupCollectionView()
         setupTableView()
 
+        if allVaccines.isEmpty {
+                allVaccines = buildVaccines()
+            }
+        
         // ✅ LOAD DATA INITIALLY
         filteredVaccines = allVaccines
         vaccinesTableView.reloadData()
@@ -608,15 +835,219 @@ UITableViewDelegate, UITextFieldDelegate
 
         setupCollectionView()
         setupTableView()
-
+        updateProgressUI()
         setupSearchClearButton()
+        requestNotificationPermission()
+        scheduleAllReminders()
+        
+        vaccinesTableView.showsVerticalScrollIndicator = false
+        vaccinesTableView.showsHorizontalScrollIndicator = false
+
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
+    //
+    
+    func buildVaccines() -> [VaccineItem] {
+
+        let dob = childDOB
+        let cal = calendar
+
+        return [
+            VaccineItem(name: "BCG", description: "Tuberculosis vaccine", ageGroup: "At Birth", status: .completed, date: dob),
+            VaccineItem(name: "OPV-0", description: "Oral Polio Vaccine (Birth dose)", ageGroup: "At Birth", status: .completed, date: dob),
+
+            VaccineItem(
+                name: "Pentavalent-1",
+                description: "DTP + HepB + Hib",
+                ageGroup: "6 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+            ),
+            // keep rest exactly same
+            
+//            VaccineItem(
+//                name: "BCG",
+//                description: "Tuberculosis vaccine",
+//                ageGroup: "At Birth",
+//                status: .completed,
+//                date: dob
+//            ),
+//
+//            VaccineItem(
+//                name: "OPV-0",
+//                description: "Oral Polio Vaccine (Birth dose)",
+//                ageGroup: "At Birth",
+//                status: .completed,
+//                date: dob
+//            ),
+
+            VaccineItem(
+                name: "Hepatitis B (Birth)",
+                description: "Hepatitis B birth dose",
+                ageGroup: "At Birth",
+                status: .completed,
+                date: dob
+            ),
+
+            // MARK: - 6 Weeks
+//            VaccineItem(
+//                name: "Pentavalent-1",
+//                description: "DTP + HepB + Hib",
+//                ageGroup: "6 Weeks",
+//                status: .upcoming,
+//                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+//            ),
+
+            VaccineItem(
+                name: "OPV-1",
+                description: "Oral Polio Vaccine",
+                ageGroup: "6 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "Rotavirus-1",
+                description: "Diarrhea prevention",
+                ageGroup: "6 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "IPV-1",
+                description: "Injectable Polio Vaccine",
+                ageGroup: "6 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+            ),
+
+            // MARK: - 10 Weeks
+            VaccineItem(
+                name: "Pentavalent-2",
+                description: "DTP + HepB + Hib",
+                ageGroup: "10 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "OPV-2",
+                description: "Oral Polio Vaccine",
+                ageGroup: "10 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "Rotavirus-2",
+                description: "Diarrhea prevention",
+                ageGroup: "10 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+            ),
+
+            // MARK: - 14 Weeks
+            VaccineItem(
+                name: "Pentavalent-3",
+                description: "DTP + HepB + Hib",
+                ageGroup: "14 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "OPV-3",
+                description: "Oral Polio Vaccine",
+                ageGroup: "14 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "IPV-2",
+                description: "Injectable Polio Vaccine",
+                ageGroup: "14 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+            ),
+
+            // MARK: - 9 Months
+            VaccineItem(
+                name: "MR-1",
+                description: "Measles & Rubella",
+                ageGroup: "9 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 9, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "JE-1",
+                description: "Japanese Encephalitis",
+                ageGroup: "9 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 9, to: dob)!
+            ),
+
+            // MARK: - 16–24 Months
+            VaccineItem(
+                name: "DPT Booster-1",
+                description: "Diphtheria, Pertussis, Tetanus",
+                ageGroup: "16–24 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 18, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "OPV Booster",
+                description: "Oral Polio Booster",
+                ageGroup: "16–24 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 18, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "MR-2",
+                description: "Measles & Rubella (2nd dose)",
+                ageGroup: "16–24 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 18, to: dob)!
+            ),
+
+            // MARK: - 5–6 Years
+            VaccineItem(
+                name: "DPT Booster-2",
+                description: "Diphtheria, Pertussis, Tetanus",
+                ageGroup: "5–6 Years",
+                status: .upcoming,
+                date: cal.date(byAdding: .year, value: 5, to: dob)!
+            ),
+
+            // MARK: - 10 Years
+            VaccineItem(
+                name: "Td",
+                description: "Tetanus & Diphtheria",
+                ageGroup: "10 Years",
+                status: .upcoming,
+                date: cal.date(byAdding: .year, value: 10, to: dob)!
+            ),
+
+            // MARK: - 16 Years
+            VaccineItem(
+                name: "Td Booster",
+                description: "Tetanus & Diphtheria",
+                ageGroup: "16 Years",
+                status: .upcoming,
+                date: cal.date(byAdding: .year, value: 16, to: dob)!
+            )
+        ]
+    }
+
 
     // MARK: - Setup
     func setupCollectionView() {
@@ -695,7 +1126,8 @@ UITableViewDelegate, UITextFieldDelegate
         switch section {
         case 0: return upcomingVaccines.count
         case 1: return completedVaccines.count
-        case 2: return rescheduledVaccines.count
+        case 2: return skippedVaccines.count
+        case 3: return rescheduledVaccines.count
         default: return 0
         }
     }
@@ -717,6 +1149,8 @@ UITableViewDelegate, UITextFieldDelegate
         case 1:
             vaccine = completedVaccines[indexPath.row]
         case 2:
+            vaccine = skippedVaccines[indexPath.row]
+        case 3:
             vaccine = rescheduledVaccines[indexPath.row]
         default:
             fatalError("Invalid section")
@@ -734,27 +1168,50 @@ UITableViewDelegate, UITextFieldDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-//        let vaccine: VaccineItem
-//        switch indexPath.section {
-//        case 0: vaccine = upcomingVaccines[indexPath.row]
-//        case 1: vaccine = completedVaccines[indexPath.row]
-//        case 2: vaccine = rescheduledVaccines[indexPath.row]
-//        default: return
-//        }
+        let vaccine: VaccineItem
+
+        switch indexPath.section {
+        case 0:
+            vaccine = upcomingVaccines[indexPath.row]
+        case 1:
+            vaccine = completedVaccines[indexPath.row]
+        case 2:
+            vaccine = skippedVaccines[indexPath.row]
+        case 3:
+            vaccine = rescheduledVaccines[indexPath.row]
+        default:
+            fatalError("Invalid section")
+        }
 
         let vc = VaccineDetailViewController(
-                nibName: "VaccineDetailViewController",
-                bundle: nil
-            )
+            nibName: "VaccineDetailViewController",
+            bundle: nil
+        )
 
-            vc.vaccine = filteredVaccines[indexPath.row]
+//        vc.vaccine = vaccine   // ✅ CORRECT vaccine now
+        
+        vc.vaccine = vaccine
+        vc.vaccineIndex = allVaccines.firstIndex {
+            $0.name == vaccine.name && $0.date == vaccine.date
+        }
+        
+        vc.onSaveStatus = { [weak self] newStatus in
+            guard let self = self,
+                  let index = vc.vaccineIndex else { return }
 
-            let nav = UINavigationController(rootViewController: vc)
-            present(nav, animated: true)
+            self.allVaccines[index].status = newStatus
+            self.applyFilter()
+            self.updateProgressUI()
+        }
+
+
+        let nav = UINavigationController(rootViewController: vc)
+        present(nav, animated: true)
     }
+
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     func tableView(_ tableView: UITableView,
@@ -762,7 +1219,8 @@ UITableViewDelegate, UITextFieldDelegate
         switch section {
         case 0: return upcomingVaccines.isEmpty ? nil : "Upcoming"
         case 1: return completedVaccines.isEmpty ? nil : "Completed"
-        case 2: return rescheduledVaccines.isEmpty ? nil : "Rescheduled"
+        case 2: return skippedVaccines.isEmpty ? nil : "Skipped"
+        case 3: return rescheduledVaccines.isEmpty ? nil : "Rescheduled"
         default: return nil
         }
     }
@@ -773,9 +1231,18 @@ UITableViewDelegate, UITextFieldDelegate
         case "6 Weeks": return 1
         case "10 Weeks": return 2
         case "14 Weeks": return 3
+        case "9 Months": return 4
+        case "12 Months": return 5
+        case "15 Months": return 6
+        case "16–24 Months": return 7
+        case "5–6 Years": return 8
+        case "10 Years": return 9
+        case "16 Years": return 10
+        case "Pregnancy": return 11
         default: return 999
         }
     }
+
 
 
     @IBAction func filterSortTapped(_ sender: UIView) {
@@ -797,6 +1264,12 @@ UITableViewDelegate, UITextFieldDelegate
             self.selectedStatusFilter = .completed
             self.applyFilter()
         })
+        
+        sheet.addAction(UIAlertAction(title: "Skipped", style: .default) { _ in
+            self.selectedStatusFilter = .skipped
+            self.applyFilter()
+        })
+
 
         sheet.addAction(UIAlertAction(title: "Rescheduled", style: .default) { _ in
             self.selectedStatusFilter = .rescheduled
@@ -844,9 +1317,12 @@ UITableViewDelegate, UITextFieldDelegate
             result = result.filter { $0.status == .upcoming }
         case .completed:
             result = result.filter { $0.status == .completed }
+        case .skipped:
+            result = result.filter { $0.status == .skipped }
         case .rescheduled:
             result = result.filter { $0.status == .rescheduled }
         }
+
 
         // 4️⃣ 🔍 SEARCH FILTER (THIS WAS WRONG BEFORE)
         if !searchQuery.isEmpty {
@@ -924,6 +1400,52 @@ UITableViewDelegate, UITextFieldDelegate
         // Present modally (clean UX)
         vc.modalPresentationStyle = .pageSheet
         present(vc, animated: true)
+    }
+    
+    func updateProgressUI() {
+        progressView.progress = Float(completionProgress)
+        let percent = Int(completionProgress * 100)
+        progressLabel.text = "Vaccination Progress: \(percent)%"
+    }
+    
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+    }
+
+
+    func scheduleReminder(for vaccine: VaccineItem) {
+
+        guard vaccine.status == .upcoming else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = "Vaccination Reminder"
+        content.body = "\(vaccine.name) is scheduled tomorrow"
+        content.sound = .default
+
+        let reminderDate = calendar.date(byAdding: .day, value: -1, to: vaccine.date)!
+        let components = calendar.dateComponents(
+            [.year, .month, .day, .hour],
+            from: reminderDate
+        )
+
+        let trigger = UNCalendarNotificationTrigger(
+            dateMatching: components,
+            repeats: false
+        )
+
+        let id = "vaccine_\(vaccine.name)_\(vaccine.date)"
+        let request = UNNotificationRequest(
+            identifier: id,
+            content: content,
+            trigger: trigger
+        )
+
+        UNUserNotificationCenter.current().add(request)
+    }
+
+    func scheduleAllReminders() {
+        allVaccines.forEach { scheduleReminder(for: $0) }
     }
 
 }

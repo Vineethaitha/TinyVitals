@@ -72,7 +72,41 @@ class MainTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTabs()
+//        setupTabs()
+        let home = HomeScreenViewController()
+        home.tabBarItem = UITabBarItem(
+            title: "Home",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
+        )
+
+        let records = RecordManagerViewController()
+        records.tabBarItem = UITabBarItem(
+            title: "Records",
+            image: UIImage(systemName: "cross.case"),
+            selectedImage: UIImage(systemName: "cross.case.fill")
+        )
+
+        let vaccine = VaccinationManagerViewController()
+        vaccine.tabBarItem = UITabBarItem(
+            title: "Vaccines",
+            image: UIImage(systemName: "syringe"),
+            selectedImage: UIImage(systemName: "syringe.fill")
+        )
+        
+        let profile = ParentProfileViewController()
+        profile.tabBarItem = UITabBarItem(
+            title: "Profile",
+            image: UIImage(systemName: "person"),
+            selectedImage: UIImage(systemName: "person.fill")
+        )
+
+        viewControllers = [
+            UINavigationController(rootViewController: home),
+            UINavigationController(rootViewController: records),
+            UINavigationController(rootViewController: vaccine),
+            UINavigationController(rootViewController: profile)
+        ]
         updateNavBarTitles()
         
         tabBar.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1.0)
@@ -99,42 +133,42 @@ class MainTabBarController: UITabBarController {
 
     // MARK: - Setup
 
-    private func setupTabs() {
+//    private func setupTabs() {
 
-        let homeVC = HomeScreenViewController()
-        homeVC.tabBarItem = UITabBarItem(
-            title: "Home",
-            image: UIImage(systemName: "house"),
-            selectedImage: UIImage(systemName: "house.fill")
-        )
-        let homeNav = UINavigationController(rootViewController: homeVC)
+//        let homeVC = HomeScreenViewController()
+//        homeVC.tabBarItem = UITabBarItem(
+//            title: "Home",
+//            image: UIImage(systemName: "house"),
+//            selectedImage: UIImage(systemName: "house.fill")
+//        )
+//        let homeNav = UINavigationController(rootViewController: homeVC)
+//
+//        let recordVC = RecordManagerViewController()
+//        recordVC.tabBarItem = UITabBarItem(
+//            title: "Record",
+//            image: UIImage(systemName: "cross.case"),
+//            selectedImage: UIImage(systemName: "cross.case.fill")
+//        )
+//        let recordNav = UINavigationController(rootViewController: recordVC)
+//
+//        let vaccineVC = VaccinationManagerViewController()
+//        vaccineVC.tabBarItem = UITabBarItem(
+//            title: "Vaccination",
+//            image: UIImage(systemName: "syringe"),
+//            selectedImage: UIImage(systemName: "syringe.fill")
+//        )
+//        let vaccineNav = UINavigationController(rootViewController: vaccineVC)
+//
+//        let profileVC = ParentProfileViewController()
+//        profileVC.tabBarItem = UITabBarItem(
+//            title: "Profile",
+//            image: UIImage(systemName: "person"),
+//            selectedImage: UIImage(systemName: "person.fill")
+//        )
+//        let profileNav = UINavigationController(rootViewController: profileVC)
 
-        let recordVC = RecordManagerViewController()
-        recordVC.tabBarItem = UITabBarItem(
-            title: "Record",
-            image: UIImage(systemName: "cross.case"),
-            selectedImage: UIImage(systemName: "cross.case.fill")
-        )
-        let recordNav = UINavigationController(rootViewController: recordVC)
-
-        let vaccineVC = VaccinationManagerViewController()
-        vaccineVC.tabBarItem = UITabBarItem(
-            title: "Vaccination",
-            image: UIImage(systemName: "syringe"),
-            selectedImage: UIImage(systemName: "syringe.fill")
-        )
-        let vaccineNav = UINavigationController(rootViewController: vaccineVC)
-
-        let profileVC = ParentProfileViewController()
-        profileVC.tabBarItem = UITabBarItem(
-            title: "Profile",
-            image: UIImage(systemName: "person"),
-            selectedImage: UIImage(systemName: "person.fill")
-        )
-        let profileNav = UINavigationController(rootViewController: profileVC)
-
-        viewControllers = [homeNav, recordNav, vaccineNav, profileNav]
-    }
+//        viewControllers = [homeNav, recordNav, vaccineNav, profileNav]
+//    }
 
 
     // MARK: - Navigation Bar

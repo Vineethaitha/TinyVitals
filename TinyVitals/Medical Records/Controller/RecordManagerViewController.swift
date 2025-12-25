@@ -71,7 +71,7 @@ class RecordManagerViewController: UIViewController {
         
         setupSortMenu()
         
-        hidesBottomBarWhenPushed = true
+//        hidesBottomBarWhenPushed = true
         
 //        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
 //            tap.cancelsTouchesInView = false

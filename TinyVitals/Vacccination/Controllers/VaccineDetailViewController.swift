@@ -137,6 +137,11 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         case rescheduled
     }
 
+    var vaccineIndex: Int?
+    var onSaveStatus: ((VaccinationManagerViewController.VaccineStatus) -> Void)?
+    var onStatusUpdated: ((VaccinationManagerViewController.VaccineItem) -> Void)?
+
+
     private var selectedStatus: VaccinationStatus = .taken
 
 
@@ -460,10 +465,21 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     }
     
     @IBAction func saveTapped(_ sender: UIButton) {
-        print("Saved status:", selectedStatus)
-        dismiss(animated: true)
-        // later you can persist this
-        // vaccine.status = selectedStatus
+        let newStatus: VaccinationManagerViewController.VaccineStatus
+
+            switch selectedStatus {
+            case .taken:
+                newStatus = .completed
+            case .skipped:
+                newStatus = .skipped
+            case .rescheduled:
+                newStatus = .rescheduled
+            }
+
+            // 🔥 THIS IS THE KEY LINE
+            onSaveStatus?(newStatus)
+
+            dismiss(animated: true)
     }
 
     func highlightRow(_ view: UIView, active: Bool) {

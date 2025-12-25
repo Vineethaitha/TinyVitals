@@ -6,13 +6,18 @@
 //
 
 import UIKit
+import Lottie
 
 final class VaccinationCalendarViewController : UIViewController {
 
     @IBOutlet weak var calendarContainerView: UIView!
     @IBOutlet weak var tableView: UITableView!
+    
+    @IBOutlet weak var emptyStateView: UIView!
+    @IBOutlet weak var animationContainerView: UIView!
 
 
+    private var emptyAnimationView: LottieAnimationView?
     private let calendarView = UICalendarView()
     
     var vaccinesByDate: [Date: [VaccinationManagerViewController.VaccineItem]] = [:]
@@ -22,9 +27,6 @@ final class VaccinationCalendarViewController : UIViewController {
 
     // 🔗 reference passed from VaccinationManagerViewController
     var allVaccines: [VaccinationManagerViewController.VaccineItem] = []
-
-
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,9 +40,16 @@ final class VaccinationCalendarViewController : UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "VaccineCell")
         
         tableView.tableFooterView = UIView()
+        scrollToFirstUpcomingVaccine()
         groupVaccinesByDate()
+        scrollToLastVaccine()
         setupCalendar()
         selectToday()
+        
+        setupEmptyStateAnimation()
+        emptyStateView.isHidden = true
+        tableView.isHidden = false
+
     }
 
     private func setupCalendar() {
@@ -57,12 +66,23 @@ final class VaccinationCalendarViewController : UIViewController {
 
         // Native configuration
         calendarView.calendar = Calendar.current
+
         calendarView.locale = Locale.current
         calendarView.fontDesign = .rounded
 
         // Accent color (optional)
-        calendarView.tintColor = .systemBlue
+//        calendarView.tintColor = .systemBlue
+        calendarView.tintColor =
+        UIColor(
+                red: 204/255,
+                green: 142/255,
+                blue: 224/255,
+                alpha: 1
+            )
 
+        // REQUIRED FOR DOTS
+        calendarView.delegate = self
+        
         // Selection
         let selection = UICalendarSelectionSingleDate(delegate: self)
         calendarView.selectionBehavior = selection
@@ -96,19 +116,184 @@ final class VaccinationCalendarViewController : UIViewController {
     }
 
     
-    func showNoVaccineAlert() {
-        let alert = UIAlertController(
-            title: "No Vaccination",
-            message: "No vaccination available on this date.",
-            preferredStyle: .alert
+//    func showNoVaccineAlert() {
+//        let alert = UIAlertController(
+//            title: "No Vaccination",
+//            message: "No vaccination available on this date.",
+//            preferredStyle: .alert
+//        )
+//
+//        alert.addAction(UIAlertAction(title: "OK", style: .default))
+//        present(alert, animated: true)
+//    }
+    
+    private func scrollToLastVaccine() {
+
+        guard let lastDate = allVaccines
+            .map({ $0.date })
+            .sorted()
+            .last
+        else { return }
+
+        let components = calendar.dateComponents(
+            [.year, .month],
+            from: lastDate
         )
 
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        calendarView.setVisibleDateComponents(components, animated: true)
+    }
+    
+    private func setupEmptyStateAnimation() {
+        let animation = LottieAnimation.named("Injection")
+        let animationView = LottieAnimationView(animation: animation)
+
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.contentMode = .scaleAspectFit
+        animationView.loopMode = .loop
+
+        animationContainerView.addSubview(animationView)
+
+        NSLayoutConstraint.activate([
+            animationView.leadingAnchor.constraint(equalTo: animationContainerView.leadingAnchor),
+            animationView.trailingAnchor.constraint(equalTo: animationContainerView.trailingAnchor),
+            animationView.topAnchor.constraint(equalTo: animationContainerView.topAnchor),
+            animationView.bottomAnchor.constraint(equalTo: animationContainerView.bottomAnchor)
+        ])
+
+        animationView.play()
+        emptyAnimationView = animationView
+    }
+    
+    private func updateEmptyState() {
+        let hasVaccines = !selectedVaccines.isEmpty
+        tableView.isHidden = !hasVaccines
+        emptyStateView.isHidden = hasVaccines
+    }
+
+    private func dotColor(
+        for vaccines: [VaccinationManagerViewController.VaccineItem]
+    ) -> UIColor {
+
+        if vaccines.contains(where: { $0.status == .skipped }) {
+            return .systemRed
+        }
+
+        if vaccines.contains(where: { $0.status == .rescheduled }) {
+            return .systemOrange
+        }
+
+        if vaccines.allSatisfy({ $0.status == .completed }) {
+            return .systemGreen
+        }
+
+        return UIColor(
+            red: 204/255,
+            green: 142/255,
+            blue: 224/255,
+            alpha: 1
+        )
+    }
+
+    
+    private func refreshCalendarDot(for date: Date) {
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        calendarView.reloadDecorations(forDateComponents: [components], animated: true)
     }
 
 
 }
+
+
+
+extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate, UITableViewDelegate {
+
+    func dateSelection(
+        _ selection: UICalendarSelectionSingleDate,
+        didSelectDate dateComponents: DateComponents?
+    ) {
+        guard
+            let components = dateComponents,
+            let date = calendar.date(from: components)
+        else { return }
+
+        let day = calendar.startOfDay(for: date)
+
+        selectedVaccines = vaccinesByDate[day] ?? []
+        tableView.reloadData()
+        updateEmptyState()
+    }
+}
+
+
+extension  VaccinationCalendarViewController : UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        selectedVaccines.count
+        let count = selectedVaccines.count
+//            emptyStateView.isHidden = count > 0
+            return count
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: "VaccineCell",
+            for: indexPath
+        )
+
+        let vaccine = selectedVaccines[indexPath.row]
+        cell.textLabel?.text = vaccine.name
+        cell.selectionStyle = .none
+
+        return cell
+    }
+    
+    private func scrollToFirstUpcomingVaccine() {
+
+        guard let firstDate = allVaccines
+            .map({ $0.date })
+            .sorted()
+            .first
+        else { return }
+
+        let components = calendar.dateComponents(
+            [.year, .month],
+            from: firstDate
+        )
+
+        calendarView.setVisibleDateComponents(components, animated: true)
+    }
+
+}
+
+extension VaccinationCalendarViewController : UICalendarViewDelegate {
+
+    func calendarView(
+        _ calendarView: UICalendarView,
+        decorationFor dateComponents: DateComponents
+    ) -> UICalendarView.Decoration? {
+
+        guard let date = calendar.date(from: dateComponents) else {
+            return nil
+        }
+
+        let day = calendar.startOfDay(for: date)
+
+        guard let vaccines = vaccinesByDate[day] else {
+            return nil
+        }
+
+        return .default(
+            color: dotColor(for: vaccines),
+            size: .small
+        )
+    }
+
+}
+
 
 //extension VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate {
 //
@@ -128,72 +313,23 @@ final class VaccinationCalendarViewController : UIViewController {
 //    }
 //}
 
-extension  VaccinationCalendarViewController : UICalendarViewDelegate {
-
-    func calendarView(
-        _ calendarView: UICalendarView,
-        decorationFor dateComponents: DateComponents
-    ) -> UICalendarView.Decoration? {
-
-        guard let date = Calendar.current.date(from: dateComponents) else {
-            return nil
-        }
-
-        let day = Calendar.current.startOfDay(for: date)
-
-        guard vaccinesByDate[day] != nil else {
-            return nil
-        }
-
-        return .default(color: .systemBlue, size: .small)
-    }
-}
-
-extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate, UITableViewDelegate {
-
-    func dateSelection(
-        _ selection: UICalendarSelectionSingleDate,
-        didSelectDate dateComponents: DateComponents?
-    ) {
-        guard
-            let components = dateComponents,
-            let date = Calendar.current.date(from: components)
-        else { return }
-
-        let day = Calendar.current.startOfDay(for: date)
-
-        if let vaccines = vaccinesByDate[day], !vaccines.isEmpty {
-            selectedVaccines = vaccines
-            tableView.reloadData()
-        } else {
-            selectedVaccines = []
-            tableView.reloadData()
-            showNoVaccineAlert()
-        }
-    }
-}
-
-
-extension  VaccinationCalendarViewController : UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        selectedVaccines.count
-    }
-
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: "VaccineCell",
-            for: indexPath
-        )
-
-        let vaccine = selectedVaccines[indexPath.row]
-        cell.textLabel?.text = vaccine.name
-        cell.selectionStyle = .none
-
-        return cell
-    }
-}
+//extension  VaccinationCalendarViewController : UICalendarViewDelegate {
+//
+//    func calendarView(
+//        _ calendarView: UICalendarView,
+//        decorationFor dateComponents: DateComponents
+//    ) -> UICalendarView.Decoration? {
+//
+//        guard let date = Calendar.current.date(from: dateComponents) else {
+//            return nil
+//        }
+//
+//        let day = Calendar.current.startOfDay(for: date)
+//
+//        guard vaccinesByDate[day] != nil else {
+//            return nil
+//        }
+//
+//        return .default(color: .systemBlue, size: .small)
+//    }
+//}
