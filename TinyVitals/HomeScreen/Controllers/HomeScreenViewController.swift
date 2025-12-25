@@ -43,7 +43,7 @@ class HomeScreenViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Home"
+//        self.title = "Home"
         graph.frame = graphContainer.bounds
         graph.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         graphContainer.addSubview(graph)
@@ -76,6 +76,7 @@ class HomeScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopAutoScroll()
+        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {

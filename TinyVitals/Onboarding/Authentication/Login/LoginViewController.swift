@@ -98,7 +98,7 @@ class LoginViewController: UIViewController {
                 return
             }
             print("User signed in: \(authResult?.user.uid ?? "N/A")")
-            self.navigateToHome()
+            self.navigateToChildSelectionVC()
         }
 //        self.navigateToHome()
     }
@@ -149,20 +149,26 @@ class LoginViewController: UIViewController {
                 }
 
                 print("Google sign-in success")
-                self.navigateToHome()
+                self.navigateToChildSelectionVC()
             }
         }
     }
     
-    private func navigateToHome() {
-        let tabBarVC = MainTabBarController()
+    private func navigateToChildSelectionVC() {
+        let childSelectionVC =
+            ChildSelectionViewController(
+                nibName: "ChildSelectionViewController",
+                bundle: nil
+            )
+
+        let nav = UINavigationController(rootViewController: childSelectionVC)
 
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else {
             return
         }
 
-        window.rootViewController = tabBarVC
+        window.rootViewController = nav
         window.makeKeyAndVisible()
 
         UIView.transition(
@@ -172,6 +178,7 @@ class LoginViewController: UIViewController {
             animations: nil
         )
     }
+
 
     
     private func showAlert(title: String, message: String) {

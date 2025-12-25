@@ -1,0 +1,356 @@
+//
+//  ChildSelectionViewController.swift
+//  ChildProfile
+//
+//  Created by admin0 on 12/22/25.
+//
+
+import UIKit
+import Lottie
+
+class ChildSelectionViewController: UIViewController {
+
+    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var selectionVCAnimationView: UIView!
+    @IBOutlet weak var yourChildrenLabel: UILabel!
+    
+    
+    private let emptyStateContainer = UIView()
+    private var animationView: LottieAnimationView?
+    private let addFirstChildButton = UIButton(type: .system)
+    private let emptyStateLabel = UILabel()
+    private var selectionAnimationView: LottieAnimationView?
+
+
+
+
+    var childProfiles: [ChildProfile] = []
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+//        title = "Select Child"
+
+        collectionView.dataSource = self
+        collectionView.delegate = self
+
+        yourChildrenLabel.isHidden = true
+        
+        collectionView.register(
+            UINib(nibName: "ChildCardCell", bundle: nil),
+            forCellWithReuseIdentifier: "ChildCardCell"
+        )
+        
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.minimumLineSpacing = 16
+            layout.minimumInteritemSpacing = 16
+            layout.sectionInset = UIEdgeInsets(top: 16, left: 20, bottom: 16, right: 20)
+        }
+
+        setupEmptyStateUI()
+        setupSelectionVCAnimation()
+        updateUI()
+    }
+    
+    private func openMainApp(with child: ChildProfile) {
+        let tabBar = MainTabBarController()
+        tabBar.allChildren = childProfiles
+        tabBar.activeChild = child
+
+        guard
+            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = scene.windows.first
+        else { return }
+
+        window.rootViewController = tabBar
+        window.makeKeyAndVisible()
+    }
+
+    private func presentAddChild() {
+        let vc = AddChildViewController(
+            nibName: "AddChildViewController",
+            bundle: nil
+        )
+        vc.mode = .add
+        vc.addDelegate = self
+        present(vc, animated: true)
+    }
+    
+//    private func setupEmptyState() {
+//        let animation = LottieAnimation.named("AddChild")
+//        let animView = LottieAnimationView(animation: animation)
+//
+//        animView.translatesAutoresizingMaskIntoConstraints = false
+//        animView.contentMode = .scaleAspectFit
+//        animView.loopMode = .loop
+//
+//        lottieContainerView.addSubview(animView)
+//
+//        NSLayoutConstraint.activate([
+//            animView.leadingAnchor.constraint(equalTo: lottieContainerView.leadingAnchor),
+//            animView.trailingAnchor.constraint(equalTo: lottieContainerView.trailingAnchor),
+//            animView.topAnchor.constraint(equalTo: lottieContainerView.topAnchor),
+//            animView.bottomAnchor.constraint(equalTo: lottieContainerView.bottomAnchor)
+//        ])
+//
+//        animView.play()
+//        animationView = animView
+//    }
+    
+    private func setupEmptyStateUI() {
+        emptyStateContainer.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(emptyStateContainer)
+
+        NSLayoutConstraint.activate([
+            emptyStateContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            emptyStateContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emptyStateContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            emptyStateContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+
+        // 🔹 Lottie Animation
+        let animation = LottieAnimation.named("AddChild")
+        let animView = LottieAnimationView(animation: animation)
+        animView.translatesAutoresizingMaskIntoConstraints = false
+        animView.contentMode = .scaleAspectFit
+        animView.loopMode = .loop
+
+        emptyStateContainer.addSubview(animView)
+
+        NSLayoutConstraint.activate([
+            animView.centerXAnchor.constraint(equalTo: emptyStateContainer.centerXAnchor),
+            animView.topAnchor.constraint(equalTo: emptyStateContainer.topAnchor, constant: 80),
+            animView.widthAnchor.constraint(equalTo: emptyStateContainer.widthAnchor, multiplier: 0.9),
+            animView.heightAnchor.constraint(equalToConstant: 280) // 🔥 increase size here
+        ])
+
+
+        animView.play()
+        animationView = animView
+        
+        // 🔹 Empty State Caption
+        emptyStateLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyStateLabel.textAlignment = .center
+        emptyStateLabel.numberOfLines = 0
+        emptyStateLabel.textColor = UIColor.systemGray
+        emptyStateLabel.font = .systemFont(ofSize: 16, weight: .medium)
+
+        emptyStateLabel.text =
+        """
+        Start your child’s health journey with us.
+        Add your first child to track growth, records,
+        and milestones — all in one place.
+        """
+
+        emptyStateContainer.addSubview(emptyStateLabel)
+
+        NSLayoutConstraint.activate([
+            emptyStateLabel.topAnchor.constraint(equalTo: animView.bottomAnchor, constant: 24),
+            emptyStateLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 32),
+            emptyStateLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -32)
+        ])
+
+
+        // 🔹 Add First Child Button
+        addFirstChildButton.translatesAutoresizingMaskIntoConstraints = false
+        addFirstChildButton.setTitle("Add Child", for: .normal)
+        addFirstChildButton.backgroundColor = .systemPurple
+        addFirstChildButton.setTitleColor(.white, for: .normal)
+        addFirstChildButton.layer.cornerRadius = 14
+        addFirstChildButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+
+        addFirstChildButton.addTarget(
+            self,
+            action: #selector(addFirstChildTapped),
+            for: .touchUpInside
+        )
+
+        emptyStateContainer.addSubview(addFirstChildButton)
+        
+        addFirstChildButton.translatesAutoresizingMaskIntoConstraints = false
+        addFirstChildButton.setTitle("Add Child", for: .normal)
+
+        // 🎨 RGB(237, 112, 153)
+        addFirstChildButton.backgroundColor = UIColor(
+            red: 237/255,
+            green: 112/255,
+            blue: 153/255,
+            alpha: 1
+        )
+
+        addFirstChildButton.setTitleColor(.white, for: .normal)
+        addFirstChildButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        addFirstChildButton.layer.cornerRadius = 25
+        addFirstChildButton.clipsToBounds = true
+
+        addFirstChildButton.addTarget(
+            self,
+            action: #selector(addFirstChildTapped),
+            for: .touchUpInside
+        )
+
+        emptyStateContainer.addSubview(addFirstChildButton)
+
+        NSLayoutConstraint.activate([
+            addFirstChildButton.topAnchor.constraint(equalTo: emptyStateLabel.bottomAnchor, constant: 24),
+            addFirstChildButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            addFirstChildButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            addFirstChildButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+
+        
+    }
+    
+    private func setupSelectionVCAnimation() {
+        let animation = LottieAnimation.named("SelectionVCAnimation")
+        // 👆 this must match your JSON filename exactly (without .json)
+
+        let animView = LottieAnimationView(animation: animation)
+        animView.translatesAutoresizingMaskIntoConstraints = false
+        animView.contentMode = .scaleAspectFit
+        animView.loopMode = .loop
+
+        selectionVCAnimationView.addSubview(animView)
+
+        NSLayoutConstraint.activate([
+            animView.leadingAnchor.constraint(equalTo: selectionVCAnimationView.leadingAnchor),
+            animView.trailingAnchor.constraint(equalTo: selectionVCAnimationView.trailingAnchor),
+            animView.topAnchor.constraint(equalTo: selectionVCAnimationView.topAnchor),
+            animView.bottomAnchor.constraint(equalTo: selectionVCAnimationView.bottomAnchor)
+        ])
+
+        animView.play()
+        selectionAnimationView = animView
+    }
+
+
+    
+    private func updateUI() {
+        let hasChildren = !childProfiles.isEmpty
+        
+        
+        collectionView.isHidden = !hasChildren
+
+        // Empty state (0 children)
+        emptyStateContainer.isHidden = hasChildren
+
+        // Selection animation (>= 1 child)
+        selectionVCAnimationView.isHidden = !hasChildren
+        
+        yourChildrenLabel.isHidden = !hasChildren
+
+        if hasChildren {
+            animationView?.stop()              // stop empty animation
+            selectionAnimationView?.play()     // play selection animation
+        } else {
+            selectionAnimationView?.stop()
+            animationView?.play()
+        }
+    }
+
+
+    
+    @objc private func addFirstChildTapped() {
+        presentAddChild()
+    }
+
+
+
+}
+
+// MARK: - Collection DataSource
+extension ChildSelectionViewController: UICollectionViewDataSource {
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        childProfiles.count + 1   // +1 for Add Child card
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "ChildCardCell",
+            for: indexPath
+        ) as! ChildCardCell
+
+        if indexPath.item < childProfiles.count {
+            cell.configure(child: childProfiles[indexPath.item])
+        } else {
+            cell.configureAsAdd()
+        }
+
+        return cell
+    }
+}
+
+// MARK: - Collection Delegate
+extension ChildSelectionViewController: UICollectionViewDelegate {
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        if indexPath.item < childProfiles.count {
+            openMainApp(with: childProfiles[indexPath.item])
+        } else {
+            presentAddChild()
+        }
+    }
+}
+
+// MARK: - AddChildDelegate
+extension ChildSelectionViewController: AddChildDelegate {
+
+    func didAddChild(_ child: ChildProfile) {
+        childProfiles.append(child)
+        collectionView.reloadData()
+        updateUI() // 🔥 switches to collection view
+    }
+
+}
+
+extension ChildSelectionViewController: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+
+        let padding: CGFloat = 20 * 2 + 16 // left + right + spacing
+        let availableWidth = collectionView.bounds.width - padding
+        let width = availableWidth / 2
+
+        return CGSize(width: width, height: 120)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didHighlightItemAt indexPath: IndexPath
+    ) {
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            UIView.animate(withDuration: 0.15) {
+                cell.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
+            }
+        }
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didUnhighlightItemAt indexPath: IndexPath
+    ) {
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            UIView.animate(withDuration: 0.15) {
+                cell.transform = .identity
+            }
+        }
+    }
+
+}
+
+

@@ -612,6 +612,11 @@ UITableViewDelegate, UITextFieldDelegate
         setupSearchClearButton()
         
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
+    }
 
     // MARK: - Setup
     func setupCollectionView() {

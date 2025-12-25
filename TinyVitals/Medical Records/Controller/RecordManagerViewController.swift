@@ -71,6 +71,8 @@ class RecordManagerViewController: UIViewController {
         
         setupSortMenu()
         
+        hidesBottomBarWhenPushed = true
+        
 //        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
 //            tap.cancelsTouchesInView = false
 //            view.addGestureRecognizer(tap)
@@ -80,6 +82,7 @@ class RecordManagerViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         collectionView.reloadData()
+        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
     
     @IBAction func magicWandTapped() {
