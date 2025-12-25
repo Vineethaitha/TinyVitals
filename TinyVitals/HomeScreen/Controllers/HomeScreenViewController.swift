@@ -182,7 +182,7 @@ class HomeScreenViewController: UIViewController {
         weightSparkline.lineColor = UIColor(
             red: 204/255, green: 142/255, blue: 224/255, alpha: 1
         )
-        weightSparkline.values = [8.2, 8.6, 8.9, 9.1, 9.4]
+        weightSparkline.values = [7.0, 7.4, 7.4, 7.5, 7.6]
         weightSparklineContainer.addSubview(weightSparkline)
 
         // Height sparkline

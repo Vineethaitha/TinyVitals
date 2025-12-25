@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -117,7 +117,7 @@
                                     <rect key="frame" x="0.0" y="350" width="393" height="800"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y1e-Lw-neK">
-                                            <rect key="frame" x="20" y="8" width="353" height="80"/>
+                                            <rect key="frame" x="20" y="30" width="353" height="80"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="45.06Kg" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Ky-nk-102">
                                                     <rect key="frame" x="20" y="30" width="70" height="20.333333333333329"/>
@@ -186,7 +186,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PBK-Tw-gLs">
-                                            <rect key="frame" x="20" y="93" width="353" height="80"/>
+                                            <rect key="frame" x="20" y="120" width="353" height="80"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3.1 ft" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zfI-i3-2aT">
                                                     <rect key="frame" x="20.000000000000004" y="30" width="40.333333333333343" height="20.333333333333329"/>
@@ -253,15 +253,23 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </view>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Charlie's Growth Trend" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="889-eY-7Mg">
+                                            <rect key="frame" x="20" y="0.0" width="182.66666666666666" height="20.333333333333332"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemGray6Color"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="800" id="D8h-HZ-lU2"/>
                                         <constraint firstAttribute="trailing" secondItem="PBK-Tw-gLs" secondAttribute="trailing" constant="20" id="Erh-LY-7vg"/>
+                                        <constraint firstItem="889-eY-7Mg" firstAttribute="top" secondItem="SOb-sv-HWK" secondAttribute="top" id="H5V-Mf-gEU"/>
                                         <constraint firstAttribute="trailing" secondItem="y1e-Lw-neK" secondAttribute="trailing" constant="20" id="KSG-kX-Mfr"/>
-                                        <constraint firstItem="PBK-Tw-gLs" firstAttribute="top" secondItem="y1e-Lw-neK" secondAttribute="bottom" constant="5" id="TmS-xI-MWO"/>
+                                        <constraint firstItem="PBK-Tw-gLs" firstAttribute="top" secondItem="y1e-Lw-neK" secondAttribute="bottom" constant="10" id="TmS-xI-MWO"/>
+                                        <constraint firstItem="889-eY-7Mg" firstAttribute="leading" secondItem="SOb-sv-HWK" secondAttribute="leading" constant="20" id="i4n-Ot-DtB"/>
                                         <constraint firstItem="PBK-Tw-gLs" firstAttribute="leading" secondItem="SOb-sv-HWK" secondAttribute="leading" constant="20" id="qQB-kE-r0T"/>
-                                        <constraint firstItem="y1e-Lw-neK" firstAttribute="top" secondItem="SOb-sv-HWK" secondAttribute="top" constant="8" id="tYm-sl-6zD"/>
+                                        <constraint firstItem="y1e-Lw-neK" firstAttribute="top" secondItem="SOb-sv-HWK" secondAttribute="top" constant="30" id="tYm-sl-6zD"/>
                                         <constraint firstItem="y1e-Lw-neK" firstAttribute="leading" secondItem="SOb-sv-HWK" secondAttribute="leading" constant="20" id="vI4-cS-E74"/>
                                     </constraints>
                                 </view>
