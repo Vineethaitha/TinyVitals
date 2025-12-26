@@ -20,7 +20,7 @@ class OnboardingViewController: UIViewController {
         continueButton.layer.cornerRadius = continueButton.frame.height / 2
         continueButton.clipsToBounds = true
         continueButton.setTitle("Continue", for: .normal)
-        continueButton.tintColor = UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1)
+        continueButton.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         continueButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         
 //        setupTitleLabel()
