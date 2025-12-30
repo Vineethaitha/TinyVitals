@@ -32,7 +32,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var mainScrollView: UIScrollView!
     @IBOutlet weak var mainStackView: UIStackView!
 
-    @IBOutlet weak var searchBar: UISearchBar!
+//    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var historyButton: UIButton!
 
     @IBOutlet weak var calendarCollectionView: UICollectionView!
@@ -48,6 +48,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var timelineTableView: UITableView!
 
     @IBOutlet weak var floatingAddButton: UIButton!
+    
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -95,7 +96,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         private func setupUI() {
             view.backgroundColor = .systemBackground
 
-            searchBar.placeholder = "Search symptoms"
+//            searchBar.placeholder = "Search symptoms"
 
             emptyImageView.image = UIImage(systemName: "figure.and.child.holdinghands")
             emptyImageView.tintColor = .systemPink
@@ -200,9 +201,15 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
 
     @IBAction func addSymptomsTapped(_ sender: UIButton) {
-            print("Add Symptoms tapped")
-            // Next step: push LogSymptomsViewController
-        }
+
+        let vc = LogSymptomsViewController(
+            nibName: "LogSymptomsViewController",
+            bundle: nil
+        )
+
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
     
     
     private func updateSummary(for date: Date) {
@@ -255,17 +262,17 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         present(activityVC, animated: true)
     }
 
-    @IBAction func doctorTapped(_ sender: UIButton) {
-        let vc = DoctorSymptomsViewController(
-            nibName: "DoctorSymptomsViewController",
-            bundle: nil
-        )
-
-        // Pass full history (NOT just selected date)
-        vc.symptomsByDate = timelineDataByDate
-
-        navigationController?.pushViewController(vc, animated: true)
-    }
+//    @IBAction func doctorTapped(_ sender: UIButton) {
+//        let vc = DoctorSymptomsViewController(
+//            nibName: "DoctorSymptomsViewController",
+//            bundle: nil
+//        )
+//
+//        // Pass full history (NOT just selected date)
+//        vc.symptomsByDate = timelineDataByDate
+//
+//        navigationController?.pushViewController(vc, animated: true)
+//    }
 
     
     

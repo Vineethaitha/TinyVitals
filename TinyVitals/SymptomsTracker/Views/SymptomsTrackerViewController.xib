@@ -17,11 +17,10 @@
                 <outlet property="emptyStateStackView" destination="8IE-KB-d63" id="4X5-si-pc4"/>
                 <outlet property="emptySubtitleLabel" destination="eWf-Yt-1WE" id="Sd5-al-FhS"/>
                 <outlet property="emptyTitleLabel" destination="wdg-Nx-TMc" id="Ekd-Bw-VaS"/>
-                <outlet property="floatingAddButton" destination="Hl8-qd-SAW" id="aBh-yE-An7"/>
+                <outlet property="floatingAddButton" destination="Hl8-qd-SAW" id="LJ3-Fb-2HP"/>
                 <outlet property="historyButton" destination="zOC-rC-q6f" id="xr8-c2-1h0"/>
                 <outlet property="mainScrollView" destination="6BW-bR-YkH" id="aFN-3m-2TL"/>
                 <outlet property="mainStackView" destination="Jpz-zO-dWf" id="kfa-mh-vfP"/>
-                <outlet property="searchBar" destination="rEf-5g-Rwy" id="Uca-KY-dga"/>
                 <outlet property="summaryLabel" destination="9PP-gu-wK9" id="jEh-dx-kNt"/>
                 <outlet property="timelineTableView" destination="pBN-ZE-8yv" id="Cdz-OM-t3x"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -41,18 +40,8 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EB4-7N-rO8" userLabel="searchRowView">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="60"/>
                                     <subviews>
-                                        <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="rEf-5g-Rwy" userLabel="searchBar">
-                                            <rect key="frame" x="20" y="0.0" width="220" height="60"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="220" id="Ivy-hz-BoP"/>
-                                            </constraints>
-                                            <textInputTraits key="textInputTraits"/>
-                                            <connections>
-                                                <outlet property="delegate" destination="-1" id="aL2-nd-Qoi"/>
-                                            </connections>
-                                        </searchBar>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zOC-rC-q6f" userLabel="historyButton">
-                                            <rect key="frame" x="275" y="13" width="50.666666666666686" height="34.333333333333336"/>
+                                            <rect key="frame" x="19.999999999999996" y="13" width="50.666666666666657" height="34.333333333333336"/>
                                             <color key="tintColor" red="0.92941176470588238" green="0.4392156862745098" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" image="calendar" catalog="system"/>
@@ -61,28 +50,33 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="thh-bV-Rht">
-                                            <rect key="frame" x="326.33333333333331" y="13" width="50.666666666666686" height="34.333333333333336"/>
+                                            <rect key="frame" x="170.66666666666666" y="13" width="50.666666666666657" height="34.333333333333336"/>
                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" imagePlacement="trailing">
                                                 <imageReference key="image" image="stethoscope.circle" catalog="system" symbolScale="large"/>
                                                 <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large" weight="bold"/>
                                             </buttonConfiguration>
-                                            <connections>
-                                                <action selector="doctorTapped:" destination="-1" eventType="touchUpInside" id="KnQ-OJ-X3L"/>
-                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iki-uQ-hxD">
+                                            <rect key="frame" x="326.66666666666669" y="13" width="50.333333333333314" height="34.333333333333336"/>
+                                            <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain">
+                                                <imageReference key="image" image="square.and.arrow.up.circle" catalog="system" symbolScale="large"/>
+                                                <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="semibold"/>
+                                            </buttonConfiguration>
                                         </button>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
-                                        <constraint firstItem="rEf-5g-Rwy" firstAttribute="leading" secondItem="EB4-7N-rO8" secondAttribute="leading" constant="20" id="4Yg-f9-E2h"/>
-                                        <constraint firstItem="rEf-5g-Rwy" firstAttribute="top" secondItem="EB4-7N-rO8" secondAttribute="top" id="65j-be-hz0"/>
+                                        <constraint firstItem="iki-uQ-hxD" firstAttribute="centerY" secondItem="EB4-7N-rO8" secondAttribute="centerY" id="4ZL-Qq-7uE"/>
                                         <constraint firstAttribute="height" constant="60" id="8sy-Nu-a5s"/>
-                                        <constraint firstItem="zOC-rC-q6f" firstAttribute="leading" secondItem="rEf-5g-Rwy" secondAttribute="trailing" constant="35" id="I3m-Ey-a5Q"/>
-                                        <constraint firstAttribute="bottom" secondItem="rEf-5g-Rwy" secondAttribute="bottom" id="KXF-11-Im0"/>
+                                        <constraint firstAttribute="trailing" secondItem="iki-uQ-hxD" secondAttribute="trailing" constant="16" id="AHF-kW-D4L"/>
                                         <constraint firstItem="zOC-rC-q6f" firstAttribute="centerY" secondItem="EB4-7N-rO8" secondAttribute="centerY" id="OjD-Tg-1SH"/>
-                                        <constraint firstAttribute="trailing" secondItem="thh-bV-Rht" secondAttribute="trailing" constant="16" id="mgI-ne-isr"/>
+                                        <constraint firstItem="thh-bV-Rht" firstAttribute="leading" secondItem="zOC-rC-q6f" secondAttribute="trailing" constant="100" id="qHW-Vk-5Rs"/>
                                         <constraint firstItem="thh-bV-Rht" firstAttribute="centerY" secondItem="zOC-rC-q6f" secondAttribute="centerY" id="vhW-DB-acN"/>
+                                        <constraint firstItem="zOC-rC-q6f" firstAttribute="leading" secondItem="EB4-7N-rO8" secondAttribute="leading" constant="20" id="z7i-LB-Tjb"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lIC-eq-qPP" userLabel="calendarContainerView">
@@ -195,14 +189,19 @@
                 </scrollView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hl8-qd-SAW" userLabel="floatingAddButton">
                     <rect key="frame" x="328" y="719" width="35" height="35"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="35" id="fCF-Bm-pQ5"/>
                         <constraint firstAttribute="height" constant="35" id="ojw-AV-g6W"/>
                     </constraints>
-                    <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="0.63749482619999998" colorSpace="custom" customColorSpace="displayP3"/>
+                    <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     <state key="normal" title="Button"/>
-                    <buttonConfiguration key="configuration" style="plain" image="plus.circle" catalog="system"/>
+                    <buttonConfiguration key="configuration" style="plain" image="plus.circle" catalog="system">
+                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" weight="bold"/>
+                    </buttonConfiguration>
+                    <connections>
+                        <action selector="addSymptomsTapped:" destination="-1" eventType="touchUpInside" id="VFN-l1-snv"/>
+                    </connections>
                 </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
@@ -221,6 +220,7 @@
     <resources>
         <image name="calendar" catalog="system" width="128" height="107"/>
         <image name="plus.circle" catalog="system" width="128" height="123"/>
+        <image name="square.and.arrow.up.circle" catalog="system" width="128" height="123"/>
         <image name="stethoscope.circle" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
