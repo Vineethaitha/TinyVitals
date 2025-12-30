@@ -48,6 +48,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var timelineTableView: UITableView!
 
     @IBOutlet weak var floatingAddButton: UIButton!
+    @IBOutlet weak var exportButton: UIButton!
     
 
         override func viewDidLoad() {
@@ -83,13 +84,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             
             calendarCollectionView.allowsMultipleSelection = false
             
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: "Export",
-                style: .plain,
-                target: self,
-                action: #selector(exportPDF)
-            )
-            
 
         }
 
@@ -114,6 +108,10 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             floatingAddButton.backgroundColor = .systemPink
             floatingAddButton.tintColor = .white
             floatingAddButton.layer.cornerRadius = 28
+            
+//            exportButton.layer.cornerRadius = 20
+//            exportButton.backgroundColor = UIColor.systemGray6
+
         }
 
     private func showSampleData() {
@@ -245,6 +243,11 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
     }
+    
+    @IBAction func exportTapped(_ sender: UIButton) {
+        exportPDF()
+    }
+
     
     
     @objc private func exportPDF() {

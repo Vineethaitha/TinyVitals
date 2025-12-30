@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="SymptomItemCell" customModule="TinyVitalsSymptomsTracker" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="208" height="91"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="208" height="91"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6bK-01-hX0">
+                        <rect key="frame" x="0.0" y="0.0" width="208" height="91"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Ldx-wb-iPT">
+                                <rect key="frame" x="10" y="14" width="188" height="63"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3q1-64-fV1">
+                                        <rect key="frame" x="0.0" y="16.666666666666668" width="30" height="30.000000000000004"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="aRA-dQ-P0F"/>
+                                            <constraint firstAttribute="width" constant="30" id="ucM-fe-jwJ"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oye-oX-x9K">
+                                        <rect key="frame" x="38" y="21.333333333333336" width="150" height="20.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Ldx-wb-iPT" secondAttribute="trailing" constant="10" id="8I7-Nc-mfB"/>
+                            <constraint firstItem="Ldx-wb-iPT" firstAttribute="leading" secondItem="6bK-01-hX0" secondAttribute="leading" constant="10" id="NwA-RQ-6G5"/>
+                            <constraint firstAttribute="bottom" secondItem="Ldx-wb-iPT" secondAttribute="bottom" constant="14" id="ehL-OE-pkc"/>
+                            <constraint firstItem="Ldx-wb-iPT" firstAttribute="top" secondItem="6bK-01-hX0" secondAttribute="top" constant="14" id="xaS-2j-TQH"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="6bK-01-hX0" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="Opi-Xe-2no"/>
+                <constraint firstAttribute="trailing" secondItem="6bK-01-hX0" secondAttribute="trailing" id="Sso-9g-j6w"/>
+                <constraint firstAttribute="bottom" secondItem="6bK-01-hX0" secondAttribute="bottom" id="bN3-dJ-qNh"/>
+                <constraint firstItem="6bK-01-hX0" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="lvt-GW-NkS"/>
+            </constraints>
+            <size key="customSize" width="208" height="91"/>
+            <connections>
+                <outlet property="containerView" destination="6bK-01-hX0" id="P5p-K6-q7F"/>
+                <outlet property="iconImageView" destination="3q1-64-fV1" id="0a7-67-gAO"/>
+                <outlet property="titleLabel" destination="Oye-oX-x9K" id="paU-Yt-SMj"/>
+            </connections>
+            <point key="canvasLocation" x="155.72519083969465" y="128.52112676056339"/>
+        </collectionViewCell>
+    </objects>
+</document>

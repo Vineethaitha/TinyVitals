@@ -17,6 +17,7 @@
                 <outlet property="emptyStateStackView" destination="8IE-KB-d63" id="4X5-si-pc4"/>
                 <outlet property="emptySubtitleLabel" destination="eWf-Yt-1WE" id="Sd5-al-FhS"/>
                 <outlet property="emptyTitleLabel" destination="wdg-Nx-TMc" id="Ekd-Bw-VaS"/>
+                <outlet property="exportButton" destination="iki-uQ-hxD" id="Sby-pF-Vwm"/>
                 <outlet property="floatingAddButton" destination="Hl8-qd-SAW" id="LJ3-Fb-2HP"/>
                 <outlet property="historyButton" destination="zOC-rC-q6f" id="xr8-c2-1h0"/>
                 <outlet property="mainScrollView" destination="6BW-bR-YkH" id="aFN-3m-2TL"/>
@@ -66,6 +67,9 @@
                                                 <imageReference key="image" image="square.and.arrow.up.circle" catalog="system" symbolScale="large"/>
                                                 <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="semibold"/>
                                             </buttonConfiguration>
+                                            <connections>
+                                                <action selector="exportTapped:" destination="-1" eventType="touchUpInside" id="Cxt-yg-3nP"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>

@@ -58,7 +58,7 @@ final class LogSymptomsViewController: UIViewController {
 
     // MARK: - Setup
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+//        view.backgroundColor = .systemBackground
 
         // Date label
 //        dateValueLabel.textColor = .systemBlue
@@ -68,23 +68,23 @@ final class LogSymptomsViewController: UIViewController {
         symptomsPreviewLabel.textColor = .secondaryLabel
 
         // Vitals buttons
-        [heightButton, weightButton, temperatureButton].forEach {
-            $0?.layer.cornerRadius = 10
-            $0?.backgroundColor = UIColor.systemGray6
-        }
+//        [heightButton, weightButton, temperatureButton].forEach {
+//            $0?.layer.cornerRadius = 10
+//            $0?.backgroundColor = UIColor.systemGray6
+//        }
 
         // Notes
-        notesTextView.layer.cornerRadius = 12
-        notesTextView.layer.borderWidth = 1
-        notesTextView.layer.borderColor = UIColor.systemGray4.cgColor
-        notesTextView.text = "Add note here"
-        notesTextView.textColor = .secondaryLabel
+//        notesTextView.layer.cornerRadius = 12
+//        notesTextView.layer.borderWidth = 1
+//        notesTextView.layer.borderColor = UIColor.systemGray4.cgColor
+//        notesTextView.text = "Add note here"
+//        notesTextView.textColor = .secondaryLabel
 
         // Photo
         photoImageView.isHidden = true
-        photoImageView.layer.cornerRadius = 12
+//        photoImageView.layer.cornerRadius = 12
         photoImageView.contentMode = .scaleAspectFill
-        photoImageView.clipsToBounds = true
+//        photoImageView.clipsToBounds = true
 
         // Save button
         saveButton.layer.cornerRadius = 14
@@ -111,13 +111,13 @@ final class LogSymptomsViewController: UIViewController {
         selectedDate = sender.date
     }
 
-    @IBAction func selectSymptomsTapped(_ sender: UIButton) {
-        // Mock selection
-        selectedSymptoms = sampleSymptoms
-
-        symptomsPreviewLabel.textColor = .label
-        symptomsPreviewLabel.text = selectedSymptoms.joined(separator: ", ")
-    }
+//    @IBAction func selectSymptomsTapped(_ sender: UIButton) {
+//        // Mock selection
+//        selectedSymptoms = sampleSymptoms
+//
+//        symptomsPreviewLabel.textColor = .label
+//        symptomsPreviewLabel.text = selectedSymptoms.joined(separator: ", ")
+//    }
 
     @IBAction func heightTapped(_ sender: UIButton) {
         showSampleAlert(
@@ -163,6 +163,24 @@ final class LogSymptomsViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+    
+    @IBAction func selectSymptomsTapped(_ sender: UIButton) {
+
+        let vc = SymptomsSelectionViewController(
+            nibName: "SymptomsSelectionViewController",
+            bundle: nil
+        )
+
+        vc.onApply = { selected in
+            let names = selected.map { $0.title }
+            self.symptomsPreviewLabel.text = names.joined(separator: ", ")
+            self.symptomsPreviewLabel.textColor = .label
+        }
+
+        vc.modalPresentationStyle = .pageSheet
+        present(vc, animated: true)
+    }
+
 
     // MARK: - Helpers
     private func showSampleAlert(
@@ -209,3 +227,20 @@ extension LogSymptomsViewController: UIImagePickerControllerDelegate, UINavigati
         dismiss(animated: true)
     }
 }
+
+//extension LogSymptomsViewController {
+//
+//    func textViewDidBeginEditing(_ textView: UITextView) {
+//        if textView.textColor == .secondaryLabel {
+//            textView.text = nil
+//            textView.textColor = .label
+//        }
+//    }
+//
+//    func textViewDidEndEditing(_ textView: UITextView) {
+//        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+//            textView.text = "Add note here"
+//            textView.textColor = .secondaryLabel
+//        }
+//    }
+//}
