@@ -53,6 +53,9 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         override func viewDidLoad() {
             super.viewDidLoad()
+            
+            mainScrollView.contentInsetAdjustmentBehavior = .never
+            
             setupUI()
             showSampleData()
             
@@ -88,7 +91,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         }
 
         private func setupUI() {
-            view.backgroundColor = .systemBackground
+//            view.backgroundColor = .systemBackground
 
 //            searchBar.placeholder = "Search symptoms"
 
@@ -101,13 +104,13 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             emptySubtitleLabel.text = "Tap + to add symptoms"
             emptySubtitleLabel.textColor = .secondaryLabel
 
-            floatingAddButton.setImage(
-                UIImage(systemName: "plus"),
-                for: .normal
-            )
-            floatingAddButton.backgroundColor = .systemPink
-            floatingAddButton.tintColor = .white
-            floatingAddButton.layer.cornerRadius = 28
+//            floatingAddButton.setImage(
+//                UIImage(systemName: "plus"),
+//                for: .normal
+//            )
+//            floatingAddButton.backgroundColor = .systemPink
+//            floatingAddButton.tintColor = .white
+            floatingAddButton.layer.cornerRadius = 25
             
 //            exportButton.layer.cornerRadius = 20
 //            exportButton.backgroundColor = UIColor.systemGray6

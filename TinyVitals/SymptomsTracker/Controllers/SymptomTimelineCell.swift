@@ -50,19 +50,19 @@ class SymptomTimelineCell: UITableViewCell {
     }
 
 
-        func configure(with item: SymptomTimelineItem) {
+    func configure(with item: SymptomTimelineItem) {
 
-            timeLabel.text = item.time
-            titleLabel.text = item.title
-            descriptionLabel.text = item.description
+        timeLabel.text = item.time
+        titleLabel.text = item.title
+        descriptionLabel.text = item.description
 
 //            cardView.backgroundColor = item.color.withAlphaComponent(0.15)
 
-            iconImageView.image = UIImage(systemName: item.iconName)
-            iconImageView.tintColor = item.color
+        iconImageView.image = UIImage(systemName: item.iconName)
+        iconImageView.tintColor = item.color
 
-                animateTimeline()
-        }
+            animateTimeline()
+    }
     
     private func prepareForAnimation() {
         topLineHeight.constant = 0

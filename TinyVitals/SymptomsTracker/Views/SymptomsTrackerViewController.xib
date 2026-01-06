@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SymptomsTrackerViewController" customModule="TinyVitalsSymptomsTracker" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SymptomsTrackerViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
                 <outlet property="calendarCollectionView" destination="o6B-b4-RNj" id="PSY-fG-B7c"/>
                 <outlet property="dateLabel" destination="A5x-Ta-mQB" id="dTN-WU-cgo"/>
@@ -35,8 +35,8 @@
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6BW-bR-YkH" userLabel="mainScrollView">
                     <rect key="frame" x="0.0" y="118" width="393" height="666"/>
                     <subviews>
-                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Jpz-zO-dWf" userLabel="mainStackView">
-                            <rect key="frame" x="0.0" y="0.0" width="393" height="520"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="Jpz-zO-dWf" userLabel="mainStackView">
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="526"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EB4-7N-rO8" userLabel="searchRowView">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="60"/>
@@ -72,7 +72,7 @@
                                             </connections>
                                         </button>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="iki-uQ-hxD" firstAttribute="centerY" secondItem="EB4-7N-rO8" secondAttribute="centerY" id="4ZL-Qq-7uE"/>
                                         <constraint firstAttribute="height" constant="60" id="8sy-Nu-a5s"/>
@@ -84,11 +84,11 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lIC-eq-qPP" userLabel="calendarContainerView">
-                                    <rect key="frame" x="0.0" y="60" width="393" height="100"/>
+                                    <rect key="frame" x="0.0" y="62" width="393" height="100"/>
                                     <subviews>
                                         <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="o6B-b4-RNj" userLabel="calendarCollectionView">
                                             <rect key="frame" x="20" y="10" width="353" height="80"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="qFF-3v-VUx">
                                                 <size key="itemSize" width="128" height="128"/>
                                                 <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -97,7 +97,7 @@
                                             </collectionViewFlowLayout>
                                         </collectionView>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="o6B-b4-RNj" secondAttribute="trailing" constant="20" id="1qX-pF-HVS"/>
                                         <constraint firstItem="o6B-b4-RNj" firstAttribute="top" secondItem="lIC-eq-qPP" secondAttribute="top" constant="10" id="RRX-5s-nFP"/>
@@ -107,7 +107,7 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mZb-v5-dCi" userLabel="summaryView">
-                                    <rect key="frame" x="0.0" y="160" width="393" height="60"/>
+                                    <rect key="frame" x="0.0" y="164" width="393" height="60"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A5x-Ta-mQB" userLabel="dateLabel">
                                             <rect key="frame" x="20" y="5" width="50" height="24"/>
@@ -122,7 +122,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="A5x-Ta-mQB" firstAttribute="leading" secondItem="mZb-v5-dCi" secondAttribute="leading" constant="20" id="BQa-CE-CMl"/>
                                         <constraint firstItem="9PP-gu-wK9" firstAttribute="top" secondItem="A5x-Ta-mQB" secondAttribute="bottom" id="Qt4-jR-nts"/>
@@ -132,7 +132,7 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dp9-Tf-Fi5" userLabel="contentAreaView">
-                                    <rect key="frame" x="0.0" y="220" width="393" height="300"/>
+                                    <rect key="frame" x="0.0" y="226" width="393" height="300"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="8IE-KB-d63" userLabel="emptyStateStackView">
                                             <rect key="frame" x="20" y="20" width="353" height="260"/>
@@ -159,13 +159,14 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </stackView>
                                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="pBN-ZE-8yv" userLabel="timelineTableView">
                                             <rect key="frame" x="20" y="20" width="353" height="260"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </tableView>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="8IE-KB-d63" firstAttribute="top" secondItem="Dp9-Tf-Fi5" secondAttribute="top" constant="20" id="3PB-YY-V8t"/>
                                         <constraint firstItem="8IE-KB-d63" firstAttribute="leading" secondItem="Dp9-Tf-Fi5" secondAttribute="leading" constant="20" id="4D7-ML-ocl"/>
@@ -179,29 +180,32 @@
                                     </constraints>
                                 </view>
                             </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </stackView>
                     </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="trailing" secondItem="6BW-bR-YkH" secondAttribute="trailing" id="5tx-q8-cNh"/>
-                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="width" secondItem="6BW-bR-YkH" secondAttribute="width" id="Fhx-pI-0nw"/>
-                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="leading" secondItem="6BW-bR-YkH" secondAttribute="leading" id="M3G-Yn-ddS"/>
-                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="top" secondItem="6BW-bR-YkH" secondAttribute="top" id="RMs-99-r6r"/>
-                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="bottom" secondItem="6BW-bR-YkH" secondAttribute="bottom" id="jUP-lO-cyT"/>
+                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="top" secondItem="6BW-bR-YkH" secondAttribute="top" id="1FC-Cg-7p6"/>
+                        <constraint firstAttribute="trailing" secondItem="Jpz-zO-dWf" secondAttribute="trailing" id="8vA-V1-kiW"/>
+                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="width" secondItem="6BW-bR-YkH" secondAttribute="width" id="YoN-S8-CiE"/>
+                        <constraint firstAttribute="bottom" secondItem="Jpz-zO-dWf" secondAttribute="bottom" id="gYN-TY-3B1"/>
+                        <constraint firstItem="Jpz-zO-dWf" firstAttribute="leading" secondItem="6BW-bR-YkH" secondAttribute="leading" id="yHh-US-UsZ"/>
                     </constraints>
                     <viewLayoutGuide key="contentLayoutGuide" id="ScI-Rc-OzN"/>
                     <viewLayoutGuide key="frameLayoutGuide" id="zUe-TB-LNL"/>
                 </scrollView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hl8-qd-SAW" userLabel="floatingAddButton">
-                    <rect key="frame" x="328" y="719" width="35" height="35"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <rect key="frame" x="313" y="704" width="50" height="50"/>
+                    <color key="backgroundColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="35" id="fCF-Bm-pQ5"/>
-                        <constraint firstAttribute="height" constant="35" id="ojw-AV-g6W"/>
+                        <constraint firstAttribute="width" constant="50" id="fCF-Bm-pQ5"/>
+                        <constraint firstAttribute="height" constant="50" id="ojw-AV-g6W"/>
                     </constraints>
-                    <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <state key="normal" title="Button"/>
-                    <buttonConfiguration key="configuration" style="plain" image="plus.circle" catalog="system">
-                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" weight="bold"/>
+                    <buttonConfiguration key="configuration" style="plain">
+                        <imageReference key="image" image="stethoscope" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large" weight="heavy"/>
                     </buttonConfiguration>
                     <connections>
                         <action selector="addSymptomsTapped:" destination="-1" eventType="touchUpInside" id="VFN-l1-snv"/>
@@ -209,13 +213,13 @@
                 </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
-            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <color key="backgroundColor" systemColor="systemGray6Color"/>
             <constraints>
-                <constraint firstItem="6BW-bR-YkH" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="5tu-oY-rb8"/>
-                <constraint firstItem="6BW-bR-YkH" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="O3a-2g-z6R"/>
-                <constraint firstItem="6BW-bR-YkH" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="QaH-Dx-mEM"/>
+                <constraint firstItem="6BW-bR-YkH" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="5HO-Ty-eVy"/>
+                <constraint firstItem="6BW-bR-YkH" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="UDc-eh-9nf"/>
+                <constraint firstItem="6BW-bR-YkH" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="g2g-Kg-huX"/>
+                <constraint firstItem="6BW-bR-YkH" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="lT7-Fh-pex"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="Hl8-qd-SAW" secondAttribute="bottom" constant="30" id="rB5-OU-ijl"/>
-                <constraint firstItem="6BW-bR-YkH" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="xep-kR-z2I"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="Hl8-qd-SAW" secondAttribute="trailing" constant="30" id="zwq-hs-blj"/>
             </constraints>
             <point key="canvasLocation" x="138.1679389312977" y="126.7605633802817"/>
@@ -223,11 +227,11 @@
     </objects>
     <resources>
         <image name="calendar" catalog="system" width="128" height="107"/>
-        <image name="plus.circle" catalog="system" width="128" height="123"/>
         <image name="square.and.arrow.up.circle" catalog="system" width="128" height="123"/>
+        <image name="stethoscope" catalog="system" width="128" height="101"/>
         <image name="stethoscope.circle" catalog="system" width="128" height="123"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        <systemColor name="systemGray6Color">
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
