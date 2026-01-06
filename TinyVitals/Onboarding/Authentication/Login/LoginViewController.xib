@@ -294,7 +294,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="80" id="8rF-Ng-XJK"/>
                                             </constraints>
-                                            <color key="tintColor" red="0.80000000000000004" green="0.5568627451" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" title="Sign Up">
                                                 <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="15"/>
