@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -38,15 +38,15 @@
                     <rect key="frame" x="0.0" y="488" width="393" height="296"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yFz-df-A9l">
-                            <rect key="frame" x="96.666666666666686" y="0.0" width="200" height="200"/>
+                            <rect key="frame" x="121.66666666666669" y="0.0" width="150" height="150"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="200" id="jBM-RW-03V"/>
-                                <constraint firstAttribute="height" constant="200" id="nfR-eA-sit"/>
+                                <constraint firstAttribute="width" constant="150" id="jBM-RW-03V"/>
+                                <constraint firstAttribute="height" constant="150" id="nfR-eA-sit"/>
                             </constraints>
                         </view>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No vaccinations on this date" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ew7-UH-Nq5">
-                            <rect key="frame" x="85" y="208" width="223" height="80"/>
+                            <rect key="frame" x="85" y="158" width="223" height="43"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                             <color key="textColor" systemColor="secondaryLabelColor"/>
                             <nil key="highlightedColor"/>
@@ -55,7 +55,6 @@
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="yFz-df-A9l" firstAttribute="centerX" secondItem="clX-Gh-rk5" secondAttribute="centerX" id="8GT-re-Kxm"/>
-                        <constraint firstAttribute="bottom" secondItem="ew7-UH-Nq5" secondAttribute="bottom" constant="8" id="Bhi-Rg-JPz"/>
                         <constraint firstItem="ew7-UH-Nq5" firstAttribute="top" secondItem="yFz-df-A9l" secondAttribute="bottom" constant="8" symbolic="YES" id="RwO-dY-ssd"/>
                         <constraint firstItem="ew7-UH-Nq5" firstAttribute="leading" secondItem="clX-Gh-rk5" secondAttribute="leading" constant="85" id="kMd-hq-U8J"/>
                         <constraint firstItem="yFz-df-A9l" firstAttribute="top" secondItem="clX-Gh-rk5" secondAttribute="top" id="lDx-KH-6qL"/>
