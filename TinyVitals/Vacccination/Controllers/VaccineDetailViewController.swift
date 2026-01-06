@@ -167,6 +167,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         configure()
         setupNotes()
         setupPhotoUI()
+        loadSavedDetails()
+
 
     }
     
@@ -414,6 +416,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         vaccineImageView.layer.cornerRadius = 12
 
         loadSavedPhoto()
+        updateAddPhotoButtonTitle(hasImage: false)
+
     }
 
     func imagePickerController(
@@ -432,6 +436,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
         vaccineImageView.image = image
         photoCardView.isHidden = false
+        updateAddPhotoButtonTitle(hasImage: true)
+
 
         // 🔥 THIS IS THE FIX
 //        photoCardHeight.constant = 200
@@ -464,23 +470,102 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         }
     }
     
-    @IBAction func saveTapped(_ sender: UIButton) {
-        let newStatus: VaccinationManagerViewController.VaccineStatus
+    private var detailStorageKey: String {
+        "vaccine_detail_\(vaccine.name)"
+    }
 
-            switch selectedStatus {
-            case .taken:
-                newStatus = .completed
-            case .skipped:
-                newStatus = .skipped
-            case .rescheduled:
-                newStatus = .rescheduled
+    
+    @IBAction func saveTapped(_ sender: UIButton) {
+//        let newStatus: VaccinationManagerViewController.VaccineStatus
+//
+//            switch selectedStatus {
+//            case .taken:
+//                newStatus = .completed
+//            case .skipped:
+//                newStatus = .skipped
+//            case .rescheduled:
+//                newStatus = .rescheduled
+//            }
+//
+//            // 🔥 THIS IS THE KEY LINE
+//            onSaveStatus?(newStatus)
+//
+//            dismiss(animated: true)
+        // 1️⃣ Save date + time (merge date & time picker)
+            let calendar = Calendar.current
+            let finalDate = calendar.date(
+                bySettingHour: calendar.component(.hour, from: timePicker.date),
+                minute: calendar.component(.minute, from: timePicker.date),
+                second: 0,
+                of: datePicker.date
+            ) ?? datePicker.date
+
+            // 2️⃣ Notes
+            let notesText =
+                notesTextView.text == notesPlaceholder
+                ? nil
+                : notesTextView.text
+
+            // 3️⃣ Image
+            let imageData = vaccineImageView.image?
+                .jpegData(compressionQuality: 0.8)
+
+            // 4️⃣ Create storage object
+            let detail = VaccineDetailStorage(
+                date: finalDate,
+                notes: notesText,
+                imageData: imageData
+            )
+
+            // 5️⃣ Save to UserDefaults
+            if let encoded = try? JSONEncoder().encode(detail) {
+                UserDefaults.standard.set(encoded, forKey: detailStorageKey)
             }
 
-            // 🔥 THIS IS THE KEY LINE
-            onSaveStatus?(newStatus)
+            // 6️⃣ Save status back to list
+            let newStatus: VaccinationManagerViewController.VaccineStatus
+            switch selectedStatus {
+            case .taken: newStatus = .completed
+            case .skipped: newStatus = .skipped
+            case .rescheduled: newStatus = .rescheduled
+            }
 
+            onSaveStatus?(newStatus)
             dismiss(animated: true)
     }
+
+    private func loadSavedDetails() {
+
+        guard
+            let data = UserDefaults.standard.data(forKey: detailStorageKey),
+            let saved = try? JSONDecoder().decode(
+                VaccineDetailStorage.self,
+                from: data
+            )
+        else { return }
+
+        // Date & Time
+        datePicker.date = saved.date
+        timePicker.date = saved.date
+        updateDateTimeLabels()
+
+        // Notes
+        if let notes = saved.notes, !notes.isEmpty {
+            notesTextView.text = notes
+            notesTextView.textColor = .label
+        }
+
+        // Image
+        if let imgData = saved.imageData,
+           let image = UIImage(data: imgData) {
+            vaccineImageView.image = image
+            photoCardView.isHidden = false
+            updateAddPhotoButtonTitle(hasImage: true)
+        } else {
+            updateAddPhotoButtonTitle(hasImage: false)
+        }
+    }
+
 
     func highlightRow(_ view: UIView, active: Bool) {
         view.backgroundColor = active
@@ -490,7 +575,21 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         view.layer.cornerRadius = view.bounds.height / 2
         view.layer.masksToBounds = true
     }
-
-
     
+    private func updateAddPhotoButtonTitle(hasImage: Bool) {
+        let title = hasImage ? "Edit / Replace Photo" : "Add Photo"
+        addPhotoButton.setTitle(title, for: .normal)
+    }
+    
+    
+
+
+ // End of class
+}
+
+
+struct VaccineDetailStorage: Codable {
+    let date: Date
+    let notes: String?
+    let imageData: Data?
 }

@@ -40,11 +40,16 @@ final class VaccinationCalendarViewController : UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "VaccineCell")
         
         tableView.tableFooterView = UIView()
-        scrollToFirstUpcomingVaccine()
+//        scrollToFirstUpcomingVaccine()
+//        groupVaccinesByDate()
+//        scrollToLastVaccine()
+//        setupCalendar()
+//        selectToday()
         groupVaccinesByDate()
-        scrollToLastVaccine()
         setupCalendar()
         selectToday()
+        loadVaccinesForToday()
+
         
         setupEmptyStateAnimation()
         emptyStateView.isHidden = true
@@ -100,6 +105,13 @@ final class VaccinationCalendarViewController : UIViewController {
         }
     }
     
+    private func loadVaccinesForToday() {
+        let today = calendar.startOfDay(for: Date())
+        selectedVaccines = vaccinesByDate[today] ?? []
+        tableView.reloadData()
+        updateEmptyState()
+    }
+
     func groupVaccinesByDate() {
         vaccinesByDate.removeAll()
 

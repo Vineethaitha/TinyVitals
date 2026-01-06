@@ -47,4 +47,18 @@ class AgeFilterCell: UICollectionViewCell {
                 titleLabel.textColor = .label
             }
         }
-    }
+//    func configure(with title: String, isSelected: Bool) {
+//        titleLabel.text = title
+//
+//        if isSelected {
+//            contentView.backgroundColor = .appPinkLight
+//            titleLabel.textColor = .appPink
+//        } else {
+//            contentView.backgroundColor = UIColor.systemGray6
+//            titleLabel.textColor = .secondaryLabel
+//        }
+//
+//        contentView.layer.cornerRadius = 15
+//    }
+
+}

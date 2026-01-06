@@ -95,6 +95,26 @@ class VaccineCell: UITableViewCell {
             cardView.backgroundColor =
                 UIColor.systemBlue.withAlphaComponent(0.15)
         }
+        
+//        switch vaccine.status {
+//
+//        case .completed:
+//            cardView.backgroundColor =
+//                UIColor.systemGreen.withAlphaComponent(0.15)
+//
+//        case .skipped:
+//            cardView.backgroundColor =
+//                UIColor.systemRed.withAlphaComponent(0.15)
+//
+//        case .rescheduled:
+//            cardView.backgroundColor =
+//                UIColor.systemOrange.withAlphaComponent(0.15)
+//
+//        case .upcoming:
+//            cardView.backgroundColor =
+//                UIColor.appPinkLight
+//        }
+        
     }
 
 

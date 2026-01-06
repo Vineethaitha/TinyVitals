@@ -10,6 +10,8 @@ import UIKit
 final class VaccinationProgressRingView: UIView {
     
     var onTap: (() -> Void)?
+//    var progressColor: UIColor = .systemBlue
+//       var trackColor: UIColor = UIColor.systemGray4.withAlphaComponent(0.4)
     
     
     override init(frame: CGRect) {
@@ -91,6 +93,8 @@ final class VaccinationProgressRingView: UIView {
 
         // Background track
         trackLayer.strokeColor = UIColor.systemGray4.withAlphaComponent(0.4).cgColor
+//        trackLayer.strokeColor = trackColor.cgColor
+
         trackLayer.strokeEnd = 1
 
         // Simple depth
