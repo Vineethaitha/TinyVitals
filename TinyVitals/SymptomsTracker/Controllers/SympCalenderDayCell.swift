@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SympCalendarDayCell: UICollectionViewCell {
+final class SympCalenderDayCell: UICollectionViewCell {
     
     @IBOutlet weak var dayLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
