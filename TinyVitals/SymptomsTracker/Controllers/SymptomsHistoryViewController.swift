@@ -25,7 +25,7 @@ final class SymptomsHistoryViewController: UIViewController, UITableViewDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemBackground
+//        view.backgroundColor = .systemBackground
         title = "Symptoms History"
 
         setupNavigation()

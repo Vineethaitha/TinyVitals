@@ -29,7 +29,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     private var symptomsByDate: [Date: Int] = [:]
 
     
-    @IBOutlet weak var mainScrollView: UIScrollView!
     @IBOutlet weak var mainStackView: UIStackView!
 
 //    @IBOutlet weak var searchBar: UISearchBar!
@@ -53,8 +52,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         override func viewDidLoad() {
             super.viewDidLoad()
-            
-            mainScrollView.contentInsetAdjustmentBehavior = .never
             
             setupUI()
             showSampleData()
