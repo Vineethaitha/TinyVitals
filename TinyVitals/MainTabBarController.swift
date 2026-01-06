@@ -86,6 +86,13 @@ class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "cross.case"),
             selectedImage: UIImage(systemName: "cross.case.fill")
         )
+        
+//        let symptoms = SymptomsTrackerViewController()
+//        symptoms.tabBarItem = UITabBarItem(
+//            title: "Records",
+//            image: UIImage(systemName: "cross.case"),
+//            selectedImage: UIImage(systemName: "cross.case.fill")
+//        )
 
         let vaccine = VaccinationManagerViewController()
         vaccine.tabBarItem = UITabBarItem(
@@ -104,6 +111,7 @@ class MainTabBarController: UITabBarController {
         viewControllers = [
             UINavigationController(rootViewController: home),
             UINavigationController(rootViewController: records),
+//            UINavigationController(rootViewController: symptoms),
             UINavigationController(rootViewController: vaccine),
             UINavigationController(rootViewController: profile)
         ]
