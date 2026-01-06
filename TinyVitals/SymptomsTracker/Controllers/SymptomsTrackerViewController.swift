@@ -50,69 +50,81 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var exportButton: UIButton!
     
 
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            
-            setupUI()
-            showSampleData()
-            
-            setupCalendarCollectionView()
-            updateSummary(for: Date())
-            
-            generateDates()
-            calendarCollectionView.reloadData()
-            
-            let today = calendar.startOfDay(for: Date())
-            symptomsByDate[today] = 2
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupUI()
+        showSampleData()
+        
+        setupCalendarCollectionView()
+        updateSummary(for: Date())
+        
+        generateDates()
+        calendarCollectionView.reloadData()
+        
+        let today = calendar.startOfDay(for: Date())
+        symptomsByDate[today] = 2
 
-            if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
-                symptomsByDate[yesterday] = 1
-            }
-            
-            timelineTableView.delegate = self
-            timelineTableView.dataSource = self
-
-            timelineTableView.register(
-                UINib(nibName: "SymptomTimelineCell", bundle: nil),
-                forCellReuseIdentifier: "SymptomTimelineCell"
-            )
-
-            timelineTableView.separatorStyle = .none
-            timelineTableView.showsVerticalScrollIndicator = false
-            timelineTableView.rowHeight = UITableView.automaticDimension
-            timelineTableView.estimatedRowHeight = 120
-            
-            calendarCollectionView.allowsMultipleSelection = false
-            
-
+        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
+            symptomsByDate[yesterday] = 1
         }
+        
+        timelineTableView.delegate = self
+        timelineTableView.dataSource = self
 
-        private func setupUI() {
-//            view.backgroundColor = .systemBackground
+        timelineTableView.register(
+            UINib(nibName: "SymptomTimelineCell", bundle: nil),
+            forCellReuseIdentifier: "SymptomTimelineCell"
+        )
 
-//            searchBar.placeholder = "Search symptoms"
+        timelineTableView.separatorStyle = .none
+        timelineTableView.showsVerticalScrollIndicator = false
+        timelineTableView.rowHeight = UITableView.automaticDimension
+        timelineTableView.estimatedRowHeight = 120
+        
+        calendarCollectionView.allowsMultipleSelection = false
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
-            emptyImageView.image = UIImage(systemName: "figure.and.child.holdinghands")
-            emptyImageView.tintColor = .systemPink
+        guard let indexPath = indexOfToday() else { return }
 
-            emptyTitleLabel.text = "No symptoms logged"
-            emptyTitleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        calendarCollectionView.selectItem(
+            at: indexPath,
+            animated: false,
+            scrollPosition: .centeredHorizontally
+        )
+    }
 
-            emptySubtitleLabel.text = "Tap + to add symptoms"
-            emptySubtitleLabel.textColor = .secondaryLabel
 
-//            floatingAddButton.setImage(
-//                UIImage(systemName: "plus"),
-//                for: .normal
-//            )
-//            floatingAddButton.backgroundColor = .systemPink
-//            floatingAddButton.tintColor = .white
-            floatingAddButton.layer.cornerRadius = 25
-            
-//            exportButton.layer.cornerRadius = 20
-//            exportButton.backgroundColor = UIColor.systemGray6
+    private func setupUI() {
+//        view.backgroundColor = .systemBackground
+//        searchBar.placeholder = "Search symptoms"
+        emptyImageView.image = UIImage(systemName: "figure.and.child.holdinghands")
+        emptyImageView.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
 
-        }
+        emptyTitleLabel.text = "No symptoms logged"
+        emptyTitleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+
+        emptySubtitleLabel.text = "Tap + to add symptoms"
+        emptySubtitleLabel.textColor = .secondaryLabel
+//        floatingAddButton.setImage(
+//            UIImage(systemName: "plus"),
+//            for: .normal
+//        )
+//        floatingAddButton.backgroundColor = .systemPink
+//        floatingAddButton.layer.cornerRadius = 25
+//        exportButton.layer.cornerRadius = 20
+//        exportButton.backgroundColor = UIColor.systemGray6
+        floatingAddButton.configuration = nil
+        floatingAddButton.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+        floatingAddButton.layer.cornerRadius = 25
+        floatingAddButton.setImage(UIImage(systemName: "stethoscope"),for: .normal)
+        floatingAddButton.tintColor = .white
+
+    }
 
     private func showSampleData() {
 
@@ -204,7 +216,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             nibName: "LogSymptomsViewController",
             bundle: nil
         )
-
+        print("Tapped")
         navigationController?.pushViewController(vc, animated: true)
     }
 
@@ -220,11 +232,17 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         currentTimelineItems = timelineDataByDate[day] ?? []
 
         if currentTimelineItems.isEmpty {
-            emptyStateStackView.isHidden = false
+//            emptyStateStackView.isHidden = false
+            emptyImageView.isHidden = false
+            emptyTitleLabel.isHidden = false
+            emptySubtitleLabel.isHidden = false
             timelineTableView.isHidden = true
-            summaryLabel.text = "Your child doesn’t have any symptoms today"
+            summaryLabel.text = "Your child doesn’t have any symptoms on this day"
         } else {
-            emptyStateStackView.isHidden = true
+//            emptyStateStackView.isHidden = true
+            emptyImageView.isHidden = true
+            emptyTitleLabel.isHidden = true
+            emptySubtitleLabel.isHidden = true
             timelineTableView.isHidden = false
             summaryLabel.text = "Your child has \(currentTimelineItems.count) symptoms today"
         }
@@ -276,6 +294,16 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 //
 //        navigationController?.pushViewController(vc, animated: true)
 //    }
+
+    private func indexOfToday() -> IndexPath? {
+        let today = calendar.startOfDay(for: Date())
+        if let index = visibleDates.firstIndex(where: {
+            calendar.isDate($0, inSameDayAs: today)
+        }) {
+            return IndexPath(item: index, section: 0)
+        }
+        return nil
+    }
 
     
     

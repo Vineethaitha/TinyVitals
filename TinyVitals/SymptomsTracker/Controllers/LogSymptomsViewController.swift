@@ -87,9 +87,12 @@ final class LogSymptomsViewController: UIViewController {
 //        photoImageView.clipsToBounds = true
 
         // Save button
-        saveButton.layer.cornerRadius = 14
-        saveButton.backgroundColor = .systemIndigo
+        saveButton.configuration = nil
+        saveButton.layer.cornerRadius = 25
+        saveButton.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         saveButton.setTitleColor(.white, for: .normal)
+        saveButton.setTitle("Save", for: .normal)
+        saveButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
     }
 
     private func setupDatePicker() {
@@ -161,7 +164,9 @@ final class LogSymptomsViewController: UIViewController {
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default))
+        navigationController?.popViewController(animated: true)
         present(alert, animated: true)
+        
     }
     
     @IBAction func selectSymptomsTapped(_ sender: UIButton) {

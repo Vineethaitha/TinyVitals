@@ -12,28 +12,63 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
 
+//    func scene(
+//        _ scene: UIScene,
+//        willConnectTo session: UISceneSession,
+//        options connectionOptions: UIScene.ConnectionOptions
+//    ) {
+//        guard let windowScene = (scene as? UIWindowScene) else { return }
+//
+//        let window = UIWindow(windowScene: windowScene)
+//
+//        // 🔥 Set Symptoms Tracker as first screen
+//        let vc = SymptomsTrackerViewController(
+//            nibName: "SymptomsTrackerViewController",
+//            bundle: nil
+//        )
+//
+//        let nav = UINavigationController(rootViewController: vc)
+//        nav.navigationBar.prefersLargeTitles = true
+//
+//        window.rootViewController = nav
+//        self.window = window
+//        window.makeKeyAndVisible()
+//    }
+//    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+//        guard let windowScene = (scene as? UIWindowScene) else { return }
+//        window = UIWindow(windowScene: windowScene)
+//        let splashVC = SymptomsTrackerViewController(nibName: "SymptomsTrackerViewController", bundle: Bundle.main)
+//        window?.rootViewController = splashVC
+//        window?.makeKeyAndVisible()
+//    }
+    
     func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
+        guard let windowScene = scene as? UIWindowScene else { return }
 
-        let window = UIWindow(windowScene: windowScene)
+        window = UIWindow(windowScene: windowScene)
 
-        // 🔥 Set Symptoms Tracker as first screen
-        let vc = SymptomsTrackerViewController(
+        let rootVC = SymptomsTrackerViewController(
             nibName: "SymptomsTrackerViewController",
-            bundle: nil
+            bundle: .main
         )
 
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.prefersLargeTitles = true
+//        let navController = UINavigationController(rootViewController: rootVC)
 
-        window.rootViewController = nav
-        self.window = window
-        window.makeKeyAndVisible()
+        // Optional: hide nav bar if you don’t want it visible
+//        navController.setNavigationBarHidden(true, animated: false)
+
+        let navController = UINavigationController(rootViewController: rootVC)
+        window?.rootViewController = navController
+
+        
+//        window?.rootViewController = navController
+        window?.makeKeyAndVisible()
     }
+
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
