@@ -89,11 +89,10 @@ class VaccineCell: UITableViewCell {
 
         case .rescheduled:
             cardView.backgroundColor =
-                UIColor.systemOrange.withAlphaComponent(0.15)
+                UIColor.systemBlue.withAlphaComponent(0.15)
 
         case .upcoming:
-            cardView.backgroundColor =
-                UIColor.systemBlue.withAlphaComponent(0.15)
+            cardView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 0.15)
         }
         
 //        switch vaccine.status {

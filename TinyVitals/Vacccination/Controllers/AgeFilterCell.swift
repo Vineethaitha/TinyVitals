@@ -15,10 +15,10 @@ class AgeFilterCell: UICollectionViewCell {
     override func awakeFromNib() {
             super.awakeFromNib()
 
-            backgroundColor = .clear
-            contentView.backgroundColor = .clear
+//            backgroundColor = .clear
+//            contentView.backgroundColor = .clear
 
-            containerView.backgroundColor = .systemGray6
+//            containerView.backgroundColor = .systemGray
             containerView.clipsToBounds = true
 
 //            titleLabel.textAlignment = .center
@@ -40,10 +40,10 @@ class AgeFilterCell: UICollectionViewCell {
             titleLabel.text = title
 
             if isSelected {
-                containerView.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
-                titleLabel.textColor = .systemBlue
+                containerView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.15)
+                titleLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             } else {
-                containerView.backgroundColor = .systemGray6
+                containerView.backgroundColor = .systemGray5
                 titleLabel.textColor = .label
             }
         }

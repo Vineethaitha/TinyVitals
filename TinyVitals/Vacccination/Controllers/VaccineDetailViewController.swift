@@ -101,8 +101,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     @IBOutlet weak var descriptionLabel: UILabel!
     
     // MARK: - Date & Time Card
-        @IBOutlet weak var dateValueLabel: UILabel!
-        @IBOutlet weak var timeValueLabel: UILabel!
+    @IBOutlet weak var dateValueLabel: UILabel!
+    @IBOutlet weak var timeValueLabel: UILabel!
     
     // MARK: - Date & Time Picker
     
@@ -110,13 +110,13 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     @IBOutlet weak var timePicker: UIDatePicker!
 
         // MARK: - Notes Card
-        @IBOutlet weak var notesTextView: UITextView!
+    @IBOutlet weak var notesTextView: UITextView!
 
         // MARK: - Photo Card
-        @IBOutlet weak var vaccineImageView: UIImageView!
-        @IBOutlet weak var addPhotoButton: UIButton!
-        @IBOutlet weak var photoCardView: UIView!  // the container view around image
-        @IBOutlet weak var photoCardHeight: NSLayoutConstraint!
+    @IBOutlet weak var vaccineImageView: UIImageView!
+    @IBOutlet weak var addPhotoButton: UIButton!
+    @IBOutlet weak var photoCardView: UIView!  // the container view around image
+    @IBOutlet weak var photoCardHeight: NSLayoutConstraint!
 
 
     // MARK: - Status Card (Custom Radio Buttons)
@@ -129,7 +129,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     @IBOutlet weak var skippedRadioImageView: UIImageView!
     @IBOutlet weak var rescheduledRadioImageView: UIImageView!
 
-        // MARK: - Data (Injected)
+    @IBOutlet weak var saveButton: UIButton!
+    // MARK: - Data (Injected)
 //        var vaccine: VaccinationManagerViewController.VaccineItem!
     enum VaccinationStatus {
         case taken
@@ -159,10 +160,10 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         updateStatusUI()
         populateData()
         
-        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-            timePicker.addTarget(self, action: #selector(timeChanged), for: .valueChanged)
+//        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+//        timePicker.addTarget(self, action: #selector(timeChanged), for: .valueChanged)
 
-        updateDateTimeLabels()
+//        updateDateTimeLabels()
         setupStatusTaps()
         configure()
         setupNotes()
@@ -200,7 +201,14 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         vaccineImageView.layer.cornerRadius = 12
         vaccineImageView.clipsToBounds = true
         vaccineImageView.backgroundColor = UIColor.systemGray5
-
+        
+        saveButton.configuration = nil
+        saveButton.setTitle("Save", for: .normal)
+        saveButton.layer.cornerRadius = 25
+        saveButton.tintColor = .white
+        saveButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        saveButton.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 1)
+        
         // Status segmented control
 //        statusSegmentedControl.selectedSegmentIndex = 0
 
@@ -225,35 +233,35 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
         // For now, show today as sample date/time
         let now = Date()
-        dateValueLabel.text = formatter.string(from: now)
-        timeValueLabel.text = formatter.string(from: now)
+//        dateValueLabel.text = formatter.string(from: now)
+//        timeValueLabel.text = formatter.string(from: now)
         
         // default
            selectedStatus = .taken
            updateStatusUI()
     }
 
-    @objc private func dateChanged() {
-        updateDateTimeLabels()
-    }
+//    @objc private func dateChanged() {
+//        updateDateTimeLabels()
+//    }
+//
+//    @objc private func timeChanged() {
+//        updateDateTimeLabels()
+//    }
 
-    @objc private func timeChanged() {
-        updateDateTimeLabels()
-    }
-
-    private func updateDateTimeLabels() {
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateStyle = .none
-        timeFormatter.timeStyle = .short
-
-        dateValueLabel.text = dateFormatter.string(from: datePicker.date)
-        timeValueLabel.text = timeFormatter.string(from: timePicker.date)
-    }
+//    private func updateDateTimeLabels() {
+//
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateStyle = .medium
+//        dateFormatter.timeStyle = .none
+//
+//        let timeFormatter = DateFormatter()
+//        timeFormatter.dateStyle = .none
+//        timeFormatter.timeStyle = .short
+//
+////        dateValueLabel.text = dateFormatter.string(from: datePicker.date)
+////        timeValueLabel.text = timeFormatter.string(from: timePicker.date)
+//    }
 
     
     // MARK: - Actions
@@ -361,7 +369,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     
     private func setupNotes() {
         notesTextView.delegate = self
-        notesTextView.layer.cornerRadius = 12
+//        notesTextView.layer.cornerRadius = 20
         notesTextView.clipsToBounds = true
 
         // Load saved notes
@@ -415,6 +423,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         vaccineImageView.clipsToBounds = true
         vaccineImageView.layer.cornerRadius = 12
 
+        
+        
         loadSavedPhoto()
         updateAddPhotoButtonTitle(hasImage: false)
 
@@ -547,7 +557,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         // Date & Time
         datePicker.date = saved.date
         timePicker.date = saved.date
-        updateDateTimeLabels()
+//        updateDateTimeLabels()
 
         // Notes
         if let notes = saved.notes, !notes.isEmpty {

@@ -18,6 +18,12 @@ final class VaccinationHeaderView: UIView {
 //    var progressColor: UIColor = .systemBlue
 //    var trackColor: UIColor = UIColor.systemGray4.withAlphaComponent(0.4)
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        backgroundColor = .clear
+//        contentView.backgroundColor = .clear
+    }
+
     
 
     func configure(
