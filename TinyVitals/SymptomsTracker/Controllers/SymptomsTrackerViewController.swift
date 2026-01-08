@@ -169,15 +169,25 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
 
+//        let nib = UINib(
+//            nibName: "SympCalenderDayCell",
+//            bundle: nil
+//        )
+//
+//        calendarCollectionView.register(
+//            nib,
+//            forCellWithReuseIdentifier: "SympCalenderDayCell"
+//        )
         let nib = UINib(
-            nibName: "CalendarDayCell",
+            nibName: "SympCalenderDayCell",
             bundle: nil
         )
 
         calendarCollectionView.register(
             nib,
-            forCellWithReuseIdentifier: "SympCalendarDayCell"
+            forCellWithReuseIdentifier: "SympCalenderDayCell"
         )
+
 
         calendarCollectionView.showsHorizontalScrollIndicator = false
 
@@ -325,10 +335,16 @@ extension SymptomsTrackerViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
 
+//        let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: "SympCalenderDayCell",
+//            for: indexPath
+//        ) as! SympCalenderDayCell
+        
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "CalendarDayCell",
+            withReuseIdentifier: "SympCalenderDayCell",
             for: indexPath
-        ) as! SympCalendarDayCell
+        ) as! SympCalenderDayCell
+
 
         let date = visibleDates[indexPath.item]
 
