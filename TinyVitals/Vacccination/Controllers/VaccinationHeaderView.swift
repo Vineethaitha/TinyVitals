@@ -35,7 +35,7 @@ final class VaccinationHeaderView: UIView {
             let total = completed + upcoming + skipped + rescheduled
             let percent = total == 0 ? 0 : Int(Double(completed) / Double(total) * 100)
 
-            progressLabel.text = "Vaccination Progress: \(percent)%"
+            progressLabel.text = "Progress: \(percent)%"
 //            progressRingView.progressColor = .appPink
 //            progressRingView.trackColor = UIColor.appPinkLight
 

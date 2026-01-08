@@ -21,7 +21,8 @@ class HomeScreenViewController: UIViewController {
     @IBOutlet weak var weightSparklineContainer: UIView!
     @IBOutlet weak var heightSparklineContainer: UIView!
 
-
+    @IBOutlet weak var vaccinationProgressContainer: UIView!
+    
     private let weightSparkline = SparklineView()
     private let heightSparkline = SparklineView()
 
@@ -81,8 +82,17 @@ class HomeScreenViewController: UIViewController {
 
         
         setupSparklines()
+        
+        setupVaccinationProgress()
 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupVaccinationProgress()
+        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
+    }
+
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -192,6 +202,45 @@ class HomeScreenViewController: UIViewController {
         heightSparkline.lineColor = UIColor.systemBlue
         heightSparkline.values = [72.0, 73.1, 74.4, 75.0, 75.7]
         heightSparklineContainer.addSubview(heightSparkline)
+    }
+
+    
+    private func setupVaccinationProgress() {
+
+        guard let header = Bundle.main.loadNibNamed(
+            "VaccinationHeaderView",
+            owner: nil,
+            options: nil
+        )?.first as? VaccinationHeaderView else { return }
+
+        header.frame = vaccinationProgressContainer.bounds
+        header.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        let vaccines = VaccinationStore.shared.allVaccines
+
+        let completed = vaccines.filter { $0.status == .completed }.count
+        let upcoming = vaccines.filter { $0.status == .upcoming }.count
+        let skipped = vaccines.filter { $0.status == .skipped }.count
+        let rescheduled = vaccines.filter { $0.status == .rescheduled }.count
+
+
+        header.configure(
+            completed: completed,
+            upcoming: upcoming,
+            skipped: skipped,
+            rescheduled: rescheduled
+        )
+
+        header.onRingTap = { [weak self] in
+            self?.openVaccinesTab()
+        }
+
+        vaccinationProgressContainer.subviews.forEach { $0.removeFromSuperview() }
+        vaccinationProgressContainer.addSubview(header)
+    }
+    
+    private func openVaccinesTab() {
+        tabBarController?.selectedIndex = 3
     }
 
 

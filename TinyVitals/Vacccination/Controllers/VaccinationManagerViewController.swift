@@ -835,8 +835,12 @@ UITableViewDelegate, UITextFieldDelegate
 
 
         if allVaccines.isEmpty {
-                allVaccines = buildVaccines()
-            }
+            allVaccines = buildVaccines()
+        }
+        
+        VaccinationStore.shared.update(allVaccines)
+
+
         
         // ✅ LOAD DATA INITIALLY
         filteredVaccines = allVaccines
@@ -1161,6 +1165,8 @@ UITableViewDelegate, UITextFieldDelegate
             )
         ]
     }
+    
+    
 
 
     // MARK: - Setup
@@ -1318,13 +1324,18 @@ UITableViewDelegate, UITextFieldDelegate
             // 1️⃣ Update model
             self.allVaccines[index].status = newStatus
 
+            // 🔥 SYNC GLOBAL STORE
+            VaccinationStore.shared.update(self.allVaccines)
+
+
             // 2️⃣ Refresh list
             self.applyFilter()
 
-            // 3️⃣ 🔥 FORCE HEADER (RING) UPDATE
+            // 3️⃣ Refresh header
             self.updateProgressUI()
             self.setupTableHeader()
         }
+
 
 
         let nav = UINavigationController(rootViewController: vc)
