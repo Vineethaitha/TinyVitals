@@ -40,11 +40,16 @@ final class VaccinationCalendarViewController : UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "VaccineCell")
         
         tableView.tableFooterView = UIView()
-        scrollToFirstUpcomingVaccine()
+//        scrollToFirstUpcomingVaccine()
+//        groupVaccinesByDate()
+//        scrollToLastVaccine()
+//        setupCalendar()
+//        selectToday()
         groupVaccinesByDate()
-        scrollToLastVaccine()
         setupCalendar()
         selectToday()
+        loadVaccinesForToday()
+
         
         setupEmptyStateAnimation()
         emptyStateView.isHidden = true
@@ -74,9 +79,9 @@ final class VaccinationCalendarViewController : UIViewController {
 //        calendarView.tintColor = .systemBlue
         calendarView.tintColor =
         UIColor(
-                red: 204/255,
-                green: 142/255,
-                blue: 224/255,
+                red: 237/255,
+                green: 112/255,
+                blue: 153/255,
                 alpha: 1
             )
 
@@ -100,6 +105,13 @@ final class VaccinationCalendarViewController : UIViewController {
         }
     }
     
+    private func loadVaccinesForToday() {
+        let today = calendar.startOfDay(for: Date())
+        selectedVaccines = vaccinesByDate[today] ?? []
+        tableView.reloadData()
+        updateEmptyState()
+    }
+
     func groupVaccinesByDate() {
         vaccinesByDate.removeAll()
 

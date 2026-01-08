@@ -181,7 +181,7 @@ class HomeScreenViewController: UIViewController {
         weightSparkline.frame = weightSparklineContainer.bounds
         weightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         weightSparkline.lineColor = UIColor(
-            red: 204/255, green: 142/255, blue: 224/255, alpha: 1
+            red: 237/255, green: 112/255, blue: 153/255, alpha: 1
         )
         weightSparkline.values = [7.0, 7.4, 7.4, 7.5, 7.6]
         weightSparklineContainer.addSubview(weightSparkline)

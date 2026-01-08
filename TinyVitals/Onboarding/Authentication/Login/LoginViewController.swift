@@ -46,12 +46,12 @@ class LoginViewController: UIViewController {
 ////        googleSignUpButton.setImage(UIImage(named: "GoogleLogo"), for: .normal)
 //        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         
-        googleSignUpButton.configuration = nil
-        googleSignUpButton.clipsToBounds = true
-        googleSignUpButton.setTitle("  Sign up with Google", for: .normal)
-        googleSignUpButton.setTitleColor(.label, for: .normal)
-        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-
+//        googleSignUpButton.configuration = nil
+//        googleSignUpButton.clipsToBounds = true
+//        googleSignUpButton.setTitle("  Sign up with Google", for: .normal)
+//        googleSignUpButton.setTitleColor(.label, for: .normal)
+//        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+//        googleSignUpButton.setImage(UIImage(named: "GoogleLogo"), for: .normal)
 //        let size = CGSize(width: 24, height: 24)
 //        let googleImage = UIImage(named: "GoogleLogo")?
 //            .withRenderingMode(.alwaysOriginal)
@@ -68,11 +68,28 @@ class LoginViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
         view.addGestureRecognizer(tap)
         
-        let size = CGSize(width: 24, height: 24)
-        let image = UIImage(named: "GoogleLogo")?.resize(to: size)
+//        let size = CGSize(width: 24, height: 24)
+//        let image = UIImage(named: "GoogleLogo")?.resize(to: size)
+//        
+//        googleSignUpButton.setImage(image, for: .normal)
+//        googleSignUpButton.imageView?.contentMode = .scaleAspectFit
         
+        
+        googleSignUpButton.configuration = nil
+        googleSignUpButton.clipsToBounds = true
+        googleSignUpButton.setTitle("  Sign up with Google", for: .normal)
+        googleSignUpButton.setTitleColor(.label, for: .normal)
+        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+
+        let size = CGSize(width: 24, height: 24)
+        let image = UIImage(named: "GoogleLogo")?
+            .resize(to: size)
+            .withRenderingMode(.alwaysOriginal)
+
         googleSignUpButton.setImage(image, for: .normal)
         googleSignUpButton.imageView?.contentMode = .scaleAspectFit
+        googleSignUpButton.tintColor = .clear
+
     }
 
     @IBAction func signUpButtonTapped(_ sender: UIButton) {

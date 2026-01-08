@@ -10,15 +10,19 @@ import UIKit
 final class VaccinationProgressRingView: UIView {
     
     var onTap: (() -> Void)?
+//    var progressColor: UIColor = .systemBlue
+//       var trackColor: UIColor = UIColor.systemGray4.withAlphaComponent(0.4)
     
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .clear
         setupTap()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        backgroundColor = .clear
         setupTap()
     }
 
@@ -46,9 +50,9 @@ final class VaccinationProgressRingView: UIView {
 
     // MARK: - Colors (Normal iOS system colors)
     private let completedColor = UIColor.systemGreen
-    private let upcomingColor = UIColor.systemBlue
+    private let upcomingColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
     private let skippedColor = UIColor.systemRed
-    private let rescheduledColor = UIColor.systemOrange
+    private let rescheduledColor = UIColor.systemBlue
     
 
     // MARK: - Layout
@@ -91,6 +95,9 @@ final class VaccinationProgressRingView: UIView {
 
         // Background track
         trackLayer.strokeColor = UIColor.systemGray4.withAlphaComponent(0.4).cgColor
+//        trackLayer.strokeColor = trackColor.cgColor
+//        trackLayer.strokeColor = UIColor.clear.cgColor
+
         trackLayer.strokeEnd = 1
 
         // Simple depth

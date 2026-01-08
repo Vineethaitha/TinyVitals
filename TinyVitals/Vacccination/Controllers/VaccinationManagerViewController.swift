@@ -539,9 +539,9 @@ UITableViewDelegate, UITextFieldDelegate
         "15 Months",
         "16–24 Months",
         "5–6 Years",
-        "10 Years",
-        "16 Years",
-        "Pregnancy"
+        "10 Years"
+//        "16 Years",
+//        "Pregnancy"
     ]
 
     var selectedFilterIndex = 0
@@ -818,10 +818,21 @@ UITableViewDelegate, UITextFieldDelegate
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        vaccinesTableView.sectionHeaderTopPadding = 8
+
+        let headerAppearance = UITableViewHeaderFooterView.appearance()
+        headerAppearance.tintColor = .clear
+//        headerAppearance.textLabel?.textColor = .appPink
+//        
+//        calendarButton.tintColor = .appPink
+//        searchTextField.tintColor = .appPink
+
 
         setupCollectionView()
         setupTableView()
-        setupTableHeader()
+        updateHeaderVisibility()
+
 
         if allVaccines.isEmpty {
                 allVaccines = buildVaccines()
@@ -865,198 +876,288 @@ UITableViewDelegate, UITextFieldDelegate
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
     
+    //
+    
     func buildVaccines() -> [VaccineItem] {
 
         let dob = childDOB
         let cal = calendar
 
         return [
-            VaccineItem(name: "BCG", description: "Tuberculosis vaccine", ageGroup: "At Birth", status: .completed, date: dob),
-            VaccineItem(name: "OPV-0", description: "Oral Polio Vaccine (Birth dose)", ageGroup: "At Birth", status: .completed, date: dob),
 
+            // 🍼 AT BIRTH
             VaccineItem(
-                name: "Pentavalent-1",
-                description: "DTP + HepB + Hib",
-                ageGroup: "6 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-            ),
-            // keep rest exactly same
-            
-//            VaccineItem(
-//                name: "BCG",
-//                description: "Tuberculosis vaccine",
-//                ageGroup: "At Birth",
-//                status: .completed,
-//                date: dob
-//            ),
-//
-//            VaccineItem(
-//                name: "OPV-0",
-//                description: "Oral Polio Vaccine (Birth dose)",
-//                ageGroup: "At Birth",
-//                status: .completed,
-//                date: dob
-//            ),
-
-            VaccineItem(
-                name: "Hepatitis B (Birth)",
-                description: "Hepatitis B birth dose",
+                name: "BCG",
+                description: "Tuberculosis",
                 ageGroup: "At Birth",
                 status: .completed,
                 date: dob
             ),
 
-            // MARK: - 6 Weeks
-//            VaccineItem(
-//                name: "Pentavalent-1",
-//                description: "DTP + HepB + Hib",
-//                ageGroup: "6 Weeks",
-//                status: .upcoming,
-//                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-//            ),
+            VaccineItem(
+                name: "OPV 0",
+                description: "Oral Polio Vaccine",
+                ageGroup: "At Birth",
+                status: .completed,
+                date: dob
+            ),
 
             VaccineItem(
-                name: "OPV-1",
-                description: "Oral Polio Vaccine",
+                name: "Hepatitis B 1",
+                description: "Hep B Birth Dose",
+                ageGroup: "At Birth",
+                status: .completed,
+                date: dob
+            ),
+
+            // 👶 6 WEEKS
+            VaccineItem(
+                name: "DTwP 1",
+                description: "Diphtheria, Tetanus, Pertussis",
                 ageGroup: "6 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
             ),
 
             VaccineItem(
-                name: "Rotavirus-1",
-                description: "Diarrhea prevention",
+                name: "IPV 1",
+                description: "Injectable Polio",
                 ageGroup: "6 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
             ),
 
             VaccineItem(
-                name: "IPV-1",
-                description: "Injectable Polio Vaccine",
+                name: "Hepatitis B 2",
+                description: "Hep B Second Dose",
                 ageGroup: "6 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
             ),
 
-            // MARK: - 10 Weeks
             VaccineItem(
-                name: "Pentavalent-2",
-                description: "DTP + HepB + Hib",
+                name: "Rotavirus 1",
+                description: "Diarrhea Protection",
+                ageGroup: "6 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "PCV 1",
+                description: "Pneumococcal",
+                ageGroup: "6 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+            ),
+
+            // 👶 10 WEEKS
+            VaccineItem(
+                name: "DTwP 2",
+                description: "Diphtheria, Tetanus, Pertussis",
                 ageGroup: "10 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
             ),
 
             VaccineItem(
-                name: "OPV-2",
-                description: "Oral Polio Vaccine",
+                name: "IPV 2",
+                description: "Injectable Polio",
                 ageGroup: "10 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
             ),
 
             VaccineItem(
-                name: "Rotavirus-2",
-                description: "Diarrhea prevention",
+                name: "Hepatitis B 3",
+                description: "Hep B Third Dose",
                 ageGroup: "10 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
             ),
 
-            // MARK: - 14 Weeks
             VaccineItem(
-                name: "Pentavalent-3",
-                description: "DTP + HepB + Hib",
+                name: "Rotavirus 2",
+                description: "Diarrhea Protection",
+                ageGroup: "10 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "PCV 2",
+                description: "Pneumococcal",
+                ageGroup: "10 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+            ),
+
+            // 👶 14 WEEKS
+            VaccineItem(
+                name: "DTwP 3",
+                description: "Diphtheria, Tetanus, Pertussis",
                 ageGroup: "14 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
             ),
 
             VaccineItem(
-                name: "OPV-3",
-                description: "Oral Polio Vaccine",
+                name: "IPV 3",
+                description: "Injectable Polio",
                 ageGroup: "14 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
             ),
 
             VaccineItem(
-                name: "IPV-2",
-                description: "Injectable Polio Vaccine",
+                name: "Rotavirus 3",
+                description: "Diarrhea Protection",
                 ageGroup: "14 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
             ),
 
-            // MARK: - 9 Months
             VaccineItem(
-                name: "MR-1",
-                description: "Measles & Rubella",
+                name: "PCV 3",
+                description: "Pneumococcal",
+                ageGroup: "14 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+            ),
+
+            // 👶 6 MONTHS
+            VaccineItem(
+                name: "OPV 1",
+                description: "Oral Polio",
+                ageGroup: "6 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 6, to: dob)!
+            ),
+
+            // 👶 9 MONTHS
+            VaccineItem(
+                name: "OPV 2",
+                description: "Oral Polio",
                 ageGroup: "9 Months",
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 9, to: dob)!
             ),
 
             VaccineItem(
-                name: "JE-1",
-                description: "Japanese Encephalitis",
+                name: "MMR 1",
+                description: "Measles, Mumps, Rubella",
                 ageGroup: "9 Months",
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 9, to: dob)!
             ),
 
-            // MARK: - 16–24 Months
+            // 👶 12 MONTHS
             VaccineItem(
-                name: "DPT Booster-1",
-                description: "Diphtheria, Pertussis, Tetanus",
-                ageGroup: "16–24 Months",
+                name: "Typhoid",
+                description: "Typhoid Conjugate",
+                ageGroup: "12 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 12, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "Hepatitis A 1",
+                description: "Hep A First Dose",
+                ageGroup: "12 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 12, to: dob)!
+            ),
+
+            // 👶 15 MONTHS
+            VaccineItem(
+                name: "MMR 2",
+                description: "Measles, Mumps, Rubella",
+                ageGroup: "15 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 15, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "Varicella 1",
+                description: "Chickenpox",
+                ageGroup: "15 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 15, to: dob)!
+            ),
+            
+            VaccineItem(
+                name: "PCV Booster",
+                description: "PCV",
+                ageGroup: "15 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 15, to: dob)!
+            ),
+
+            // 👶 18 MONTHS
+            VaccineItem(
+                name: "DTwP Booster 1",
+                description: "DTP Booster",
+                ageGroup: "18 Months",
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 18, to: dob)!
             ),
 
             VaccineItem(
-                name: "OPV Booster",
-                description: "Oral Polio Booster",
-                ageGroup: "16–24 Months",
+                name: "IPV Booster",
+                description: "Polio Booster",
+                ageGroup: "18 Months",
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 18, to: dob)!
             ),
 
             VaccineItem(
-                name: "MR-2",
-                description: "Measles & Rubella (2nd dose)",
-                ageGroup: "16–24 Months",
+                name: "Hepatitis A 2",
+                description: "Hep A Second Dose",
+                ageGroup: "18 Months",
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 18, to: dob)!
             ),
 
-            // MARK: - 5–6 Years
+            // 🧒 4–6 YEARS
             VaccineItem(
-                name: "DPT Booster-2",
-                description: "Diphtheria, Pertussis, Tetanus",
+                name: "DTwP Booster 2",
+                description: "DTP Booster",
                 ageGroup: "5–6 Years",
                 status: .upcoming,
                 date: cal.date(byAdding: .year, value: 5, to: dob)!
             ),
 
-            // MARK: - 10 Years
             VaccineItem(
-                name: "Td",
+                name: "OPV 3",
+                description: "Oral Polio",
+                ageGroup: "5–6 Years",
+                status: .upcoming,
+                date: cal.date(byAdding: .year, value: 5, to: dob)!
+            ),
+
+            VaccineItem(
+                name: "Varicella 2",
+                description: "Chickenpox",
+                ageGroup: "5–6 Years",
+                status: .upcoming,
+                date: cal.date(byAdding: .year, value: 5, to: dob)!
+            ),
+
+            // 🧑 10–12 YEARS
+            VaccineItem(
+                name: "Tdap / Td",
                 description: "Tetanus & Diphtheria",
-                ageGroup: "10 Years",
+                ageGroup: "10–12 Years",
                 status: .upcoming,
                 date: cal.date(byAdding: .year, value: 10, to: dob)!
             ),
 
-            // MARK: - 16 Years
             VaccineItem(
-                name: "Td Booster",
-                description: "Tetanus & Diphtheria",
-                ageGroup: "16 Years",
+                name: "HPV",
+                description: "Human Papillomavirus",
+                ageGroup: "10–12 Years",
                 status: .upcoming,
-                date: cal.date(byAdding: .year, value: 16, to: dob)!
+                date: cal.date(byAdding: .year, value: 10, to: dob)!
             )
         ]
     }
@@ -1103,9 +1204,11 @@ UITableViewDelegate, UITextFieldDelegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedFilterIndex = indexPath.item
         applyFilter()
-        
+        updateHeaderVisibility()   // ✅ ADD THIS
         collectionView.reloadData()
     }
+
+
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -1212,9 +1315,14 @@ UITableViewDelegate, UITextFieldDelegate
             guard let self = self,
                   let index = vc.vaccineIndex else { return }
 
+            // 1️⃣ Update model
             self.allVaccines[index].status = newStatus
+
+            // 2️⃣ Refresh list
             self.applyFilter()
-//            self.updateProgressUI()
+
+            // 3️⃣ 🔥 FORCE HEADER (RING) UPDATE
+            self.updateProgressUI()
             self.setupTableHeader()
         }
 
@@ -1454,11 +1562,19 @@ UITableViewDelegate, UITextFieldDelegate
         let skipped = allVaccines.filter { $0.status == .skipped }.count
         let rescheduled = allVaccines.filter { $0.status == .rescheduled }.count
 
-        setupTableHeader()
+        updateHeaderVisibility()
 
         let total = allVaccines.count
         let percent = total == 0 ? 0 : Int((Double(completed) / Double(total)) * 100)
 //        progressLabel.text = "Vaccination Progress: \(percent)%"
+    }
+    
+    private func updateHeaderVisibility() {
+        if filterOptions[selectedFilterIndex] == "All" {
+            setupTableHeader()
+        } else {
+            vaccinesTableView.tableHeaderView = nil
+        }
     }
 
     

@@ -138,7 +138,7 @@ final class GrowthTrendGraphView: UIView {
         }
         curve.addLine(to: points.last!)
 
-        UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1).setStroke()
+        UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 1).setStroke()
         curve.lineWidth = 2.5
         curve.stroke()
 
@@ -151,7 +151,7 @@ final class GrowthTrendGraphView: UIView {
         context.saveGState()
         fill.addClip()
 
-        let baseColor = UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1)
+        let baseColor = UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 1)
 
         let gradient = CGGradient(
             colorsSpace: CGColorSpaceCreateDeviceRGB(),
@@ -222,7 +222,7 @@ final class GrowthTrendGraphView: UIView {
             let vLine = UIBezierPath()
             vLine.move(to: CGPoint(x: p.x, y: padding))
             vLine.addLine(to: CGPoint(x: p.x, y: rect.height - padding))
-            UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1).setStroke()
+            UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1).setStroke()
             vLine.setLineDash([4, 4], count: 2, phase: 0)
             vLine.lineWidth = 1
             vLine.stroke()
@@ -237,7 +237,7 @@ final class GrowthTrendGraphView: UIView {
                     height: dotRadius * 2
                 )
             )
-            UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1).setFill()
+            UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1).setFill()
             dot.fill()
 
             // SMART LABEL POSITIONING
@@ -269,7 +269,7 @@ final class GrowthTrendGraphView: UIView {
                 at: CGPoint(x: p.x + 6, y: labelY),
                 withAttributes: [
                     .font: UIFont.systemFont(ofSize: 11, weight: .semibold),
-                    .foregroundColor: UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1)
+                    .foregroundColor: UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
                 ]
             )
         }
