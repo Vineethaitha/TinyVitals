@@ -34,11 +34,7 @@ class RecordManagerViewController: UIViewController {
 
 
     var selectedSortOption: FolderSortOption = .nameAZ
-
-
-
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -70,8 +66,6 @@ class RecordManagerViewController: UIViewController {
         searchBarView.delegate = self
         
         setupSortMenu()
-        
-//        hidesBottomBarWhenPushed = true
         
 //        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
 //            tap.cancelsTouchesInView = false
@@ -214,6 +208,8 @@ class RecordManagerViewController: UIViewController {
         vc.folderName = folder.name
         vc.folderName = folder.name
         navigationController?.pushViewController(vc, animated: true)
+        
+//        print("hi")
     }
 
     

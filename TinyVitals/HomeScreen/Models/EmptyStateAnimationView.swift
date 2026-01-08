@@ -86,7 +86,7 @@ final class EmptyStateAnimationView: UIView {
             let button = UIButton(type: .system)
             button.setTitle(actionTitle, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-            button.backgroundColor = UIColor(red: 204/255, green: 142/255, blue: 224/255, alpha: 1)
+            button.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             button.setTitleColor(.white, for: .normal)
             button.layer.cornerRadius = 25
             button.translatesAutoresizingMaskIntoConstraints = false
