@@ -588,7 +588,7 @@ class RecordListViewController: UIViewController {
         addFileButton.isHidden = true
         
         let emptyView = EmptyStateAnimationView(
-            animationName: "FileClosetAnimation",
+            animationName: "FileClosetAnimation2",
             message: "Add your medical records\nand keep everything organised",
             animationSize: 220,
             actionTitle: "Add Record"

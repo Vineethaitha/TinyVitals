@@ -28,9 +28,9 @@ class CalendarRecordsViewController: UIViewController {
     private var emptyAnimationView: EmptyStateAnimationView?
 
     private let calendarAccentColor = UIColor(
-        red: 204/255,
-        green: 142/255,
-        blue: 224/255,
+        red: 237/255,
+        green: 112/255,
+        blue: 153/255,
         alpha: 1
     )
 
@@ -239,9 +239,9 @@ extension CalendarRecordsViewController {
         calendarView.locale = Locale.current
 
         calendarView.tintColor = UIColor(
-            red: 204/255,
-            green: 142/255,
-            blue: 224/255,
+            red: 237/255,
+            green: 112/255,
+            blue: 153/255,
             alpha: 1
         )
 

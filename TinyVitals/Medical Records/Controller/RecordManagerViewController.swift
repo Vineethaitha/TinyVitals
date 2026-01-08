@@ -34,11 +34,7 @@ class RecordManagerViewController: UIViewController {
 
 
     var selectedSortOption: FolderSortOption = .nameAZ
-
-
-
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -211,6 +207,8 @@ class RecordManagerViewController: UIViewController {
         vc.folderName = folder.name
         vc.folderName = folder.name
         navigationController?.pushViewController(vc, animated: true)
+        
+//        print("hi")
     }
 
     

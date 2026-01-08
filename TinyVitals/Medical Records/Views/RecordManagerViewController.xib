@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RecordManagerViewController" customModule="MedicalRecords_Feat" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RecordManagerViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
                 <outlet property="addButton" destination="o3w-Pq-131" id="U02-Nq-FwY"/>
                 <outlet property="collectionView" destination="fio-EH-zf1" id="fp9-vI-xMz"/>
@@ -24,7 +24,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="KZk-AC-fma">
-                    <rect key="frame" x="20" y="118" width="243" height="64"/>
+                    <rect key="frame" x="20" y="118" width="279" height="64"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <textInputTraits key="textInputTraits"/>
                     <connections>
@@ -43,7 +43,7 @@
                 </collectionView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o3w-Pq-131">
                     <rect key="frame" x="303" y="694" width="60" height="60"/>
-                    <color key="backgroundColor" red="0.80000000000000004" green="0.5568627451" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="backgroundColor" red="0.92941176470588238" green="0.4392156862745098" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="60" id="iNx-Qf-cwJ"/>
                         <constraint firstAttribute="width" constant="60" id="w3O-Ic-Exa"/>
@@ -65,10 +65,10 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mWQ-t2-9gG">
-                    <rect key="frame" x="294" y="134" width="54" height="35"/>
+                    <rect key="frame" x="289" y="134" width="54" height="35"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="35" id="Qk6-XQ-Lxh"/>
-                        <constraint firstAttribute="width" constant="54" id="WK5-gV-IRh"/>
+                        <constraint firstAttribute="width" constant="54" id="RRN-5m-5SG"/>
+                        <constraint firstAttribute="height" constant="35" id="sPF-6T-kbg"/>
                     </constraints>
                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <state key="normal" title="Button"/>
@@ -81,7 +81,11 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="97l-QU-vsU">
-                    <rect key="frame" x="338" y="134" width="50" height="34.333333333333343"/>
+                    <rect key="frame" x="333" y="134" width="50" height="35"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="50" id="4Tc-V8-Yd8"/>
+                        <constraint firstAttribute="height" constant="35" id="BXz-Qn-K4m"/>
+                    </constraints>
                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <state key="normal" title="Button"/>
                     <buttonConfiguration key="configuration" style="plain">
@@ -89,38 +93,22 @@
                         <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large" weight="bold"/>
                     </buttonConfiguration>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DtD-Wt-VPR">
-                    <rect key="frame" x="253" y="134" width="51" height="35"/>
-                    <color key="tintColor" red="0.55294117649999996" green="0.75294117650000003" blue="0.85098039219999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <state key="normal" title="Button"/>
-                    <buttonConfiguration key="configuration" style="plain">
-                        <imageReference key="image" image="wand.and.sparkles" catalog="system" symbolScale="large"/>
-                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="font" scale="large" weight="bold">
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                        </preferredSymbolConfiguration>
-                    </buttonConfiguration>
-                    <connections>
-                        <action selector="magicWandTapped" destination="-1" eventType="touchUpInside" id="ovK-xX-GdV"/>
-                    </connections>
-                </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemGray6Color"/>
             <constraints>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="o3w-Pq-131" secondAttribute="trailing" constant="30" id="0Lh-ej-fgA"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="o3w-Pq-131" secondAttribute="bottom" constant="30" id="46r-0r-bUE"/>
-                <constraint firstItem="mWQ-t2-9gG" firstAttribute="leading" secondItem="DtD-Wt-VPR" secondAttribute="trailing" constant="-10" id="DM9-cN-4TO"/>
                 <constraint firstItem="KZk-AC-fma" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="Lfk-ld-MiU"/>
+                <constraint firstItem="97l-QU-vsU" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" constant="-48" id="Qqn-1m-Yyt"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="fio-EH-zf1" secondAttribute="trailing" constant="20" id="S98-LW-Zh5"/>
                 <constraint firstItem="fio-EH-zf1" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="SwK-NO-7rx"/>
-                <constraint firstItem="97l-QU-vsU" firstAttribute="leading" secondItem="mWQ-t2-9gG" secondAttribute="trailing" constant="-10" id="V5o-It-lNk"/>
-                <constraint firstItem="DtD-Wt-VPR" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" constant="-48" id="Wo7-D3-wTH"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="97l-QU-vsU" secondAttribute="trailing" constant="10" id="Z1I-iS-WMJ"/>
+                <constraint firstItem="97l-QU-vsU" firstAttribute="leading" secondItem="mWQ-t2-9gG" secondAttribute="trailing" constant="-10" id="eWE-o7-yGj"/>
                 <constraint firstItem="KZk-AC-fma" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="hRr-Lz-2aC"/>
-                <constraint firstItem="97l-QU-vsU" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" constant="-48" id="kT9-bS-nj2"/>
                 <constraint firstItem="fio-EH-zf1" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" id="kW5-GO-hgd"/>
-                <constraint firstItem="KZk-AC-fma" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" constant="-130" id="lrZ-YN-JaX"/>
-                <constraint firstItem="DtD-Wt-VPR" firstAttribute="leading" secondItem="KZk-AC-fma" secondAttribute="trailing" constant="-10" id="opt-3S-3P4"/>
-                <constraint firstItem="mWQ-t2-9gG" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" constant="-48" id="uSZ-a6-i25"/>
+                <constraint firstItem="mWQ-t2-9gG" firstAttribute="leading" secondItem="KZk-AC-fma" secondAttribute="trailing" constant="-10" id="qUq-pi-cgF"/>
+                <constraint firstItem="mWQ-t2-9gG" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" constant="-48" id="wab-gs-Pxn"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="fio-EH-zf1" secondAttribute="bottom" id="xJc-tR-0Os"/>
             </constraints>
             <point key="canvasLocation" x="136.64122137404578" y="153.52112676056339"/>
@@ -130,9 +118,8 @@
         <image name="calendar.circle" catalog="system" width="128" height="123"/>
         <image name="document.badge.plus.fill" catalog="system" width="120" height="128"/>
         <image name="ellipsis.circle" catalog="system" width="128" height="123"/>
-        <image name="wand.and.sparkles" catalog="system" width="128" height="112"/>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
