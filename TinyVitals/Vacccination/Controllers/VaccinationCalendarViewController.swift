@@ -79,9 +79,9 @@ final class VaccinationCalendarViewController : UIViewController {
 //        calendarView.tintColor = .systemBlue
         calendarView.tintColor =
         UIColor(
-                red: 204/255,
-                green: 142/255,
-                blue: 224/255,
+                red: 237/255,
+                green: 112/255,
+                blue: 153/255,
                 alpha: 1
             )
 

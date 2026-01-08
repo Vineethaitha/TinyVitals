@@ -40,10 +40,10 @@
                     <rect key="frame" x="0.0" y="118" width="393" height="1314"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MIz-sa-biR" userLabel="contentView">
-                            <rect key="frame" x="0.0" y="0.0" width="393" height="841"/>
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="891"/>
                             <subviews>
-                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="d1B-Ey-szP" userLabel="mainStack">
-                                    <rect key="frame" x="20" y="16" width="353" height="801"/>
+                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="d1B-Ey-szP" userLabel="mainStack">
+                                    <rect key="frame" x="20" y="16" width="353" height="851"/>
                                     <subviews>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sky-az-FFQ" userLabel="headerCardView">
                                             <rect key="frame" x="0.0" y="0.0" width="353" height="80"/>
@@ -76,7 +76,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Iid-6E-DGW" userLabel="dateTimeCardView">
-                                            <rect key="frame" x="0.0" y="85" width="353" height="90"/>
+                                            <rect key="frame" x="0.0" y="95" width="353" height="90"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BMX-rZ-Wlk">
                                                     <rect key="frame" x="20" y="10" width="313" height="35"/>
@@ -105,8 +105,8 @@
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6ix-bN-C3l">
-                                                    <rect key="frame" x="20" y="45" width="313" height="1"/>
-                                                    <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                                    <rect key="frame" x="25" y="45" width="303" height="1"/>
+                                                    <color key="backgroundColor" systemColor="systemGray4Color"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="1" id="uhT-HZ-abL"/>
                                                     </constraints>
@@ -141,7 +141,7 @@
                                             <color key="backgroundColor" systemColor="systemGray5Color"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="90" id="55Z-sW-VfF"/>
-                                                <constraint firstItem="6ix-bN-C3l" firstAttribute="leading" secondItem="Iid-6E-DGW" secondAttribute="leading" constant="20" id="7Ky-69-1sq"/>
+                                                <constraint firstItem="6ix-bN-C3l" firstAttribute="leading" secondItem="Iid-6E-DGW" secondAttribute="leading" constant="25" id="7Ky-69-1sq"/>
                                                 <constraint firstItem="BMX-rZ-Wlk" firstAttribute="bottom" secondItem="dun-X6-O43" secondAttribute="top" id="8Y6-kV-1bo"/>
                                                 <constraint firstItem="BMX-rZ-Wlk" firstAttribute="leading" secondItem="Iid-6E-DGW" secondAttribute="leading" constant="20" id="Iro-em-OIu"/>
                                                 <constraint firstItem="dun-X6-O43" firstAttribute="leading" secondItem="Iid-6E-DGW" secondAttribute="leading" constant="20" id="LsQ-Hr-FE0"/>
@@ -149,7 +149,7 @@
                                                 <constraint firstItem="BMX-rZ-Wlk" firstAttribute="top" secondItem="Iid-6E-DGW" secondAttribute="top" constant="10" id="P8a-Qw-6Q3"/>
                                                 <constraint firstAttribute="trailing" secondItem="dun-X6-O43" secondAttribute="trailing" constant="20" id="bAl-9J-Ynv"/>
                                                 <constraint firstAttribute="trailing" secondItem="BMX-rZ-Wlk" secondAttribute="trailing" constant="20" id="pXe-62-iY4"/>
-                                                <constraint firstAttribute="trailing" secondItem="6ix-bN-C3l" secondAttribute="trailing" constant="20" id="xqm-HO-GF6"/>
+                                                <constraint firstAttribute="trailing" secondItem="6ix-bN-C3l" secondAttribute="trailing" constant="25" id="xqm-HO-GF6"/>
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -158,7 +158,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3pm-I2-wf2" userLabel="notesCardView">
-                                            <rect key="frame" x="0.0" y="180" width="353" height="130"/>
+                                            <rect key="frame" x="0.0" y="200" width="353" height="130"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" text="Enter notes.." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Vwi-Qp-oWX">
                                                     <rect key="frame" x="10" y="15" width="333" height="100"/>
@@ -191,7 +191,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aW1-ke-Ydv" userLabel="photoCardView">
-                                            <rect key="frame" x="0.0" y="315" width="353" height="234"/>
+                                            <rect key="frame" x="0.0" y="345" width="353" height="234"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="x5p-hO-OjF">
                                                     <rect key="frame" x="16" y="16" width="321" height="202"/>
@@ -244,7 +244,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cQ5-Oo-OvS" userLabel="statusCardView">
-                                            <rect key="frame" x="0.0" y="554" width="353" height="192"/>
+                                            <rect key="frame" x="0.0" y="594" width="353" height="192"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="MwO-Ph-igM">
                                                     <rect key="frame" x="16" y="16" width="321" height="160"/>
@@ -381,7 +381,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="afs-VQ-Xtu">
-                                            <rect key="frame" x="0.0" y="751" width="353" height="50"/>
+                                            <rect key="frame" x="0.0" y="801" width="353" height="50"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="clR-Db-Qul" userLabel="saveButton">
                                                     <rect key="frame" x="0.0" y="0.0" width="353" height="50"/>
@@ -447,6 +447,9 @@
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
             <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGray4Color">
+            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray5Color">
             <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
