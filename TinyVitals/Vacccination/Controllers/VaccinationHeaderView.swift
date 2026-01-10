@@ -30,7 +30,7 @@ final class VaccinationHeaderView: UIView {
             let total = completed + upcoming + skipped + rescheduled
             let percent = total == 0 ? 0 : Int(Double(completed) / Double(total) * 100)
 
-            progressLabel.text = "Progress: \(percent)%"
+            progressLabel.text = "Progress"
             progressRingView.update(
                 completed: completed,
                 upcoming: upcoming,
