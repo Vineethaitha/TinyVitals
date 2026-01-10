@@ -19,7 +19,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
         sendLinkButton.configuration = nil
         sendLinkButton.layer.cornerRadius = sendLinkButton.frame.height / 2
         sendLinkButton.clipsToBounds = true
-        sendLinkButton.setTitle("Seng link", for: .normal)
+        sendLinkButton.setTitle("Send link", for: .normal)
         sendLinkButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 //        self.title = "Password Recovery"
         emailTextField.delegate = self

@@ -15,6 +15,7 @@ class HomeScreenViewController: UIViewController {
     @IBOutlet weak var weightCardView: UIView!
     @IBOutlet weak var heightCardView: UIView!
 
+    
     @IBOutlet weak var weightValueLabel: UILabel!
     @IBOutlet weak var heightValueLabel: UILabel!
     
