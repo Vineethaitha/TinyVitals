@@ -15,16 +15,11 @@ final class VaccinationHeaderView: UIView {
     @IBOutlet weak var progressLabel: UILabel!
     
     var onRingTap: (() -> Void)?
-//    var progressColor: UIColor = .systemBlue
-//    var trackColor: UIColor = UIColor.systemGray4.withAlphaComponent(0.4)
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         backgroundColor = .clear
-//        contentView.backgroundColor = .clear
     }
-
-    
 
     func configure(
             completed: Int,
@@ -36,10 +31,6 @@ final class VaccinationHeaderView: UIView {
             let percent = total == 0 ? 0 : Int(Double(completed) / Double(total) * 100)
 
             progressLabel.text = "Progress: \(percent)%"
-//            progressRingView.progressColor = .appPink
-//            progressRingView.trackColor = UIColor.appPinkLight
-
-
             progressRingView.update(
                 completed: completed,
                 upcoming: upcoming,
@@ -47,7 +38,6 @@ final class VaccinationHeaderView: UIView {
                 rescheduled: rescheduled
             )
 
-            // 🔥 forward tap
             progressRingView.onTap = { [weak self] in
                 self?.onRingTap?()
             }

@@ -27,8 +27,6 @@ class HomeScreenViewController: UIViewController {
     private let heightSparkline = SparklineView()
 
 
-    
-    
     let articles: [Article] = [
         Article(
             title: "Healthy Living",

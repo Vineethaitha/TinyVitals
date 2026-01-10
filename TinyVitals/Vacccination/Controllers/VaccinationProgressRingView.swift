@@ -10,9 +10,6 @@ import UIKit
 final class VaccinationProgressRingView: UIView {
     
     var onTap: (() -> Void)?
-//    var progressColor: UIColor = .systemBlue
-//       var trackColor: UIColor = UIColor.systemGray4.withAlphaComponent(0.4)
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -95,9 +92,6 @@ final class VaccinationProgressRingView: UIView {
 
         // Background track
         trackLayer.strokeColor = UIColor.systemGray4.withAlphaComponent(0.4).cgColor
-//        trackLayer.strokeColor = trackColor.cgColor
-//        trackLayer.strokeColor = UIColor.clear.cgColor
-
         trackLayer.strokeEnd = 1
 
         // Simple depth
@@ -184,17 +178,10 @@ final class VaccinationProgressRingView: UIView {
         pulse.repeatCount = .infinity
         layer.add(pulse, forKey: "pulse")
     }
-    
-//    private func setupTap() {
-//        if gestureRecognizers == nil {
-//            let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
-//            isUserInteractionEnabled = true
-//            addGestureRecognizer(tap)
-//        }
-//    }
 
     @objc private func didTap() {
         onTap?()
     }
 
 }
+

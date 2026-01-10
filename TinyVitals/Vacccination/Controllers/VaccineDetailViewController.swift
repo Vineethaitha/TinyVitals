@@ -5,94 +5,6 @@
 //  Created by user66 on 18/12/25.
 //
 
-//import UIKit
-//
-//class VaccineDetailViewController: UIViewController {
-//
-//    // MARK: - Outlets
-//    @IBOutlet weak var titleLabel: UILabel!
-//    @IBOutlet weak var descriptionLabel: UILabel!
-//    @IBOutlet weak var dateLabel: UILabel!
-//
-//    // MARK: - Data
-//    var vaccine: ViewController.VaccineItem!
-//
-//    // MARK: - Lifecycle
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        configureUI()
-//        setupCloseButton()
-//    }
-//
-//    // MARK: - UI Setup
-//    private func setupCloseButton() {
-//        let close = UIButton(type: .system)
-//        close.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
-//        close.tintColor = .secondaryLabel
-//        close.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
-//
-//        close.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(close)
-//
-//        NSLayoutConstraint.activate([
-//            close.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
-//            close.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            close.widthAnchor.constraint(equalToConstant: 32),
-//            close.heightAnchor.constraint(equalToConstant: 32)
-//        ])
-//    }
-//
-//    @objc private func closeTapped() {
-//        dismiss(animated: true)
-//    }
-//
-//    private func configureUI() {
-//        titleLabel.text = vaccine.name
-//        descriptionLabel.text = "Scheduled at \(vaccine.ageGroup)"
-//
-//        switch vaccine.status {
-//        case .upcoming:
-//            descriptionLabel.textColor = .systemBlue
-//        case .completed:
-//            descriptionLabel.textColor = .systemGreen
-//        case .rescheduled:
-//            descriptionLabel.textColor = .systemOrange
-//        }
-//
-//        if let date = vaccine.dueDate {
-//            let formatter = DateFormatter()
-//            formatter.dateStyle = .medium
-//            dateLabel.text = formatter.string(from: date)
-//        } else {
-//            dateLabel.text = "Not scheduled"
-//        }
-//    }
-//}
-
-//
-//import UIKit
-//
-//class VaccineDetailViewController: UIViewController {
-//
-//    @IBOutlet weak var nameLabel: UILabel!
-//    @IBOutlet weak var descriptionLabel: UILabel!
-//    @IBOutlet weak var statusLabel: UILabel!
-//
-//    var vaccine: VaccineItem!
-//
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//
-//        nameLabel.text = vaccine.name
-//        descriptionLabel.text = vaccine.description
-////        statusLabel.text = vaccine.status.rawValue.capitalized
-//    }
-//
-//    @IBAction func closeTapped(_ sender: UIButton) {
-//        dismiss(animated: true)
-//    }
-//}
-
 import UIKit
 
 class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -115,7 +27,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         // MARK: - Photo Card
     @IBOutlet weak var vaccineImageView: UIImageView!
     @IBOutlet weak var addPhotoButton: UIButton!
-    @IBOutlet weak var photoCardView: UIView!  // the container view around image
+    @IBOutlet weak var photoCardView: UIView! 
     @IBOutlet weak var photoCardHeight: NSLayoutConstraint!
 
 
@@ -131,7 +43,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     @IBOutlet weak var saveButton: UIButton!
     // MARK: - Data (Injected)
-//        var vaccine: VaccinationManagerViewController.VaccineItem!
+
     enum VaccinationStatus {
         case taken
         case skipped
@@ -159,18 +71,11 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         setupUI()
         updateStatusUI()
         populateData()
-        
-//        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-//        timePicker.addTarget(self, action: #selector(timeChanged), for: .valueChanged)
-
-//        updateDateTimeLabels()
         setupStatusTaps()
         configure()
         setupNotes()
         setupPhotoUI()
         loadSavedDetails()
-
-
     }
     
     override func viewDidLayoutSubviews() {
@@ -184,9 +89,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         descriptionLabel.text = vaccine.description
     }
 
-//    @IBAction func closeTapped(_ sender: Any) {
-//        dismiss(animated: true)
-//    }
     
     // MARK: - UI Setup
     private func setupUI() {
@@ -208,9 +110,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         saveButton.tintColor = .white
         saveButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         saveButton.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 1)
-        
-        // Status segmented control
-//        statusSegmentedControl.selectedSegmentIndex = 0
 
         // Close button
         navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -231,37 +130,11 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
 
-        // For now, show today as sample date/time
-        let now = Date()
-//        dateValueLabel.text = formatter.string(from: now)
-//        timeValueLabel.text = formatter.string(from: now)
         
         // default
            selectedStatus = .taken
            updateStatusUI()
     }
-
-//    @objc private func dateChanged() {
-//        updateDateTimeLabels()
-//    }
-//
-//    @objc private func timeChanged() {
-//        updateDateTimeLabels()
-//    }
-
-//    private func updateDateTimeLabels() {
-//
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateStyle = .medium
-//        dateFormatter.timeStyle = .none
-//
-//        let timeFormatter = DateFormatter()
-//        timeFormatter.dateStyle = .none
-//        timeFormatter.timeStyle = .short
-//
-////        dateValueLabel.text = dateFormatter.string(from: datePicker.date)
-////        timeValueLabel.text = timeFormatter.string(from: timePicker.date)
-//    }
 
     
     // MARK: - Actions
@@ -273,18 +146,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         present(picker, animated: true)
     }
 
-//    @IBAction func statusChanged(_ sender: UISegmentedControl) {
-//        switch sender.selectedSegmentIndex {
-//        case 0:
-//            print("Status: Upcoming")
-//        case 1:
-//            print("Status: Completed")
-//        case 2:
-//            print("Status: Rescheduled")
-//        default:
-//            break
-//        }
-//    }
 
     @objc private func closeTapped() {
         dismiss(animated: true)
@@ -313,7 +174,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         UIView.animate(withDuration: 0.2) {
                 self.updateStatusUI()
             }
-//        updateStatusUI()
     }
 
     @objc func skippedTapped() {
@@ -322,7 +182,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         UIView.animate(withDuration: 0.2) {
                 self.updateStatusUI()
             }
-//        updateStatusUI()
     }
 
     @objc func rescheduledTapped() {
@@ -331,7 +190,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         UIView.animate(withDuration: 0.2) {
                 self.updateStatusUI()
             }
-//        updateStatusUI()
     }
 
 
@@ -366,10 +224,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     
     // SET UP NOTES
-    
     private func setupNotes() {
         notesTextView.delegate = self
-//        notesTextView.layer.cornerRadius = 20
         notesTextView.clipsToBounds = true
 
         // Load saved notes
@@ -414,17 +270,13 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         // IMPORTANT: hide container, not image only
         photoCardView.isHidden = true
         vaccineImageView.image = nil
-        
         photoCardView.isHidden = true
-//            photoCardHeight.constant = 0
 
         vaccineImageView.image = nil
         vaccineImageView.contentMode = .scaleAspectFill
         vaccineImageView.clipsToBounds = true
         vaccineImageView.layer.cornerRadius = 12
-
-        
-        
+   
         loadSavedPhoto()
         updateAddPhotoButtonTitle(hasImage: false)
 
@@ -438,19 +290,15 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
         guard let image =
             (info[.editedImage] ?? info[.originalImage]) as? UIImage else {
-            print("❌ No image found")
+            print(" No image found")
             return
         }
 
-        print("✅ Image assigned")
+        print(" Image assigned")
 
         vaccineImageView.image = image
         photoCardView.isHidden = false
         updateAddPhotoButtonTitle(hasImage: true)
-
-
-        // 🔥 THIS IS THE FIX
-//        photoCardHeight.constant = 200
 
         UIView.animate(withDuration: 0.25) {
             self.view.layoutIfNeeded()
@@ -486,22 +334,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     
     @IBAction func saveTapped(_ sender: UIButton) {
-//        let newStatus: VaccinationManagerViewController.VaccineStatus
-//
-//            switch selectedStatus {
-//            case .taken:
-//                newStatus = .completed
-//            case .skipped:
-//                newStatus = .skipped
-//            case .rescheduled:
-//                newStatus = .rescheduled
-//            }
-//
-//            // 🔥 THIS IS THE KEY LINE
-//            onSaveStatus?(newStatus)
-//
-//            dismiss(animated: true)
-        // 1️⃣ Save date + time (merge date & time picker)
+            
+            //  Save date + time (merge date & time picker)
             let calendar = Calendar.current
             let finalDate = calendar.date(
                 bySettingHour: calendar.component(.hour, from: timePicker.date),
@@ -510,29 +344,29 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
                 of: datePicker.date
             ) ?? datePicker.date
 
-            // 2️⃣ Notes
+            //  Notes
             let notesText =
                 notesTextView.text == notesPlaceholder
                 ? nil
                 : notesTextView.text
 
-            // 3️⃣ Image
+            //  Image
             let imageData = vaccineImageView.image?
                 .jpegData(compressionQuality: 0.8)
 
-            // 4️⃣ Create storage object
+            //  Create storage object
             let detail = VaccineDetailStorage(
                 date: finalDate,
                 notes: notesText,
                 imageData: imageData
             )
 
-            // 5️⃣ Save to UserDefaults
+            //  Save to UserDefaults
             if let encoded = try? JSONEncoder().encode(detail) {
                 UserDefaults.standard.set(encoded, forKey: detailStorageKey)
             }
 
-            // 6️⃣ Save status back to list
+            //  Save status back to list
             let newStatus: VaccinationManagerViewController.VaccineStatus
             switch selectedStatus {
             case .taken: newStatus = .completed
@@ -557,7 +391,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         // Date & Time
         datePicker.date = saved.date
         timePicker.date = saved.date
-//        updateDateTimeLabels()
 
         // Notes
         if let notes = saved.notes, !notes.isEmpty {
@@ -590,11 +423,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         let title = hasImage ? "Edit / Replace Photo" : "Add Photo"
         addPhotoButton.setTitle(title, for: .normal)
     }
-    
-    
-
-
- // End of class
 }
 
 

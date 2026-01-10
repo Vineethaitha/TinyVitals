@@ -22,11 +22,8 @@ final class VaccinationCalendarViewController : UIViewController {
     
     var vaccinesByDate: [Date: [VaccinationManagerViewController.VaccineItem]] = [:]
     var selectedVaccines: [VaccinationManagerViewController.VaccineItem] = []
-
-    let calendar = Calendar.current
-
-    // 🔗 reference passed from VaccinationManagerViewController
     var allVaccines: [VaccinationManagerViewController.VaccineItem] = []
+    let calendar = Calendar.current
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,21 +33,13 @@ final class VaccinationCalendarViewController : UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
-        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "VaccineCell")
-        
         tableView.tableFooterView = UIView()
-//        scrollToFirstUpcomingVaccine()
-//        groupVaccinesByDate()
-//        scrollToLastVaccine()
-//        setupCalendar()
-//        selectToday()
+        
         groupVaccinesByDate()
         setupCalendar()
         selectToday()
         loadVaccinesForToday()
-
-        
         setupEmptyStateAnimation()
         emptyStateView.isHidden = true
         tableView.isHidden = false
@@ -71,12 +60,8 @@ final class VaccinationCalendarViewController : UIViewController {
 
         // Native configuration
         calendarView.calendar = Calendar.current
-
         calendarView.locale = Locale.current
         calendarView.fontDesign = .rounded
-
-        // Accent color (optional)
-//        calendarView.tintColor = .systemBlue
         calendarView.tintColor =
         UIColor(
                 red: 237/255,
@@ -126,19 +111,7 @@ final class VaccinationCalendarViewController : UIViewController {
 
         calendarView.reloadDecorations(forDateComponents: components, animated: true)
     }
-
-    
-//    func showNoVaccineAlert() {
-//        let alert = UIAlertController(
-//            title: "No Vaccination",
-//            message: "No vaccination available on this date.",
-//            preferredStyle: .alert
-//        )
-//
-//        alert.addAction(UIAlertAction(title: "OK", style: .default))
-//        present(alert, animated: true)
-//    }
-    
+ 
     private func scrollToLastVaccine() {
 
         guard let lastDate = allVaccines
@@ -211,8 +184,6 @@ final class VaccinationCalendarViewController : UIViewController {
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         calendarView.reloadDecorations(forDateComponents: [components], animated: true)
     }
-
-
 }
 
 
@@ -240,18 +211,12 @@ extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDele
 extension  VaccinationCalendarViewController : UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        selectedVaccines.count
         let count = selectedVaccines.count
-//            emptyStateView.isHidden = count > 0
             return count
     }
 
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-
-        let cell = tableView.dequeueReusableCell(
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = tableView.dequeueReusableCell(
             withIdentifier: "VaccineCell",
             for: indexPath
         )
@@ -264,7 +229,6 @@ extension  VaccinationCalendarViewController : UITableViewDataSource {
     }
     
     private func scrollToFirstUpcomingVaccine() {
-
         guard let firstDate = allVaccines
             .map({ $0.date })
             .sorted()
@@ -283,10 +247,7 @@ extension  VaccinationCalendarViewController : UITableViewDataSource {
 
 extension VaccinationCalendarViewController : UICalendarViewDelegate {
 
-    func calendarView(
-        _ calendarView: UICalendarView,
-        decorationFor dateComponents: DateComponents
-    ) -> UICalendarView.Decoration? {
+    func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
 
         guard let date = calendar.date(from: dateComponents) else {
             return nil
@@ -305,43 +266,3 @@ extension VaccinationCalendarViewController : UICalendarViewDelegate {
     }
 
 }
-
-
-//extension VaccinationCalendarViewController : UICalendarSelectionSingleDateDelegate {
-//
-//    func dateSelection(
-//        _ selection: UICalendarSelectionSingleDate,
-//        didSelectDate dateComponents: DateComponents?
-//    ) {
-//        guard
-//            let components = dateComponents,
-//            let date = Calendar.current.date(from: components)
-//        else { return }
-//
-//        let formatter = DateFormatter()
-//        formatter.dateStyle = .medium
-//
-//        print("Selected date:", formatter.string(from: date))
-//    }
-//}
-
-//extension  VaccinationCalendarViewController : UICalendarViewDelegate {
-//
-//    func calendarView(
-//        _ calendarView: UICalendarView,
-//        decorationFor dateComponents: DateComponents
-//    ) -> UICalendarView.Decoration? {
-//
-//        guard let date = Calendar.current.date(from: dateComponents) else {
-//            return nil
-//        }
-//
-//        let day = Calendar.current.startOfDay(for: date)
-//
-//        guard vaccinesByDate[day] != nil else {
-//            return nil
-//        }
-//
-//        return .default(color: .systemBlue, size: .small)
-//    }
-//}

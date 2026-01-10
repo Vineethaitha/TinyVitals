@@ -30,8 +30,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
     
     @IBOutlet weak var mainStackView: UIStackView!
-
-//    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var historyButton: UIButton!
 
     @IBOutlet weak var calendarCollectionView: UICollectionView!
@@ -105,8 +103,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
 
     private func setupUI() {
-//        view.backgroundColor = .systemBackground
-//        searchBar.placeholder = "Search symptoms"
         emptyImageView.image = UIImage(systemName: "figure.and.child.holdinghands")
         emptyImageView.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
 
@@ -115,14 +111,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         emptySubtitleLabel.text = "Tap + to add symptoms"
         emptySubtitleLabel.textColor = .secondaryLabel
-//        floatingAddButton.setImage(
-//            UIImage(systemName: "plus"),
-//            for: .normal
-//        )
-//        floatingAddButton.backgroundColor = .systemPink
-//        floatingAddButton.layer.cornerRadius = 25
-//        exportButton.layer.cornerRadius = 20
-//        exportButton.backgroundColor = UIColor.systemGray6
+
         floatingAddButton.configuration = nil
         floatingAddButton.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         floatingAddButton.layer.cornerRadius = 25
@@ -180,11 +169,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             forCellWithReuseIdentifier: "SympCalenderDayCell"
         )
         
-//        let nib = UINib(
-//            nibName: "SympCalendarDayCell",
-//            bundle: nil
-//        )
-
         calendarCollectionView.showsHorizontalScrollIndicator = false
 
         if let layout = calendarCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
@@ -289,18 +273,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         present(activityVC, animated: true)
     }
 
-//    @IBAction func doctorTapped(_ sender: UIButton) {
-//        let vc = DoctorSymptomsViewController(
-//            nibName: "DoctorSymptomsViewController",
-//            bundle: nil
-//        )
-//
-//        // Pass full history (NOT just selected date)
-//        vc.symptomsByDate = timelineDataByDate
-//
-//        navigationController?.pushViewController(vc, animated: true)
-//    }
-
     private func indexOfToday() -> IndexPath? {
         let today = calendar.startOfDay(for: Date())
         if let index = visibleDates.firstIndex(where: {
@@ -386,7 +358,7 @@ extension SymptomsTrackerViewController: UICollectionViewDelegate {
 
         collectionView.reloadData()
 
-        // ✅ RE-SELECT after reload
+        // RE-SELECT after reload
         collectionView.selectItem(
             at: indexPath,
             animated: false,
