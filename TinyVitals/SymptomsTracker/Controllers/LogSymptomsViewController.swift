@@ -40,7 +40,8 @@ final class LogSymptomsViewController: UIViewController {
     @IBOutlet weak var saveButton: UIButton!
 
     // MARK: - Data
-    private var selectedSymptoms: [String] = []
+//    private var selectedSymptoms: [String] = []
+    private var selectedSymptoms: [SymptomItem] = []
     private let sampleSymptoms = ["Fever", "Cold", "Cough"]
 
     // MARK: - Lifecycle
@@ -158,14 +159,36 @@ final class LogSymptomsViewController: UIViewController {
     }
 
     @IBAction func saveTapped(_ sender: UIButton) {
-        let alert = UIAlertController(
-            title: "Saved",
-            message: "Symptoms saved successfully (mock)",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        navigationController?.popViewController(animated: true)
-        present(alert, animated: true)
+//        let alert = UIAlertController(
+//            title: "Saved",
+//            message: "Symptoms saved successfully (mock)",
+//            preferredStyle: .alert
+//        )
+//        alert.addAction(UIAlertAction(title: "OK", style: .default))
+//        navigationController?.popViewController(animated: true)
+//        present(alert, animated: true)
+        let formatter = DateFormatter()
+            formatter.timeStyle = .short
+
+            let time = formatter.string(from: selectedDate)
+
+        let items = selectedSymptoms.map { symptom in
+            SymptomTimelineItem(
+                title: symptom.title,
+                description: "Reported by parent",
+                time: time,
+                color: symptom.tintColor,
+                iconName: symptom.iconName
+            )
+            }
+
+            // SAVE TO CENTRAL STORE
+            SymptomsDataStore.shared.addSymptoms(
+                items,
+                on: selectedDate
+            )
+
+            navigationController?.popViewController(animated: true)
         
     }
     
@@ -177,10 +200,15 @@ final class LogSymptomsViewController: UIViewController {
         )
 
         vc.onApply = { selected in
-            let names = selected.map { $0.title }
-            self.symptomsPreviewLabel.text = names.joined(separator: ", ")
+            self.selectedSymptoms = selected
+
+            self.symptomsPreviewLabel.text =
+                selected.map { $0.title }.joined(separator: ", ")
+
             self.symptomsPreviewLabel.textColor = .label
         }
+
+
 
         vc.modalPresentationStyle = .pageSheet
         present(vc, animated: true)
@@ -232,20 +260,3 @@ extension LogSymptomsViewController: UIImagePickerControllerDelegate, UINavigati
         dismiss(animated: true)
     }
 }
-
-//extension LogSymptomsViewController {
-//
-//    func textViewDidBeginEditing(_ textView: UITextView) {
-//        if textView.textColor == .secondaryLabel {
-//            textView.text = nil
-//            textView.textColor = .label
-//        }
-//    }
-//
-//    func textViewDidEndEditing(_ textView: UITextView) {
-//        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-//            textView.text = "Add note here"
-//            textView.textColor = .secondaryLabel
-//        }
-//    }
-//}

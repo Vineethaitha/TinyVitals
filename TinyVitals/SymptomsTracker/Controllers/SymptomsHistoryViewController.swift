@@ -31,10 +31,19 @@ final class SymptomsHistoryViewController: UIViewController, UITableViewDelegate
         setupNavigation()
         setupCalendar()
         setupTable()
-        loadSampleData()
+//        loadSampleData()
         selectToday()
         timelineTableView.reloadData()
         updateEmptyState()
+        
+        timelineDataByDate =
+            SymptomsDataStore.shared.timelineDataByDate
+
+        allDatesSorted =
+            SymptomsDataStore.shared.allDates()
+
+        reloadCalendarDots()
+
 
     }
 
@@ -110,42 +119,42 @@ extension SymptomsHistoryViewController {
 
 extension SymptomsHistoryViewController {
 
-    func loadSampleData() {
-        let today = calendar.startOfDay(for: Date())
-
-        let fever = SymptomTimelineItem(
-            title: "Fever",
-            description: "High body temperature",
-            time: "09:15 AM",
-            color: .systemRed,
-            iconName: "thermometer"
-        )
-
-        let cold = SymptomTimelineItem(
-            title: "Cold & Cough",
-            description: "Runny nose",
-            time: "02:40 PM",
-            color: .systemBlue,
-            iconName: "wind"
-        )
-
-        timelineDataByDate[today] = [fever, cold]
-
-        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
-            timelineDataByDate[yesterday] = [
-                SymptomTimelineItem(
-                    title: "Vomiting",
-                    description: "After food",
-                    time: "11:00 AM",
-                    color: .systemOrange,
-                    iconName: "cross.case"
-                )
-            ]
-        }
-
-        allDatesSorted = timelineDataByDate.keys.sorted()
-        reloadCalendarDots()
-    }
+//    func loadSampleData() {
+//        let today = calendar.startOfDay(for: Date())
+//
+//        let fever = SymptomTimelineItem(
+//            title: "Fever",
+//            description: "High body temperature",
+//            time: "09:15 AM",
+//            color: .systemRed,
+//            iconName: "thermometer"
+//        )
+//
+//        let cold = SymptomTimelineItem(
+//            title: "Cold & Cough",
+//            description: "Runny nose",
+//            time: "02:40 PM",
+//            color: .systemBlue,
+//            iconName: "wind"
+//        )
+//
+//        timelineDataByDate[today] = [fever, cold]
+//
+//        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
+//            timelineDataByDate[yesterday] = [
+//                SymptomTimelineItem(
+//                    title: "Vomiting",
+//                    description: "After food",
+//                    time: "11:00 AM",
+//                    color: .systemOrange,
+//                    iconName: "cross.case"
+//                )
+//            ]
+//        }
+//
+//        allDatesSorted = timelineDataByDate.keys.sorted()
+//        reloadCalendarDots()
+//    }
 }
 
 extension SymptomsHistoryViewController: UICalendarViewDelegate {
