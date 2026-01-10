@@ -26,7 +26,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     private var selectedDate: Date = Date()
 
     // TEMP: mock symptoms count per day
-    private var symptomsByDate: [Date: Int] = [:]
+//    private var symptomsByDate: [Date: Int] = [:]
 
     
     @IBOutlet weak var mainStackView: UIStackView!
@@ -37,7 +37,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var summaryLabel: UILabel!
 
-    @IBOutlet weak var emptyStateStackView: UIStackView!
+//    @IBOutlet weak var emptyStateStackView: UIStackView!
     @IBOutlet weak var emptyImageView: UIImageView!
     @IBOutlet weak var emptyTitleLabel: UILabel!
     @IBOutlet weak var emptySubtitleLabel: UILabel!
@@ -52,7 +52,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         super.viewDidLoad()
         
         setupUI()
-        showSampleData()
+//        showSampleData()
         
         setupCalendarCollectionView()
         updateSummary(for: Date())
@@ -60,12 +60,12 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         generateDates()
         calendarCollectionView.reloadData()
         
-        let today = calendar.startOfDay(for: Date())
-        symptomsByDate[today] = 2
+//        let today = calendar.startOfDay(for: Date())
+//        symptomsByDate[today] = 2
 
-        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
-            symptomsByDate[yesterday] = 1
-        }
+//        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
+//            symptomsByDate[yesterday] = 1
+//        }
         
         timelineTableView.delegate = self
         timelineTableView.dataSource = self
@@ -86,8 +86,28 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
+
+        // pull fresh data
+        updateSummary(for: selectedDate)
+
+        // update dots
+        calendarCollectionView.reloadData()
+
+        // scroll to today if needed
+        if let index = indexOfToday() {
+            calendarCollectionView.selectItem(
+                at: index,
+                animated: false,
+                scrollPosition: .centeredHorizontally
+            )
+        }
     }
+
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
+//    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -120,43 +140,43 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
     }
 
-    private func showSampleData() {
-
-        let today = calendar.startOfDay(for: Date())
-
-        let fever = SymptomTimelineItem(
-            title: "Fever",
-            description: "High temperature",
-            time: "09:15 AM",
-            color: .systemRed,
-            iconName: "thermometer"
-        )
-
-        let cold = SymptomTimelineItem(
-            title: "Cold & Cough",
-            description: "Runny nose",
-            time: "02:40 PM",
-            color: .systemBlue,
-            iconName: "wind"
-        )
-
-        timelineDataByDate[today] = [fever, cold]
-        symptomsByDate[today] = 2
-
-        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
-
-            let vomiting = SymptomTimelineItem(
-                title: "Vomiting",
-                description: "One episode after food",
-                time: "11:10 AM",
-                color: .systemOrange,
-                iconName: "cross.case"
-            )
-
-            timelineDataByDate[yesterday] = [vomiting]
-            symptomsByDate[yesterday] = 1
-        }
-    }
+//    private func showSampleData() {
+//
+//        let today = calendar.startOfDay(for: Date())
+//
+//        let fever = SymptomTimelineItem(
+//            title: "Fever",
+//            description: "High temperature",
+//            time: "09:15 AM",
+//            color: .systemRed,
+//            iconName: "thermometer"
+//        )
+//
+//        let cold = SymptomTimelineItem(
+//            title: "Cold & Cough",
+//            description: "Runny nose",
+//            time: "02:40 PM",
+//            color: .systemBlue,
+//            iconName: "wind"
+//        )
+//
+//        timelineDataByDate[today] = [fever, cold]
+//        symptomsByDate[today] = 2
+//
+//        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
+//
+//            let vomiting = SymptomTimelineItem(
+//                title: "Vomiting",
+//                description: "One episode after food",
+//                time: "11:10 AM",
+//                color: .systemOrange,
+//                iconName: "cross.case"
+//            )
+//
+//            timelineDataByDate[yesterday] = [vomiting]
+//            symptomsByDate[yesterday] = 1
+//        }
+//    }
 
     
     private func setupCalendarCollectionView() {
@@ -218,8 +238,11 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
 
-        let day = calendar.startOfDay(for: date)
-        currentTimelineItems = timelineDataByDate[day] ?? []
+//        let day = calendar.startOfDay(for: date)
+//        currentTimelineItems = timelineDataByDate[day] ?? []
+        currentTimelineItems =
+            SymptomsDataStore.shared.symptoms(for: date)
+
 
         if currentTimelineItems.isEmpty {
 //            emptyStateStackView.isHidden = false
@@ -246,7 +269,10 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             bundle: nil
         )
 
-        vc.timelineDataByDate = self.timelineDataByDate
+//        vc.timelineDataByDate = self.timelineDataByDate
+        vc.timelineDataByDate =
+            SymptomsDataStore.shared.timelineDataByDate
+
 
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
@@ -261,7 +287,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @objc private func exportPDF() {
 
         guard let pdfURL = SymptomsPDFExporter.generatePDF(
-            from: timelineDataByDate,
+            from: SymptomsDataStore.shared.timelineDataByDate,
             calendar: calendar
         ) else { return }
 
@@ -319,8 +345,11 @@ extension SymptomsTrackerViewController: UICollectionViewDataSource {
         let day = dayFormatter.string(from: date).uppercased()
         let dayNumber = dateFormatter.string(from: date)
 
+//        let hasSymptoms =
+//            symptomsByDate[calendar.startOfDay(for: date)] != nil
         let hasSymptoms =
-            symptomsByDate[calendar.startOfDay(for: date)] != nil
+            SymptomsDataStore.shared.hasSymptoms(on: date)
+
 
         cell.configure(
             day: day,
