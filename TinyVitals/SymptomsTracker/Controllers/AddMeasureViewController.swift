@@ -52,7 +52,7 @@ final class AddMeasureViewController: UIViewController,
         case .weight: return 100.0
         case .height: return 15.0
         case .temperature: return 120.0
-        case .severity: return 20.0
+        case .severity: return 22.0
         }
     }
 

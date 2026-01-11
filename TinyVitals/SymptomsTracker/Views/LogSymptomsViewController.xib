@@ -13,6 +13,7 @@
             <connections>
                 <outlet property="addHeightButton" destination="jpH-ui-g79" id="NrG-fp-avK"/>
                 <outlet property="addPhotoButton" destination="xKX-Ey-50F" id="zS8-oa-xm5"/>
+                <outlet property="addSeverityButton" destination="Pb5-It-Ob4" id="Bh4-VQ-Su5"/>
                 <outlet property="addTemperatureButton" destination="tHA-cm-bhO" id="KYc-4J-wBV"/>
                 <outlet property="addWeightButton" destination="anr-Fc-tyW" id="fao-1j-4L2"/>
                 <outlet property="datePicker" destination="HBg-yH-JLL" id="fTf-Au-WEo"/>
@@ -189,6 +190,9 @@
                                             <buttonConfiguration key="configuration" style="plain" title="Severity">
                                                 <fontDescription key="titleFontDescription" type="boldSystem" pointSize="13"/>
                                             </buttonConfiguration>
+                                            <connections>
+                                                <action selector="addSeverityTapped:" destination="-1" eventType="touchUpInside" id="Z9V-3v-Wla"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
