@@ -7,18 +7,23 @@
 
 import UIKit
 
-struct SymptomTimelineItem {
-    let title: String
-    let description: String
-    let time: String
-    let color: UIColor
-    let iconName: String
-}
+//struct SymptomTimelineItem {
+//    let title: String
+//    let description: String
+//    let time: String
+//    let color: UIColor
+//    let iconName: String
+//}
+
+private var currentEntries: [SymptomEntry] = []
 
 class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
-    private var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
-    private var currentTimelineItems: [SymptomTimelineItem] = []
+//    private var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
+//    private var currentTimelineItems: [SymptomTimelineItem] = []
+//    private var currentEntries: [SymptomEntry] = []
+//    currentEntries = SymptomsDataStore.shared.entries(for: date)
+
 
     
     private let calendar = Calendar.current
@@ -81,6 +86,13 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         timelineTableView.estimatedRowHeight = 120
         
         calendarCollectionView.allowsMultipleSelection = false
+        
+        let longPress = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(handleLongPress(_:))
+        )
+        timelineTableView.addGestureRecognizer(longPress)
+
         
     }
     
@@ -238,30 +250,25 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
 
-//        let day = calendar.startOfDay(for: date)
-//        currentTimelineItems = timelineDataByDate[day] ?? []
-        currentTimelineItems =
-            SymptomsDataStore.shared.symptoms(for: date)
+        currentEntries = SymptomsDataStore.shared.entries(for: date)
 
-
-        if currentTimelineItems.isEmpty {
-//            emptyStateStackView.isHidden = false
+        if currentEntries.isEmpty {
             emptyImageView.isHidden = false
             emptyTitleLabel.isHidden = false
             emptySubtitleLabel.isHidden = false
             timelineTableView.isHidden = true
             summaryLabel.text = "Your child doesn’t have any symptoms on this day"
         } else {
-//            emptyStateStackView.isHidden = true
             emptyImageView.isHidden = true
             emptyTitleLabel.isHidden = true
             emptySubtitleLabel.isHidden = true
             timelineTableView.isHidden = false
-            summaryLabel.text = "Your child has \(currentTimelineItems.count) symptoms today"
+            summaryLabel.text = "Your child has \(currentEntries.count) symptoms today"
         }
 
         timelineTableView.reloadData()
     }
+
     
     @IBAction func historyTapped(_ sender: UIButton) {
         let vc = SymptomsHistoryViewController(
@@ -270,8 +277,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         )
 
 //        vc.timelineDataByDate = self.timelineDataByDate
-        vc.timelineDataByDate =
-            SymptomsDataStore.shared.timelineDataByDate
+//        vc.timelineDataByDate =
+//            SymptomsDataStore.shared.timelineDataByDate
 
 
         let nav = UINavigationController(rootViewController: vc)
@@ -287,7 +294,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @objc private func exportPDF() {
 
         guard let pdfURL = SymptomsPDFExporter.generatePDF(
-            from: SymptomsDataStore.shared.timelineDataByDate,
+            from: SymptomsDataStore.shared.entriesByDate,
             calendar: calendar
         ) else { return }
 
@@ -307,6 +314,53 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             return IndexPath(item: index, section: 0)
         }
         return nil
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        let entry = currentEntries[indexPath.row]
+
+        let vc = SymptomDetailViewController(
+            nibName: "SymptomDetailViewController",
+            bundle: nil
+        )
+
+        vc.entry = entry
+        navigationController?.pushViewController(vc, animated: true)
+
+    }
+
+    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+
+        let point = gesture.location(in: timelineTableView)
+        guard let indexPath = timelineTableView.indexPathForRow(at: point) else { return }
+
+        let entry = currentEntries[indexPath.row]
+
+        let alert = UIAlertController(
+            title: entry.symptom.title,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(title: "Edit", style: .default) { _ in
+            let vc = SymptomDetailViewController(
+                nibName: "SymptomDetailViewController",
+                bundle: nil
+            )
+            vc.entry = entry
+            self.navigationController?.pushViewController(vc, animated: true)
+        })
+
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
+            SymptomsDataStore.shared.deleteEntry(entry)
+            self.updateSummary(for: self.selectedDate)
+        })
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
     }
 
     
@@ -405,7 +459,7 @@ extension SymptomsTrackerViewController: UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        currentTimelineItems.count
+        currentEntries.count
     }
 
     func tableView(
@@ -418,7 +472,7 @@ extension SymptomsTrackerViewController: UITableViewDataSource {
             for: indexPath
         ) as! SymptomTimelineCell
 
-        cell.configure(with: currentTimelineItems[indexPath.row])
+        cell.configure(with: currentEntries[indexPath.row])
         return cell
     }
 }

@@ -10,9 +10,9 @@ import UIKit
 class SymptomTimelineCell: UITableViewCell {
     
     
-    @IBOutlet weak var timeLabel: UILabel!
+       @IBOutlet weak var timeLabel: UILabel!
     
-    @IBOutlet weak var topLineView: UIView!
+       @IBOutlet weak var topLineView: UIView!
        @IBOutlet weak var bottomLineView: UIView!
        @IBOutlet weak var dotView: UIView!
 
@@ -30,14 +30,7 @@ class SymptomTimelineCell: UITableViewCell {
             super.awakeFromNib()
 
             selectionStyle = .none
-
-            // Card appearance
-//            cardView.layer.cornerRadius = 16
-//            cardView.layer.masksToBounds = true
-
-            // Icon polish
             iconImageView.contentMode = .scaleAspectFit
-        
             prepareForAnimation()
         }
     
@@ -49,20 +42,24 @@ class SymptomTimelineCell: UITableViewCell {
         dotView.alpha = 0
     }
 
+    func configure(with entry: SymptomEntry) {
 
-    func configure(with item: SymptomTimelineItem) {
+        timeLabel.text = DateFormatter.localizedString(
+            from: entry.date,
+            dateStyle: .none,
+            timeStyle: .short
+        )
 
-        timeLabel.text = item.time
-        titleLabel.text = item.title
-        descriptionLabel.text = item.description
+        titleLabel.text = entry.symptom.title
+        descriptionLabel.text = "Reported by parent"
 
-//            cardView.backgroundColor = item.color.withAlphaComponent(0.15)
+        iconImageView.image = UIImage(systemName: entry.symptom.iconName)
+        iconImageView.tintColor = entry.symptom.tintColor
 
-        iconImageView.image = UIImage(systemName: item.iconName)
-        iconImageView.tintColor = item.color
-
-            animateTimeline()
+        animateTimeline()
     }
+
+
     
     private func prepareForAnimation() {
         topLineHeight.constant = 0

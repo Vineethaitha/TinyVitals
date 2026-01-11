@@ -7,7 +7,7 @@
 
 import UIKit
 
-private var selectedDayItems: [SymptomTimelineItem] = []
+private var selectedDayItems: [SymptomEntry] = []
 
 final class SymptomsHistoryViewController: UIViewController, UITableViewDelegate {
 
@@ -18,7 +18,7 @@ final class SymptomsHistoryViewController: UIViewController, UITableViewDelegate
     private let calendar = Calendar.current
 
     // 🔹 DATA
-    var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
+//    var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
     private var allDatesSorted: [Date] = []
     private var selectedDate: Date?
 
@@ -36,8 +36,8 @@ final class SymptomsHistoryViewController: UIViewController, UITableViewDelegate
         timelineTableView.reloadData()
         updateEmptyState()
         
-        timelineDataByDate =
-            SymptomsDataStore.shared.timelineDataByDate
+//        timelineDataByDate =
+//            SymptomsDataStore.shared.timelineDataByDate
 
         allDatesSorted =
             SymptomsDataStore.shared.allDates()
@@ -164,19 +164,19 @@ extension SymptomsHistoryViewController: UICalendarViewDelegate {
         decorationFor dateComponents: DateComponents
     ) -> UICalendarView.Decoration? {
 
-        guard
-            let date = calendar.date(from: dateComponents),
-            timelineDataByDate[calendar.startOfDay(for: date)] != nil
+        guard let date = calendar.date(from: dateComponents),
+              SymptomsDataStore.shared.hasSymptoms(on: date)
         else { return nil }
 
         return .default(color: .systemPink, size: .small)
     }
 
+
     func reloadCalendarDots() {
-        let components = timelineDataByDate.keys.map {
+        let dates = SymptomsDataStore.shared.allDates().map {
             calendar.dateComponents([.year, .month, .day], from: $0)
         }
-        calendarView.reloadDecorations(forDateComponents: components, animated: true)
+        calendarView.reloadDecorations(forDateComponents: dates, animated: true)
     }
 }
 
@@ -198,8 +198,8 @@ extension SymptomsHistoryViewController: UICalendarSelectionSingleDateDelegate {
         let day = calendar.startOfDay(for: date)
         selectedDate = day
 
-        // ✅ ONLY take symptoms for this day
-        selectedDayItems = timelineDataByDate[day] ?? []
+        selectedDayItems =
+            SymptomsDataStore.shared.entries(for: day)
 
         timelineTableView.reloadData()
     }
@@ -218,7 +218,9 @@ extension SymptomsHistoryViewController: UICalendarSelectionSingleDateDelegate {
 
             let today = calendar.startOfDay(for: Date())
             selectedDate = today
-            selectedDayItems = timelineDataByDate[today] ?? []
+            selectedDayItems =
+                SymptomsDataStore.shared.entries(for: today)
+
             timelineTableView.reloadData()
         }
     }

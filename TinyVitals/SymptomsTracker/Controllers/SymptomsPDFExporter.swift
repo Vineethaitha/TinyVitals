@@ -10,7 +10,7 @@ import UIKit
 final class SymptomsPDFExporter {
 
     static func generatePDF(
-        from data: [Date: [SymptomTimelineItem]],
+        from data: [Date: [SymptomEntry]],
         calendar: Calendar
     ) -> URL? {
 
@@ -48,12 +48,15 @@ final class SymptomsPDFExporter {
 
                     guard let items = data[date] else { continue }
 
-                    for item in items {
-                        let line = "• \(item.time)  \(item.title) – \(item.description)"
-                        line.draw(
-                            at: CGPoint(x: 40, y: y),
-                            withAttributes: bodyAttributes
+                    for entry in items {
+                        let time = DateFormatter.localizedString(
+                            from: entry.date,
+                            dateStyle: .none,
+                            timeStyle: .short
                         )
+
+                        let line = "• \(time)  \(entry.symptom.title)"
+                        line.draw(at: CGPoint(x: 40, y: y), withAttributes: bodyAttributes)
                         y += 22
                     }
                 }

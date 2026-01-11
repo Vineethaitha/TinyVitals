@@ -195,37 +195,26 @@ final class LogSymptomsViewController: UIViewController {
     }
 
     @IBAction func saveTapped(_ sender: UIButton) {
-//        let alert = UIAlertController(
-//            title: "Saved",
-//            message: "Symptoms saved successfully (mock)",
-//            preferredStyle: .alert
-//        )
-//        alert.addAction(UIAlertAction(title: "OK", style: .default))
-//        navigationController?.popViewController(animated: true)
-//        present(alert, animated: true)
-        let formatter = DateFormatter()
-            formatter.timeStyle = .short
 
-            let time = formatter.string(from: selectedDate)
+            for symptom in selectedSymptoms {
 
-        let items = selectedSymptoms.map { symptom in
-            SymptomTimelineItem(
-                title: symptom.title,
-                description: "Reported by parent",
-                time: time,
-                color: symptom.tintColor,
-                iconName: symptom.iconName
-            )
+                var entry = SymptomEntry(
+                    symptom: symptom,
+                    date: selectedDate
+                )
+
+                entry.height = currentHeight
+                entry.weight = currentWeight
+                entry.temperature = currentTemperature
+                entry.severity = currentSeverity
+                entry.notes = notesTextView.text
+                entry.image = photoImageView.image
+
+                SymptomsDataStore.shared.addEntry(entry)
             }
 
-            // SAVE TO CENTRAL STORE
-            SymptomsDataStore.shared.addSymptoms(
-                items,
-                on: selectedDate
-            )
-
             navigationController?.popViewController(animated: true)
-        
+
     }
     
     @IBAction func selectSymptomsTapped(_ sender: UIButton) {
