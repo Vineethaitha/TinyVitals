@@ -25,9 +25,17 @@ final class LogSymptomsViewController: UIViewController {
     @IBOutlet weak var symptomsPreviewLabel: UILabel!
 
     // Vitals
-    @IBOutlet weak var heightButton: UIButton!
-    @IBOutlet weak var weightButton: UIButton!
-    @IBOutlet weak var temperatureButton: UIButton!
+    @IBOutlet weak var addHeightButton: UIButton!
+    @IBOutlet weak var addWeightButton: UIButton!
+    @IBOutlet weak var addTemperatureButton: UIButton!
+    
+    @IBOutlet weak var addSeverityButton: UIButton!
+
+    
+    private var currentWeight: Double = 1.5
+    private var currentHeight: Double = 1.5
+    private var currentTemperature: Double = 98.6
+    private var currentSeverity: Double = 5
 
     // Notes
     @IBOutlet weak var notesTextView: UITextView!
@@ -124,30 +132,58 @@ final class LogSymptomsViewController: UIViewController {
 //    }
 
     @IBAction func heightTapped(_ sender: UIButton) {
-        showSampleAlert(
-            title: "Height",
-            message: "Sample Height: 120 cm"
-        ) {
-            self.heightButton.setTitle("120 cm", for: .normal)
-        }
+//        showSampleAlert(
+//            title: "Height",
+//            message: "Sample Height: 120 cm"
+//        ) {
+//            self.addHeightButton.setTitle("120 cm", for: .normal)
+//        }
+        
+        let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
+        vc.measureType = .height
+        vc.selectedInitialValue = currentHeight
+        vc.delegate = self
+        present(vc, animated: true)
     }
 
     @IBAction func weightTapped(_ sender: UIButton) {
-        showSampleAlert(
-            title: "Weight",
-            message: "Sample Weight: 25 kg"
-        ) {
-            self.weightButton.setTitle("25 kg", for: .normal)
-        }
+//        showSampleAlert(
+//            title: "Weight",
+//            message: "Sample Weight: 25 kg"
+//        ) {
+//            self.addWeightButton.setTitle("25 kg", for: .normal)
+//        }
+        
+        let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
+        vc.measureType = .weight
+        vc.selectedInitialValue = currentWeight
+        vc.delegate = self
+        present(vc, animated: true)
     }
 
     @IBAction func temperatureTapped(_ sender: UIButton) {
-        showSampleAlert(
-            title: "Temperature",
-            message: "Sample Temperature: 98.6°F"
-        ) {
-            self.temperatureButton.setTitle("98.6°F", for: .normal)
-        }
+//        showSampleAlert(
+//            title: "Temperature",
+//            message: "Sample Temperature: 98.6°F"
+//        ) {
+//            self.temperatureButton.setTitle("98.6°F", for: .normal)
+//        }
+        let vc = AddMeasureViewController(
+            nibName: "AddMeasureViewController",
+            bundle: nil
+        )
+        vc.measureType = .temperature
+        vc.selectedInitialValue = currentTemperature
+        vc.delegate = self
+        present(vc, animated: true)
+    }
+    
+    @IBAction func addSeverityTapped(_ sender: UIButton) {
+        let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
+        vc.measureType = .severity
+        vc.selectedInitialValue = currentSeverity
+        vc.delegate = self
+        present(vc, animated: true)
     }
 
     @IBAction func addPhotoTapped(_ sender: UIButton) {
@@ -236,6 +272,28 @@ final class LogSymptomsViewController: UIViewController {
 
         present(alert, animated: true)
     }
+    
+    private func updateButtonTitle() {
+        addWeightButton.setTitle(
+            String(format: "%.1f kg", currentWeight),
+            for: .normal
+        )
+
+        addHeightButton.setTitle(
+            String(format: "%.1f ft", currentHeight),
+            for: .normal
+        )
+
+        addTemperatureButton.setTitle(
+            String(format: "%.1f °F", currentTemperature),
+            for: .normal
+        )
+
+        addSeverityButton.setTitle(
+            "Severity \(Int(currentSeverity))",
+            for: .normal
+        )
+    }
 }
 
 
@@ -259,4 +317,23 @@ extension LogSymptomsViewController: UIImagePickerControllerDelegate, UINavigati
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true)
     }
+}
+
+extension LogSymptomsViewController: AddMeasureDelegate {
+
+    func didSaveValue(_ value: Double, type: AddMeasureViewController.MeasureType) {
+        switch type {
+        case .weight:
+            currentWeight = value
+        case .height:
+            currentHeight = value
+        case .temperature:
+            currentTemperature = value
+        case .severity:
+            currentSeverity = value
+        }
+        updateButtonTitle()
+    }
+
+
 }

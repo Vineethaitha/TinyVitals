@@ -11,9 +11,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LogSymptomsViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
+                <outlet property="addHeightButton" destination="jpH-ui-g79" id="NrG-fp-avK"/>
                 <outlet property="addPhotoButton" destination="xKX-Ey-50F" id="zS8-oa-xm5"/>
+                <outlet property="addTemperatureButton" destination="tHA-cm-bhO" id="KYc-4J-wBV"/>
+                <outlet property="addWeightButton" destination="anr-Fc-tyW" id="fao-1j-4L2"/>
                 <outlet property="datePicker" destination="HBg-yH-JLL" id="fTf-Au-WEo"/>
-                <outlet property="heightButton" destination="jpH-ui-g79" id="NrG-fp-avK"/>
                 <outlet property="mainScrollView" destination="mZy-Hi-ssn" id="U2B-Zj-BUi"/>
                 <outlet property="mainStackView" destination="onx-O6-Lxw" id="S0a-PZ-WIQ"/>
                 <outlet property="notesTextView" destination="zRQ-cj-8Q0" id="Vhq-JV-7Yi"/>
@@ -21,9 +23,7 @@
                 <outlet property="saveButton" destination="IXd-3e-sqC" id="Zd3-Nq-FFr"/>
                 <outlet property="selectedSymptomsLabel" destination="VJ5-qJ-gVU" id="dWG-2s-OgJ"/>
                 <outlet property="symptomsPreviewLabel" destination="zMB-a4-T3U" id="QcE-Fg-6UP"/>
-                <outlet property="temperatureButton" destination="tHA-cm-bhO" id="KYc-4J-wBV"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
-                <outlet property="weightButton" destination="anr-Fc-tyW" id="fao-1j-4L2"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -174,20 +174,40 @@
                                                 <action selector="temperatureTapped:" destination="-1" eventType="touchUpInside" id="Eto-ja-GRX"/>
                                             </connections>
                                         </button>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Image 2" translatesAutoresizingMaskIntoConstraints="NO" id="0xF-RT-gio">
+                                            <rect key="frame" x="234.33333333333334" y="70" width="40.000000000000028" height="40"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="40" id="0eG-de-rlZ"/>
+                                                <constraint firstAttribute="width" constant="40" id="BJz-4y-dFu"/>
+                                            </constraints>
+                                        </imageView>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pb5-It-Ob4">
+                                            <rect key="frame" x="279.33333333333331" y="69.666666666666657" width="77.666666666666686" height="29.666666666666671"/>
+                                            <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                            <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="Severity">
+                                                <fontDescription key="titleFontDescription" type="boldSystem" pointSize="13"/>
+                                            </buttonConfiguration>
+                                        </button>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="dru-iT-vav" firstAttribute="top" secondItem="jj8-tx-DAv" secondAttribute="top" constant="10" id="5XB-xl-j9d"/>
+                                        <constraint firstItem="anr-Fc-tyW" firstAttribute="bottom" secondItem="Pb5-It-Ob4" secondAttribute="top" constant="-26" id="6Gj-yP-SME"/>
                                         <constraint firstItem="cIN-0I-haj" firstAttribute="top" secondItem="IsK-FM-dNF" secondAttribute="bottom" constant="20" id="9Gf-am-EKm"/>
                                         <constraint firstItem="tHA-cm-bhO" firstAttribute="leading" secondItem="cIN-0I-haj" secondAttribute="trailing" id="CZM-C1-GGo"/>
                                         <constraint firstItem="cIN-0I-haj" firstAttribute="leading" secondItem="jj8-tx-DAv" secondAttribute="leading" constant="20" id="IO2-00-JiA"/>
                                         <constraint firstAttribute="height" constant="120" id="Tqe-7L-Leo"/>
                                         <constraint firstAttribute="trailing" secondItem="anr-Fc-tyW" secondAttribute="trailing" constant="20" id="WDf-6f-a8d"/>
                                         <constraint firstItem="jpH-ui-g79" firstAttribute="top" secondItem="jj8-tx-DAv" secondAttribute="top" constant="16" id="Wcn-ad-NSw"/>
+                                        <constraint firstAttribute="trailing" secondItem="Pb5-It-Ob4" secondAttribute="trailing" constant="36" id="aUv-RA-xKO"/>
                                         <constraint firstItem="jpH-ui-g79" firstAttribute="leading" secondItem="IsK-FM-dNF" secondAttribute="trailing" id="bxY-Wx-gpA"/>
                                         <constraint firstItem="IsK-FM-dNF" firstAttribute="top" secondItem="jj8-tx-DAv" secondAttribute="top" constant="10" id="fok-9K-Rdf"/>
                                         <constraint firstItem="tHA-cm-bhO" firstAttribute="top" secondItem="jpH-ui-g79" secondAttribute="bottom" constant="26" id="fsc-4k-8tv"/>
+                                        <constraint firstItem="0xF-RT-gio" firstAttribute="top" secondItem="dru-iT-vav" secondAttribute="bottom" constant="20" id="gFO-zJ-15q"/>
                                         <constraint firstItem="anr-Fc-tyW" firstAttribute="leading" secondItem="dru-iT-vav" secondAttribute="trailing" constant="5" id="iEl-5W-mJJ"/>
+                                        <constraint firstItem="Pb5-It-Ob4" firstAttribute="leading" secondItem="0xF-RT-gio" secondAttribute="trailing" constant="5" id="mAP-nO-9dt"/>
                                         <constraint firstItem="anr-Fc-tyW" firstAttribute="top" secondItem="jj8-tx-DAv" secondAttribute="top" constant="14" id="nRr-jD-DQQ"/>
                                         <constraint firstItem="IsK-FM-dNF" firstAttribute="leading" secondItem="jj8-tx-DAv" secondAttribute="leading" constant="20" id="z06-Qs-tBl"/>
                                     </constraints>
