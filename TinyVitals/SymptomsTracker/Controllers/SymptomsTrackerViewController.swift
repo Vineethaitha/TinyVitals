@@ -321,18 +321,25 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         let entry = currentEntries[indexPath.row]
+        presentDetail(entry)
+    }
 
+    
+    private func presentDetail(_ entry: SymptomEntry) {
         let vc = SymptomDetailViewController(
             nibName: "SymptomDetailViewController",
             bundle: nil
         )
-
         vc.entry = entry
-        navigationController?.pushViewController(vc, animated: true)
-
+        vc.modalPresentationStyle = .pageSheet
+        present(vc, animated: true)
     }
 
+
+
     @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+
+        if gesture.state != .began { return }
 
         let point = gesture.location(in: timelineTableView)
         guard let indexPath = timelineTableView.indexPathForRow(at: point) else { return }
@@ -340,19 +347,10 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         let entry = currentEntries[indexPath.row]
 
         let alert = UIAlertController(
-            title: entry.symptom.title,
-            message: nil,
+            title: "Delete symptom?",
+            message: entry.symptom.title,
             preferredStyle: .actionSheet
         )
-
-        alert.addAction(UIAlertAction(title: "Edit", style: .default) { _ in
-            let vc = SymptomDetailViewController(
-                nibName: "SymptomDetailViewController",
-                bundle: nil
-            )
-            vc.entry = entry
-            self.navigationController?.pushViewController(vc, animated: true)
-        })
 
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
             SymptomsDataStore.shared.deleteEntry(entry)
@@ -360,9 +358,9 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         })
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
         present(alert, animated: true)
     }
-
     
     
 }

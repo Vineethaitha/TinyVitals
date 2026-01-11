@@ -9,80 +9,47 @@ import UIKit
 
 final class SymptomDetailViewController: UIViewController {
 
-    // MARK: - Data
     var entry: SymptomEntry!
 
-    private var currentHeight: Double?
-    private var currentWeight: Double?
-    private var currentTemperature: Double?
-    private var currentSeverity: Double?
-
-    // MARK: - Outlets
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
 
-    @IBOutlet weak var heightButton: UIButton!
-    @IBOutlet weak var weightButton: UIButton!
-    @IBOutlet weak var temperatureButton: UIButton!
-    @IBOutlet weak var severityButton: UIButton!
+    @IBOutlet weak var heightLabel: UILabel!
+    @IBOutlet weak var weightLabel: UILabel!
+    @IBOutlet weak var temperatureLabel: UILabel!
+    @IBOutlet weak var severityLabel: UILabel!
 
-    @IBOutlet weak var notesTextView: UITextView!
-
+    @IBOutlet weak var notesLabel: UILabel!
     @IBOutlet weak var photoImageView: UIImageView!
-    @IBOutlet weak var addPhotoButton: UIButton!
 
-    @IBOutlet weak var saveButton: UIButton!
-
-    // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-        populateData()
-        configureSheet()
+        setupSheet()
+        populate()
     }
 
-    private func configureSheet() {
+    private func setupSheet() {
+        view.backgroundColor = .systemGroupedBackground
         if let sheet = sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 24
         }
     }
 
-    
-    private func setupUI() {
-
-        view.backgroundColor = .systemGroupedBackground
-
-        photoImageView.layer.cornerRadius = 12
-        photoImageView.clipsToBounds = true
-
-        notesTextView.layer.cornerRadius = 12
-        notesTextView.backgroundColor = .secondarySystemBackground
-
-        saveButton.layer.cornerRadius = 24
-        saveButton.backgroundColor = .systemPink
-        saveButton.setTitleColor(.white, for: .normal)
-    }
-
-    private func populateData() {
-
+    private func populate() {
         titleLabel.text = entry.symptom.title
 
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        dateLabel.text = formatter.string(from: entry.date)
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .short
+        dateLabel.text = f.string(from: entry.date)
 
-        currentHeight = entry.height
-        currentWeight = entry.weight
-        currentTemperature = entry.temperature
-        currentSeverity = entry.severity
+        heightLabel.text = entry.height != nil ? "\(entry.height!) ft" : "—"
+        weightLabel.text = entry.weight != nil ? "\(entry.weight!) kg" : "—"
+        temperatureLabel.text = entry.temperature != nil ? "\(entry.temperature!) °F" : "—"
+        severityLabel.text = entry.severity != nil ? "\(Int(entry.severity!)) / 5" : "—"
 
-        updateButtons()
-
-        notesTextView.text = entry.notes
+        notesLabel.text = entry.notes?.isEmpty == false ? entry.notes : "No notes"
 
         if let image = entry.image {
             photoImageView.image = image
@@ -92,128 +59,12 @@ final class SymptomDetailViewController: UIViewController {
         }
     }
 
-    
-    private func updateButtons() {
-
-        heightButton.setTitle(
-            currentHeight != nil ? "\(currentHeight!) ft" : "Add height",
-            for: .normal
-        )
-
-        weightButton.setTitle(
-            currentWeight != nil ? "\(currentWeight!) kg" : "Add weight",
-            for: .normal
-        )
-
-        temperatureButton.setTitle(
-            currentTemperature != nil ? "\(currentTemperature!) °F" : "Add temp",
-            for: .normal
-        )
-
-        severityButton.setTitle(
-            currentSeverity != nil ? "Severity \(Int(currentSeverity!))" : "Add severity",
-            for: .normal
-        )
-    }
-
-    @IBAction func heightTapped() {
-        openMeasure(.height, value: currentHeight)
-    }
-
-    @IBAction func weightTapped() {
-        openMeasure(.weight, value: currentWeight)
-    }
-
-    @IBAction func temperatureTapped() {
-        openMeasure(.temperature, value: currentTemperature)
-    }
-
-    @IBAction func severityTapped() {
-        openMeasure(.severity, value: currentSeverity)
-    }
-
-    private func openMeasure(
-        _ type: AddMeasureViewController.MeasureType,
-        value: Double?
-    ) {
-        let vc = AddMeasureViewController(
-            nibName: "AddMeasureViewController",
-            bundle: nil
-        )
-        vc.measureType = type
-        vc.selectedInitialValue = value ?? 0
-        vc.delegate = self
-        present(vc, animated: true)
-    }
-
-    @IBAction func addPhotoTapped() {
-        let picker = UIImagePickerController()
-        picker.sourceType = .photoLibrary
-        picker.delegate = self
-        picker.allowsEditing = true
-        present(picker, animated: true)
-    }
-    
-    @IBAction func saveTapped() {
-
-        entry.height = currentHeight
-        entry.weight = currentWeight
-        entry.temperature = currentTemperature
-        entry.severity = currentSeverity
-        entry.notes = notesTextView.text
-        entry.image = photoImageView.image
-
-        navigationController?.popViewController(animated: true)
-    }
-    
-//    @IBAction func backTapped() {
-//        navigationController?.popViewController(animated: true)
+//    @IBAction func deleteTapped() {
+//        SymptomsDataStore.shared.deleteEntry(entry)
+//        dismiss(animated: true)
 //    }
-
-
-    
-}
-
-
-extension SymptomDetailViewController:
-    UIImagePickerControllerDelegate,
-    UINavigationControllerDelegate {
-
-    func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
-    ) {
-
-        if let image =
-            info[.editedImage] as? UIImage ??
-            info[.originalImage] as? UIImage {
-
-            photoImageView.image = image
-            photoImageView.isHidden = false
-        }
-
-        dismiss(animated: true)
-    }
-}
-
-
-extension SymptomDetailViewController: AddMeasureDelegate {
-
-    func didSaveValue(
-        _ value: Double,
-        type: AddMeasureViewController.MeasureType
-    ) {
-        switch type {
-        case .height:
-            currentHeight = value
-        case .weight:
-            currentWeight = value
-        case .temperature:
-            currentTemperature = value
-        case .severity:
-            currentSeverity = value
-        }
-
-        updateButtons()
-    }
+//
+//    @IBAction func cancelTapped() {
+//        dismiss(animated: true)
+//    }
 }

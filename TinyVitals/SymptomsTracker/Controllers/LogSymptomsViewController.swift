@@ -7,6 +7,8 @@
 
 import UIKit
 
+private let notesPlaceholder = "Add notes"
+
 final class LogSymptomsViewController: UIViewController {
     
     private var selectedDate: Date = Date()
@@ -62,6 +64,10 @@ final class LogSymptomsViewController: UIViewController {
         photoImageView.layer.cornerRadius = 12
         photoImageView.clipsToBounds = true
         photoImageView.contentMode = .scaleAspectFill
+        notesTextView.delegate = self
+        notesTextView.text = notesPlaceholder
+        notesTextView.textColor = .secondaryLabel
+
 
     }
 
@@ -325,4 +331,22 @@ extension LogSymptomsViewController: AddMeasureDelegate {
     }
 
 
+}
+
+
+extension LogSymptomsViewController: UITextViewDelegate {
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.text == notesPlaceholder {
+            textView.text = ""
+            textView.textColor = .label
+        }
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            textView.text = notesPlaceholder
+            textView.textColor = .secondaryLabel
+        }
+    }
 }
