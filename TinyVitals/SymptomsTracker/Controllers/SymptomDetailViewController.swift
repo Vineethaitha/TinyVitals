@@ -57,6 +57,18 @@ final class SymptomDetailViewController: UIViewController {
         } else {
             photoImageView.isHidden = true
         }
+        
+        let descriptor = UIFont.systemFont(ofSize: 22, weight: .bold)
+            .fontDescriptor
+            .withDesign(.rounded)
+
+        titleLabel.font = UIFont(descriptor: descriptor!, size: 24)
+        dateLabel.font = UIFont(descriptor: descriptor!, size: 17)
+        weightLabel.font = UIFont(descriptor: descriptor!, size: 17)
+        heightLabel.font = UIFont(descriptor: descriptor!, size: 17)
+        temperatureLabel.font = UIFont(descriptor: descriptor!, size: 17)
+        severityLabel.font = UIFont(descriptor: descriptor!, size: 17)
+//        notesLabel.font = UIFont(descriptor: descriptor!, size: 22)
     }
 
 //    @IBAction func deleteTapped() {
