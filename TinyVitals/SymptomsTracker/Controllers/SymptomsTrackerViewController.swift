@@ -141,7 +141,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         emptyTitleLabel.text = "No symptoms logged"
         emptyTitleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
 
-        emptySubtitleLabel.text = "Tap + to add symptoms"
+//        emptySubtitleLabel.text = ""
         emptySubtitleLabel.textColor = .secondaryLabel
 
         floatingAddButton.configuration = nil

@@ -91,7 +91,7 @@ extension SymptomsHistoryViewController {
 
         calendarView.calendar = calendar
         calendarView.locale = .current
-        calendarView.tintColor = .systemPink
+        calendarView.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
 
         let selection = UICalendarSelectionSingleDate(delegate: self)
         calendarView.selectionBehavior = selection

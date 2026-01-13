@@ -32,6 +32,12 @@ final class SymptomItemCell: UICollectionViewCell {
     func configure(with item: SymptomItem, selected: Bool) {
         titleLabel.text = item.title
         iconImageView.image = UIImage(systemName: item.iconName)
+        
+        let descriptor = UIFont.systemFont(ofSize: 22, weight: .medium)
+            .fontDescriptor
+            .withDesign(.rounded)
+
+        titleLabel.font = UIFont(descriptor: descriptor!, size: 15)
 
         if selected {
             // ✅ Selected style

@@ -101,10 +101,16 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3dp-9b-M3p">
                                     <rect key="frame" x="0.0" y="100" width="393" height="50"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No symptoms selected yet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zMB-a4-T3U">
-                                            <rect key="frame" x="20" y="14.666666666666684" width="203" height="20.333333333333329"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zMB-a4-T3U">
+                                            <rect key="frame" x="20" y="13.333333333333313" width="239" height="23.333333333333329"/>
+                                            <attributedString key="attributedText">
+                                                <fragment content="No symptoms selected yet">
+                                                    <attributes>
+                                                        <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <font key="NSFont" size="20" name="SFProRounded-Bold"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -126,8 +132,12 @@
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jpH-ui-g79">
-                                            <rect key="frame" x="60" y="16" width="93" height="29.666666666666671"/>
+                                            <rect key="frame" x="60" y="16" width="131" height="30"/>
                                             <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="131" id="Abk-bX-mGk"/>
+                                                <constraint firstAttribute="height" constant="30" id="prH-oN-mIT"/>
+                                            </constraints>
                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" title="Add height">
@@ -138,15 +148,19 @@
                                             </connections>
                                         </button>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Image 1" translatesAutoresizingMaskIntoConstraints="NO" id="dru-iT-vav">
-                                            <rect key="frame" x="232.66666666666666" y="10" width="39.999999999999972" height="40"/>
+                                            <rect key="frame" x="197" y="10" width="40" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="40" id="9uM-pW-ZSP"/>
                                                 <constraint firstAttribute="height" constant="40" id="sUg-1p-CJQ"/>
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="anr-Fc-tyW">
-                                            <rect key="frame" x="277.66666666666669" y="14.000000000000002" width="95.333333333333314" height="29.666666666666671"/>
+                                            <rect key="frame" x="242" y="14" width="131" height="30"/>
                                             <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="131" id="RoW-pn-UKm"/>
+                                                <constraint firstAttribute="height" constant="30" id="rUq-mV-gAh"/>
+                                            </constraints>
                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" title="Add weight">
@@ -164,8 +178,12 @@
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tHA-cm-bhO">
-                                            <rect key="frame" x="60" y="71.666666666666657" width="131" height="29.666666666666671"/>
+                                            <rect key="frame" x="60" y="72" width="131" height="30"/>
                                             <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="131" id="4zF-nj-QSd"/>
+                                                <constraint firstAttribute="height" constant="30" id="TDa-qH-YGy"/>
+                                            </constraints>
                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" title="Add temperature">
@@ -176,15 +194,19 @@
                                             </connections>
                                         </button>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Image 2" translatesAutoresizingMaskIntoConstraints="NO" id="0xF-RT-gio">
-                                            <rect key="frame" x="234.33333333333334" y="70" width="40.000000000000028" height="40"/>
+                                            <rect key="frame" x="197" y="70" width="40" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="40" id="0eG-de-rlZ"/>
                                                 <constraint firstAttribute="width" constant="40" id="BJz-4y-dFu"/>
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pb5-It-Ob4">
-                                            <rect key="frame" x="279.33333333333331" y="69.666666666666657" width="77.666666666666686" height="29.666666666666671"/>
+                                            <rect key="frame" x="242" y="70" width="131" height="30"/>
                                             <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="131" id="9ed-am-rB0"/>
+                                                <constraint firstAttribute="height" constant="30" id="Uyh-U7-prS"/>
+                                            </constraints>
                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" title="Severity">
@@ -205,7 +227,7 @@
                                         <constraint firstAttribute="height" constant="120" id="Tqe-7L-Leo"/>
                                         <constraint firstAttribute="trailing" secondItem="anr-Fc-tyW" secondAttribute="trailing" constant="20" id="WDf-6f-a8d"/>
                                         <constraint firstItem="jpH-ui-g79" firstAttribute="top" secondItem="jj8-tx-DAv" secondAttribute="top" constant="16" id="Wcn-ad-NSw"/>
-                                        <constraint firstAttribute="trailing" secondItem="Pb5-It-Ob4" secondAttribute="trailing" constant="36" id="aUv-RA-xKO"/>
+                                        <constraint firstAttribute="trailing" secondItem="Pb5-It-Ob4" secondAttribute="trailing" constant="20" id="aUv-RA-xKO"/>
                                         <constraint firstItem="jpH-ui-g79" firstAttribute="leading" secondItem="IsK-FM-dNF" secondAttribute="trailing" id="bxY-Wx-gpA"/>
                                         <constraint firstItem="IsK-FM-dNF" firstAttribute="top" secondItem="jj8-tx-DAv" secondAttribute="top" constant="10" id="fok-9K-Rdf"/>
                                         <constraint firstItem="tHA-cm-bhO" firstAttribute="top" secondItem="jpH-ui-g79" secondAttribute="bottom" constant="26" id="fsc-4k-8tv"/>
