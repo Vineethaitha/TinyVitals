@@ -10,6 +10,9 @@ import QuickLook
 
 
 class CalendarRecordsViewController: UIViewController {
+    
+    var activeChild: ChildProfile!
+
 
     @IBOutlet weak var calendarContainerView: UIView!
 
@@ -170,7 +173,10 @@ class CalendarRecordsViewController: UIViewController {
         vc.existingRecord = record
 
         // ✅ PUT THIS LINE HERE
-        vc.availableFolders = store.folders.map { $0.name }
+//        vc.availableFolders = store.folders.map { $0.name }
+        vc.activeChild = activeChild
+        vc.availableFolders = store.folders(for: activeChild.id).map { $0.name }
+
 
         vc.modalPresentationStyle = .pageSheet
         if let sheet = vc.sheetPresentationController {
@@ -185,15 +191,18 @@ class CalendarRecordsViewController: UIViewController {
 
     func deleteRecord(_ record: MedicalFile) {
 
-        for (folder, records) in store.filesByFolder {
-            store.filesByFolder[folder] = records.filter { $0.id != record.id }
+        store.filesByChild[activeChild.id]?.removeAll {
+            $0.id == record.id
         }
 
-        selectedDateRecords.removeAll { $0.id == record.id }
+        selectedDateRecords.removeAll {
+            $0.id == record.id
+        }
 
         groupRecordsByDate()
         tableView.reloadData()
     }
+
     
     func showEmptyAnimation() {
 
@@ -256,11 +265,12 @@ extension CalendarRecordsViewController {
     func groupRecordsByDate() {
         recordsByDate.removeAll()
 
-        for record in store.allRecords {
-            guard let date = record.date.toDate() else { continue }
+        for record in store.allFiles(for: activeChild.id) {
+            let date = record.date.toDate()!
             let normalized = Calendar.current.startOfDay(for: date)
             recordsByDate[normalized, default: []].append(record)
         }
+
 
         let components = recordsByDate.keys.map {
             Calendar.current.dateComponents([.year, .month, .day], from: $0)

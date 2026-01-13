@@ -5,11 +5,12 @@
 //  Created by admin0 on 12/12/25.
 //
 
-import Foundation
 import UIKit
+import Foundation
 
 struct MedicalFile {
     let id: String
+    let childId: UUID
     let title: String
     let hospital: String
     let date: String
@@ -17,6 +18,8 @@ struct MedicalFile {
     let pdfURL: URL?
     var folderName: String
 }
+
+
 
 
 

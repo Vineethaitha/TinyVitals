@@ -51,7 +51,7 @@
 import UIKit
 
 class MainTabBarController: UITabBarController {
-
+    
     // MARK: - State
 
     var allChildren: [ChildProfile] = [] {
@@ -64,9 +64,12 @@ class MainTabBarController: UITabBarController {
 
     var activeChild: ChildProfile? {
         didSet {
+            guard let child = activeChild else { return }
+            propagateActiveChild(child)
             updateNavBarTitles()
         }
     }
+
 
     // MARK: - Lifecycle
 
@@ -81,11 +84,13 @@ class MainTabBarController: UITabBarController {
         )
 
         let records = RecordManagerViewController()
+//        records.activeChild = activeChild    ✅ REQUIRED
         records.tabBarItem = UITabBarItem(
             title: "Records",
             image: UIImage(systemName: "cross.case"),
             selectedImage: UIImage(systemName: "cross.case.fill")
         )
+
         
         let symptoms = SymptomsTrackerViewController()
         symptoms.tabBarItem = UITabBarItem(
@@ -136,6 +141,32 @@ class MainTabBarController: UITabBarController {
         super.viewWillLayoutSubviews()
         updateNavBarTitles()
     }
+    
+    
+    private func propagateActiveChild(_ child: ChildProfile) {
+        viewControllers?.forEach { vc in
+            guard let nav = vc as? UINavigationController,
+                  let topVC = nav.topViewController
+            else { return }
+
+            if let recordsVC = topVC as? RecordManagerViewController {
+                recordsVC.activeChild = child
+            }
+
+//            if let calendarVC = topVC as? CalendarRecordsViewController {
+//                calendarVC.activeChild = child
+//            }
+//
+//            if let symptomsVC = topVC as? SymptomsTrackerViewController {
+//                symptomsVC.activeChild = child
+//            }
+//
+//            if let vaccineVC = topVC as? VaccinationManagerViewController {
+//                vaccineVC.activeChild = child
+//            }
+        }
+    }
+
 
 
 

@@ -11,6 +11,9 @@ import Lottie
 
 
 class RecordListViewController: UIViewController {
+    
+    var activeChild: ChildProfile!
+
     let store = RecordsStore.shared
 
 
@@ -71,9 +74,11 @@ class RecordListViewController: UIViewController {
             return aiFilteredFiles
 
         case .normal(let folder):
-            return store.filesByFolder[folder] ?? []
+            guard let childId = activeChild?.id else { return [] }
+            return store.files(for: childId, folderName: folder)
         }
     }
+
 
 
 
@@ -82,7 +87,10 @@ class RecordListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        mode = .normal(folder: folderName)
+        if case .normal = mode {
+            assert(activeChild != nil, "❌ RecordListViewController opened in normal mode without activeChild")
+        }
+//        mode = .normal(folder: folderName)
         
         addFileButton.configuration = nil
         addFileButton.layer.cornerRadius = addFileButton.frame.height / 2
@@ -130,14 +138,17 @@ class RecordListViewController: UIViewController {
 
 
     func updateUI() {
-        if currentFiles.isEmpty {
+        let files = currentFiles
+
+        if files.isEmpty {
             showEmptyState()
-            tableView.reloadData()
         } else {
             hideEmptyState()
-            tableView.reloadData()
         }
+
+        tableView.reloadData()
     }
+
 
 
 
@@ -149,7 +160,8 @@ class RecordListViewController: UIViewController {
             bundle: nil
         )
 
-        vc.availableFolders = store.folders.map { $0.name }
+        vc.activeChild = activeChild
+        vc.availableFolders = store.folders(for: activeChild.id).map { $0.name }
         vc.selectedFolderName = folderName
 
         vc.onRecordSaved = { [weak self] in
@@ -254,6 +266,7 @@ class RecordListViewController: UIViewController {
     @objc func deleteSelectedRecords() {
 
         guard !selectedRecords.isEmpty else { return }
+        guard let childId = activeChild?.id else { return }
 
         let alert = UIAlertController(
             title: "Delete Records",
@@ -263,24 +276,27 @@ class RecordListViewController: UIViewController {
 
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
 
-            self.store.filesByFolder[self.folderName]?.removeAll {
+            // 1️⃣ Remove from STORE (child-scoped)
+            self.store.filesByChild[childId]?.removeAll {
                 self.selectedRecords.contains($0.id)
             }
 
+            // 2️⃣ Remove from local filtered list (search mode)
             if self.isSearching {
                 self.filteredFiles.removeAll {
                     self.selectedRecords.contains($0.id)
                 }
             }
 
+            // 3️⃣ Exit selection + refresh UI
             self.exitSelectionMode()
             self.updateUI()
         })
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        present(alert, animated: true)
+        self.present(alert, animated: true)
     }
+
 
 
 
@@ -292,9 +308,11 @@ class RecordListViewController: UIViewController {
     
     @objc func shareSelectedRecords() {
 
-        let records = store.allRecords.filter {
+        guard let childId = activeChild?.id else { return }
+
+        let records = store.filesByChild[childId]?.filter {
             selectedRecords.contains($0.id)
-        }
+        } ?? []
 
         var items: [Any] = []
 
@@ -316,6 +334,7 @@ class RecordListViewController: UIViewController {
         vc.popoverPresentationController?.sourceView = view
         present(vc, animated: true)
     }
+
 
 
     
@@ -442,7 +461,10 @@ class RecordListViewController: UIViewController {
             : currentFiles[indexPath.row]
 
         // Remove from store
-        store.filesByFolder[folderName]?.removeAll { $0.id == record.id }
+        store.filesByChild[activeChild.id]?.removeAll {
+            $0.id == record.id
+        }
+        
 
         // Update search results if needed
         if isSearching {
@@ -459,6 +481,8 @@ class RecordListViewController: UIViewController {
 
     func openEditRecord(for indexPath: IndexPath) {
 
+        guard let childId = activeChild?.id else { return }
+
         let record = isSearching
             ? filteredFiles[indexPath.row]
             : currentFiles[indexPath.row]
@@ -470,7 +494,10 @@ class RecordListViewController: UIViewController {
 
         vc.isEditingRecord = true
         vc.existingRecord = record
-        vc.availableFolders = store.folders.map { $0.name }
+        vc.activeChild = activeChild
+
+        // ✅ FIXED: child-scoped folders
+        vc.availableFolders = store.folders(for: childId).map { $0.name }
 
         vc.modalPresentationStyle = .pageSheet
         if let sheet = vc.sheetPresentationController {
@@ -480,6 +507,7 @@ class RecordListViewController: UIViewController {
 
         present(vc, animated: true)
     }
+
     
 
     func configureSortMenu(for button: UIButton) {
@@ -555,7 +583,7 @@ class RecordListViewController: UIViewController {
     func applySort(_ option: RecordSortOption) {
         currentSort = option
 
-        var files = store.filesByFolder[folderName] ?? []
+        var files = store.files(for: activeChild.id, folderName: folderName)
 
         switch option {
         case .nameAZ:
@@ -571,7 +599,8 @@ class RecordListViewController: UIViewController {
             files.sort { $0.date < $1.date }
         }
 
-        store.filesByFolder[folderName] = files
+        store.filesByChild[activeChild.id] = store.allFiles(for: activeChild.id)
+            .map { $0.id == files.first?.id ? files.first! : $0 }
 
         // Update filtered list if searching
         if isSearching {

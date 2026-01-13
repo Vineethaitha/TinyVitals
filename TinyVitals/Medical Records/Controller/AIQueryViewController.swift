@@ -14,6 +14,8 @@ class AIQueryViewController: UIViewController {
 
     let store = RecordsStore.shared
     
+    var activeChild: ChildProfile!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         hideKeyboardWhenTappedAround()
@@ -25,7 +27,7 @@ class AIQueryViewController: UIViewController {
         guard !prompt.isEmpty else { return }
 
         let results = AIQueryParser.filter(
-            records: store.allRecords,
+            records: store.allFiles(for: activeChild.id),
             prompt: prompt
         )
 

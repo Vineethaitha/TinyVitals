@@ -10,6 +10,10 @@ import UIKit
 class RecordManagerViewController: UIViewController {
     
     let store = RecordsStore.shared
+    var activeChild: ChildProfile!
+    
+    
+//    let store = RecordsStore.shared
 
     @IBOutlet weak var searchBarView: UISearchBar!
     
@@ -43,13 +47,23 @@ class RecordManagerViewController: UIViewController {
         addButton.clipsToBounds = true
         addButton.setImage(UIImage(systemName: "doc.badge.plus"), for: .normal)
         
-        if store.folders.isEmpty {
-            store.folders = [
+        guard let activeChild else {
+            assertionFailure("❌ RecordManagerViewController opened without activeChild")
+            return
+        }
+
+        let childId = activeChild.id
+
+        if store.foldersByChild[childId] == nil {
+            store.foldersByChild[childId] = [
                 RecordFolder(name: "Reports", icon: UIImage(systemName: "folder.fill")),
                 RecordFolder(name: "Prescriptions", icon: UIImage(systemName: "pills.fill")),
                 RecordFolder(name: "Vaccinations", icon: UIImage(systemName: "bandage.fill"))
             ]
+            store.filesByChild[childId] = []
         }
+
+
 
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -79,13 +93,17 @@ class RecordManagerViewController: UIViewController {
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
     
-    @IBAction func magicWandTapped() {
-        let vc = AIQueryViewController(
-            nibName: "AIQueryViewController",
-            bundle: nil
-        )
-        navigationController?.pushViewController(vc, animated: true)
-    }
+//    @IBAction func magicWandTapped() {
+//        let vc = AIQueryViewController(
+//            nibName: "AIQueryViewController",
+//            bundle: nil
+//        )
+//
+//        vc.activeChild = activeChild   // ✅ THIS LINE FIXES EVERYTHING
+//
+//        navigationController?.pushViewController(vc, animated: true)
+//    }
+
 
     
 //    @objc func dismissKeyboard() {
@@ -168,20 +186,46 @@ class RecordManagerViewController: UIViewController {
 
 
     func sortFoldersByName(ascending: Bool) {
-        store.folders.sort {
-            ascending ? $0.name < $1.name : $0.name > $1.name
+
+        guard let childId = activeChild?.id else { return }
+
+        var folders = store.folders(for: childId)
+
+        folders.sort {
+            ascending ? $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+                      : $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedDescending
         }
+
+        store.foldersByChild[childId] = folders
         collectionView.reloadData()
     }
 
+
     func sortFoldersByFileCount(descending: Bool) {
-        store.folders.sort {
-            let c1 = store.filesByFolder[$0.name]?.count ?? 0
-            let c2 = store.filesByFolder[$1.name]?.count ?? 0
-            return descending ? c1 > c2 : c1 < c2
+
+        guard let childId = activeChild?.id else { return }
+
+        var folders = store.folders(for: childId)
+
+        folders.sort {
+
+            let count1 = store.files(
+                for: childId,
+                folderName: $0.name
+            ).count
+
+            let count2 = store.files(
+                for: childId,
+                folderName: $1.name
+            ).count
+
+            return descending ? count1 > count2 : count1 < count2
         }
+
+        store.foldersByChild[childId] = folders
         collectionView.reloadData()
     }
+
 
 
 
@@ -204,11 +248,16 @@ class RecordManagerViewController: UIViewController {
         collectionView.reloadData()
 
         // Navigate to next screen
-        let vc = RecordListViewController(nibName: "RecordListViewController", bundle: nil)
+        let vc = RecordListViewController(
+            nibName: "RecordListViewController",
+            bundle: nil
+        )
+
+        vc.activeChild = activeChild          // ✅ REQUIRED
+        vc.mode = .normal(folder: folder.name)
         vc.folderName = folder.name
-        vc.folderName = folder.name
+
         navigationController?.pushViewController(vc, animated: true)
-        
 //        print("hi")
     }
 
@@ -219,6 +268,8 @@ class RecordManagerViewController: UIViewController {
             nibName: "CalendarRecordsViewController",
             bundle: nil
         )
+
+        vc.activeChild = activeChild
 
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .fullScreen
@@ -233,9 +284,9 @@ class RecordManagerViewController: UIViewController {
             nibName: "AddRecordViewController",
             bundle: nil
         )
-
-        vc.availableFolders = store.folders.map { $0.name }
-
+        
+        vc.activeChild = activeChild
+        vc.availableFolders = store.folders(for: activeChild.id).map { $0.name }
         vc.onRecordSaved = { [weak self] in
             guard let self = self else { return }
 
@@ -283,15 +334,24 @@ class RecordManagerViewController: UIViewController {
     }
     
     func createFolder(named name: String) {
+
+        guard let childId = activeChild?.id else { return }
+
+        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmedName.isEmpty else { return }
+
         let newFolder = RecordFolder(
-            name: name,
+            name: trimmedName,
             icon: UIImage(systemName: "folder.fill"),
             color: UIColor.randomIOSFolderColor()
         )
 
-        store.folders.append(newFolder)
+        // Append to CHILD-SCOPED folders
+        store.foldersByChild[childId, default: []].append(newFolder)
+
         collectionView.reloadData()
     }
+
 
     
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
@@ -327,35 +387,43 @@ class RecordManagerViewController: UIViewController {
 
     func showRenameAlert(for indexPath: IndexPath) {
 
-        let folder = getFolder(for: indexPath)
+        guard let childId = activeChild?.id else { return }
 
-        let alert = UIAlertController(title: "Rename Folder",
-                                      message: nil,
-                                      preferredStyle: .alert)
+        let folder = getFolder(for: indexPath)
+        let oldName = folder.name
+
+        let alert = UIAlertController(
+            title: "Rename Folder",
+            message: nil,
+            preferredStyle: .alert
+        )
 
         alert.addTextField { textField in
-            textField.text = folder.name
+            textField.text = oldName
         }
 
         alert.addAction(UIAlertAction(title: "Save", style: .default) { _ in
+
             guard let newName = alert.textFields?.first?.text,
-                  !newName.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+                  !newName.trimmingCharacters(in: .whitespaces).isEmpty,
+                  newName != oldName
+            else { return }
 
-            let oldName = folder.name
+            // 1️⃣ Update folders list (CHILD-SCOPED)
+            if var folders = self.store.foldersByChild[childId],
+               let index = folders.firstIndex(where: { $0.name == oldName }) {
 
-            // 1️⃣ Update folders list
-            if let index = self.store.folders.firstIndex(where: { $0.name == oldName }) {
-                self.store.folders[index].name = newName
+                folders[index].name = newName
+                self.store.foldersByChild[childId] = folders
             }
 
-            // 2️⃣ Move files to new key
-            if let files = self.store.filesByFolder[oldName] {
-                self.store.filesByFolder[newName] = files.map {
-                    var f = $0
-                    f.folderName = newName
-                    return f
+            // 2️⃣ Update records folderName (NO MOVING KEYS ANYMORE)
+            self.store.filesByChild[childId] = self.store.filesByChild[childId]?.map {
+                var file = $0
+                if file.folderName == oldName {
+                    file.folderName = newName
                 }
-                self.store.filesByFolder.removeValue(forKey: oldName)
+                return file
             }
 
             // 3️⃣ Update recents
@@ -366,30 +434,39 @@ class RecordManagerViewController: UIViewController {
             self.collectionView.reloadData()
         })
 
-
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true)
     }
 
 
+
     
     func deleteFolder(at indexPath: IndexPath) {
+
+        guard let childId = activeChild?.id else { return }
 
         let folder = getFolder(for: indexPath)
         let folderName = folder.name
 
-        // 1️⃣ Remove from ALL folders
-        store.folders.removeAll { $0.name == folderName }
+        // 1️⃣ Remove folder from CHILD folders list
+        store.foldersByChild[childId]?.removeAll {
+            $0.name == folderName
+        }
 
         // 2️⃣ Remove from RECENTS
-        recentFolders.removeAll { $0.name == folderName }
+        recentFolders.removeAll {
+            $0.name == folderName
+        }
 
-        // 3️⃣ Remove all files of this folder
-        store.filesByFolder.removeValue(forKey: folderName)
+        // 3️⃣ Remove all records belonging to this folder
+        store.filesByChild[childId]?.removeAll {
+            $0.folderName == folderName
+        }
 
         // 4️⃣ Refresh UI
         collectionView.reloadData()
     }
+
 
 }
 
@@ -412,7 +489,10 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
             return (section == 0) ? filteredRecentFolders.count : filteredFolders.count
         }
 
-        return (section == 0) ? recentFolders.count : store.folders.count
+        return (section == 0)
+            ? recentFolders.count
+            : store.folders(for: activeChild.id).count
+
     }
 
 
@@ -424,9 +504,10 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
                 filteredFolders[indexPath.item]
         }
 
-        return indexPath.section == 0 ?
-            recentFolders[indexPath.item] :
-            store.folders[indexPath.item]
+        return indexPath.section == 0
+            ? recentFolders[indexPath.item]
+            : store.folders(for: activeChild.id)[indexPath.item]
+
     }
 
     // MARK: - Cell
@@ -439,7 +520,12 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
         ) as! RecordCardCell
 
         let folder = getFolder(for: indexPath)
-        let count = store.filesByFolder[folder.name]?.count ?? 0
+        let count = store.files(
+            for: activeChild.id,
+            folderName: folder.name
+        ).count
+
+
         cell.configure(with: folder, fileCount: count)
 
 
@@ -511,6 +597,8 @@ extension RecordManagerViewController: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 
+        guard let childId = activeChild?.id else { return }
+
         let text = searchText.lowercased()
 
         if text.isEmpty {
@@ -521,18 +609,21 @@ extension RecordManagerViewController: UISearchBarDelegate {
 
         isSearching = true
 
-        // Filter All folders
-        filteredFolders = store.folders.filter {
+        let allFolders = store.folders(for: childId)
+
+        // Filter ALL folders
+        filteredFolders = allFolders.filter {
             $0.name.lowercased().contains(text)
         }
 
-        // Filter Recents
+        // Filter RECENTS
         filteredRecentFolders = recentFolders.filter {
             $0.name.lowercased().contains(text)
         }
 
         collectionView.reloadData()
     }
+
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""

@@ -10,6 +10,8 @@ import UniformTypeIdentifiers
 
 class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let store = RecordsStore.shared
+    var activeChild: ChildProfile!
+
     // MARK: - Outlets
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var clinicTextField: UITextField!
@@ -95,78 +97,53 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
     
     @IBAction func addButtonTapped(_ sender: UIButton) {
 
-        // 1️⃣ Validate title
-        guard let title = titleTextField.text,
-              !title.trimmingCharacters(in: .whitespaces).isEmpty else {
-            showValidationAlert(message: "Please enter a record title.")
+        guard let activeChild else { return }
+
+        guard let title = titleTextField.text, !title.isEmpty else {
+            showValidationAlert(message: "Enter title")
             return
         }
 
-        // 2️⃣ Validate hospital/clinic
-        guard let clinic = clinicTextField.text,
-              !clinic.trimmingCharacters(in: .whitespaces).isEmpty else {
-            showValidationAlert(message: "Please enter the clinic or hospital name.")
+        guard let clinic = clinicTextField.text, !clinic.isEmpty else {
+            showValidationAlert(message: "Enter hospital name")
             return
         }
 
-        // 3️⃣ Validate folder selection
-        guard let folder = selectedFolderName, !folder.isEmpty else {
-            showValidationAlert(message: "Please choose a folder to save this record.")
+        guard let folder = selectedFolderName else {
+            showValidationAlert(message: "Select folder")
             return
         }
 
-        // 4️⃣ Validate file uploaded
-        if selectedThumbnail == nil && selectedFileURL == nil {
-            showValidationAlert(message: "Please upload a file (image or PDF) before saving.")
+        guard selectedThumbnail != nil || selectedFileURL != nil else {
+            showValidationAlert(message: "Upload file")
             return
         }
-
-        // 5️⃣ Determine thumbnail
-        var finalThumbnail: UIImage? = selectedThumbnail
-        if finalThumbnail == nil, let pdfURL = selectedFileURL {
-            finalThumbnail = generatePDFThumbnail(url: pdfURL)
-        }
-
-        // 6️⃣ Create record (NEW / EDIT)
-        let recordID = isEditingRecord
-            ? existingRecord!.id
-            : UUID().uuidString
 
         let newRecord = MedicalFile(
-            id: recordID,
+            id: isEditingRecord ? existingRecord!.id : UUID().uuidString,
+            childId: activeChild.id,
             title: title,
             hospital: clinic,
             date: visitDate.date.toString(),
-            thumbnail: finalThumbnail,
+            thumbnail: selectedThumbnail,
             pdfURL: selectedFileURL,
             folderName: folder
         )
 
-
-
         let store = RecordsStore.shared
 
-        // 7️⃣ Save to RecordsStore
-        if isEditingRecord, let oldRecord = existingRecord {
-
-            // Remove old record (important if folder changed)
-            store.filesByFolder[oldRecord.folderName ?? "", default: []]
-                .removeAll { $0.id == oldRecord.id }
-
-            // Add updated record
-            store.filesByFolder[folder, default: []].append(newRecord)
-
-        } else {
-            // New record
-            store.filesByFolder[folder, default: []].append(newRecord)
+        if isEditingRecord {
+            store.filesByChild[activeChild.id]?.removeAll {
+                $0.id == existingRecord!.id
+            }
         }
-        // 8️⃣ Notify parent VC
+
+        store.filesByChild[activeChild.id, default: []].append(newRecord)
+
         onRecordSaved?()
-
-        // 9️⃣ Close sheet
         dismiss(animated: true)
-
     }
+
 
     
     func showValidationAlert(message: String) {
