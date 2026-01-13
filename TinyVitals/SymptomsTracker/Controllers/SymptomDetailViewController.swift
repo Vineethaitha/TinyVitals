@@ -47,7 +47,7 @@ final class SymptomDetailViewController: UIViewController {
         heightLabel.text = entry.height != nil ? "\(entry.height!) ft" : "—"
         weightLabel.text = entry.weight != nil ? "\(entry.weight!) kg" : "—"
         temperatureLabel.text = entry.temperature != nil ? "\(entry.temperature!) °F" : "—"
-        severityLabel.text = entry.severity != nil ? "\(Int(entry.severity!)) / 5" : "—"
+        severityLabel.text = entry.severity != nil ? "\(Int(entry.severity!))" : "—"
 
         notesLabel.text = entry.notes?.isEmpty == false ? entry.notes : "No notes"
 

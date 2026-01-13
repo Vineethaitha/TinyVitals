@@ -37,7 +37,7 @@ final class LogSymptomsViewController: UIViewController {
     private var currentWeight: Double = 1.5
     private var currentHeight: Double = 1.5
     private var currentTemperature: Double = 98.6
-    private var currentSeverity: Double = 5
+    private var currentSeverity: Double = 1
 
     // Notes
     @IBOutlet weak var notesTextView: UITextView!
