@@ -7,15 +7,6 @@
 
 import Foundation
 
-//struct ChildProfile {
-//    let name: String
-//    let dob: Date
-//    let gender: String
-//    let bloodGroup: String
-//    let weight: Double?
-//    let height: Double?
-//}
-
 struct ChildProfile {
     let id: UUID
     var name: String

@@ -98,7 +98,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
         // pull fresh data
         updateSummary(for: selectedDate)
 

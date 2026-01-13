@@ -7,16 +7,16 @@
 
 import Foundation
 
-final class RecordsStore {
-
-    static let shared = RecordsStore()
-    private init() {}
-
-    var folders: [RecordFolder] = []
-    var filesByFolder: [String: [MedicalFile]] = [:]
-
-    var allRecords: [MedicalFile] {
-        filesByFolder.values.flatMap { $0 }
-    }
-}
+//final class RecordsStore {
+//
+//    static let shared = RecordsStore()
+//    private init() {}
+//
+//    var folders: [RecordFolder] = []
+//    var filesByFolder: [String: [MedicalFile]] = [:]
+//
+//    var allRecords: [MedicalFile] {
+//        filesByFolder.values.flatMap { $0 }
+//    }
+//}
 
