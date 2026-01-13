@@ -7,18 +7,23 @@
 
 import UIKit
 
-struct SymptomTimelineItem {
-    let title: String
-    let description: String
-    let time: String
-    let color: UIColor
-    let iconName: String
-}
+//struct SymptomTimelineItem {
+//    let title: String
+//    let description: String
+//    let time: String
+//    let color: UIColor
+//    let iconName: String
+//}
+
+private var currentEntries: [SymptomEntry] = []
 
 class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
-    private var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
-    private var currentTimelineItems: [SymptomTimelineItem] = []
+//    private var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
+//    private var currentTimelineItems: [SymptomTimelineItem] = []
+//    private var currentEntries: [SymptomEntry] = []
+//    currentEntries = SymptomsDataStore.shared.entries(for: date)
+
 
     
     private let calendar = Calendar.current
@@ -82,6 +87,13 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         
         calendarCollectionView.allowsMultipleSelection = false
         
+        let longPress = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(handleLongPress(_:))
+        )
+        timelineTableView.addGestureRecognizer(longPress)
+
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -129,7 +141,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         emptyTitleLabel.text = "No symptoms logged"
         emptyTitleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
 
-        emptySubtitleLabel.text = "Tap + to add symptoms"
+//        emptySubtitleLabel.text = ""
         emptySubtitleLabel.textColor = .secondaryLabel
 
         floatingAddButton.configuration = nil
@@ -238,30 +250,25 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
 
-//        let day = calendar.startOfDay(for: date)
-//        currentTimelineItems = timelineDataByDate[day] ?? []
-        currentTimelineItems =
-            SymptomsDataStore.shared.symptoms(for: date)
+        currentEntries = SymptomsDataStore.shared.entries(for: date)
 
-
-        if currentTimelineItems.isEmpty {
-//            emptyStateStackView.isHidden = false
+        if currentEntries.isEmpty {
             emptyImageView.isHidden = false
             emptyTitleLabel.isHidden = false
             emptySubtitleLabel.isHidden = false
             timelineTableView.isHidden = true
             summaryLabel.text = "Your child doesn’t have any symptoms on this day"
         } else {
-//            emptyStateStackView.isHidden = true
             emptyImageView.isHidden = true
             emptyTitleLabel.isHidden = true
             emptySubtitleLabel.isHidden = true
             timelineTableView.isHidden = false
-            summaryLabel.text = "Your child has \(currentTimelineItems.count) symptoms today"
+            summaryLabel.text = "Your child has \(currentEntries.count) symptoms today"
         }
 
         timelineTableView.reloadData()
     }
+
     
     @IBAction func historyTapped(_ sender: UIButton) {
         let vc = SymptomsHistoryViewController(
@@ -270,8 +277,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         )
 
 //        vc.timelineDataByDate = self.timelineDataByDate
-        vc.timelineDataByDate =
-            SymptomsDataStore.shared.timelineDataByDate
+//        vc.timelineDataByDate =
+//            SymptomsDataStore.shared.timelineDataByDate
 
 
         let nav = UINavigationController(rootViewController: vc)
@@ -287,7 +294,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @objc private func exportPDF() {
 
         guard let pdfURL = SymptomsPDFExporter.generatePDF(
-            from: SymptomsDataStore.shared.timelineDataByDate,
+            from: SymptomsDataStore.shared.entriesByDate,
             calendar: calendar
         ) else { return }
 
@@ -309,6 +316,51 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         return nil
     }
 
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        let entry = currentEntries[indexPath.row]
+        presentDetail(entry)
+    }
+
+    
+    private func presentDetail(_ entry: SymptomEntry) {
+        let vc = SymptomDetailViewController(
+            nibName: "SymptomDetailViewController",
+            bundle: nil
+        )
+        vc.entry = entry
+        vc.modalPresentationStyle = .pageSheet
+        present(vc, animated: true)
+    }
+
+
+
+    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+
+        if gesture.state != .began { return }
+
+        let point = gesture.location(in: timelineTableView)
+        guard let indexPath = timelineTableView.indexPathForRow(at: point) else { return }
+
+        let entry = currentEntries[indexPath.row]
+
+        let alert = UIAlertController(
+            title: "Delete symptom?",
+            message: entry.symptom.title,
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
+            SymptomsDataStore.shared.deleteEntry(entry)
+            self.updateSummary(for: self.selectedDate)
+        })
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        present(alert, animated: true)
+    }
     
     
 }
@@ -405,7 +457,7 @@ extension SymptomsTrackerViewController: UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        currentTimelineItems.count
+        currentEntries.count
     }
 
     func tableView(
@@ -418,7 +470,7 @@ extension SymptomsTrackerViewController: UITableViewDataSource {
             for: indexPath
         ) as! SymptomTimelineCell
 
-        cell.configure(with: currentTimelineItems[indexPath.row])
+        cell.configure(with: currentEntries[indexPath.row])
         return cell
     }
 }

@@ -72,9 +72,12 @@ final class SymptomsSelectionViewController: UIViewController {
     }
 
     private func setupApplyButton() {
-        applyButton.layer.cornerRadius = 14
-        applyButton.backgroundColor = .systemPink
+        applyButton.configuration = nil
+        applyButton.setTitle("Apply", for: .normal)
+        applyButton.layer.cornerRadius = 25
+        applyButton.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         applyButton.setTitleColor(.white, for: .normal)
+        applyButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
     }
 
     // MARK: - Data Source

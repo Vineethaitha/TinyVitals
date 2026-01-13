@@ -15,28 +15,29 @@ final class SymptomsDataStore {
 
     private let calendar = Calendar.current
 
-    // Single source of truth
-    private(set) var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
+    private(set) var entriesByDate: [Date: [SymptomEntry]] = [:]
 
-    func addSymptoms(
-        _ items: [SymptomTimelineItem],
-        on date: Date
-    ) {
-        let day = calendar.startOfDay(for: date)
-        timelineDataByDate[day, default: []].append(contentsOf: items)
+    func addEntry(_ entry: SymptomEntry) {
+        let day = calendar.startOfDay(for: entry.date)
+        entriesByDate[day, default: []].append(entry)
     }
 
-    func symptoms(for date: Date) -> [SymptomTimelineItem] {
+    func entries(for date: Date) -> [SymptomEntry] {
         let day = calendar.startOfDay(for: date)
-        return timelineDataByDate[day] ?? []
+        return entriesByDate[day] ?? []
     }
 
-    func allDates() -> [Date] {
-        timelineDataByDate.keys.sorted()
+    func deleteEntry(_ entry: SymptomEntry) {
+        let day = calendar.startOfDay(for: entry.date)
+        entriesByDate[day]?.removeAll { $0.id == entry.id }
     }
 
     func hasSymptoms(on date: Date) -> Bool {
         let day = calendar.startOfDay(for: date)
-        return timelineDataByDate[day] != nil
+        return !(entriesByDate[day]?.isEmpty ?? true)
+    }
+
+    func allDates() -> [Date] {
+        entriesByDate.keys.sorted()
     }
 }
