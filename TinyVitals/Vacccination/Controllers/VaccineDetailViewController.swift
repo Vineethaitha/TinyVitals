@@ -8,6 +8,9 @@
 import UIKit
 
 class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    var activeChild: ChildProfile!
+
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
@@ -60,7 +63,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     private let notesPlaceholder = "Enter notes..."
     private var notesStorageKey: String {
-        return "notes_\(vaccine.name)"
+        "notes_\(activeChild.id.uuidString)_\(vaccine.name)"
     }
 
     
@@ -68,6 +71,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        assert(activeChild != nil, "❌ VaccinationCalendarViewController opened without activeChild")
         setupUI()
         updateStatusUI()
         populateData()
@@ -311,8 +315,9 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     
     
     private var photoStorageKey: String {
-        return "photo_\(vaccine.name)"
+        "photo_\(activeChild.id.uuidString)_\(vaccine.name)"
     }
+
 
     private func savePhoto(_ image: UIImage) {
         if let data = image.jpegData(compressionQuality: 0.8) {
@@ -329,8 +334,9 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     }
     
     private var detailStorageKey: String {
-        "vaccine_detail_\(vaccine.name)"
+        "vaccine_detail_\(activeChild.id.uuidString)_\(vaccine.name)"
     }
+
 
     
     @IBAction func saveTapped(_ sender: UIButton) {
@@ -425,9 +431,3 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     }
 }
 
-
-struct VaccineDetailStorage: Codable {
-    let date: Date
-    let notes: String?
-    let imageData: Data?
-}

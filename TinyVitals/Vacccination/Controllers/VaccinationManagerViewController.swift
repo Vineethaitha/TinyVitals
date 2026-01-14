@@ -9,6 +9,8 @@ import UIKit
 
 class VaccinationManagerViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
 
+    var activeChild: ChildProfile!
+    
     // MARK: - Outlets
     @IBOutlet weak var filtersCollectionView: UICollectionView!
     @IBOutlet weak var vaccinesTableView: UITableView!
@@ -101,27 +103,39 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         vaccinesTableView.sectionHeaderTopPadding = 8
 
         let headerAppearance = UITableViewHeaderFooterView.appearance()
         headerAppearance.tintColor = .clear
-        
+
         setupCollectionView()
         setupTableView()
         updateHeaderVisibility()
 
-
-        if allVaccines.isEmpty {
-            allVaccines = buildVaccines()
+        // ❗ REQUIRED
+        guard let child = activeChild else {
+            assertionFailure("❌ VaccinationManagerViewController opened without activeChild")
+            return
         }
-        
-        VaccinationStore.shared.update(allVaccines)
-    
-        // LOAD DATA INITIALLY
+
+        // Child DOB
+        childDOB = child.dob
+
+        // ✅ Ensure vaccines exist ONLY ONCE per child
+        VaccinationStore.shared.ensureVaccinesExist(
+            for: child
+        ) { dob in
+            self.buildVaccines(from: dob)
+        }
+
+        // ✅ Load from store
+        allVaccines = VaccinationStore.shared.vaccines(for: child.id.uuidString)
+
+        // Initial UI load
         filteredVaccines = allVaccines
         vaccinesTableView.reloadData()
-        
+
         searchTextField.delegate = self
         searchTextField.addTarget(
             self,
@@ -129,26 +143,25 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             for: .editingChanged
         )
 
-        setupCollectionView()
-        setupTableView()
         updateProgressUI()
         setupSearchClearButton()
         requestNotificationPermission()
         scheduleAllReminders()
-        
+
         vaccinesTableView.showsVerticalScrollIndicator = false
         vaccinesTableView.showsHorizontalScrollIndicator = false
-        
     }
+
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
 
-    func buildVaccines() -> [VaccineItem] {
+    func buildVaccines(from dob: Date) -> [VaccineItem] {
 
-        let dob = childDOB
+//        let dob = childDOB
         let cal = calendar
 
         return [
@@ -530,18 +543,12 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         tableView.deselectRow(at: indexPath, animated: true)
 
         let vaccine: VaccineItem
-
         switch indexPath.section {
-        case 0:
-            vaccine = upcomingVaccines[indexPath.row]
-        case 1:
-            vaccine = completedVaccines[indexPath.row]
-        case 2:
-            vaccine = skippedVaccines[indexPath.row]
-        case 3:
-            vaccine = rescheduledVaccines[indexPath.row]
-        default:
-            fatalError("Invalid section")
+        case 0: vaccine = upcomingVaccines[indexPath.row]
+        case 1: vaccine = completedVaccines[indexPath.row]
+        case 2: vaccine = skippedVaccines[indexPath.row]
+        case 3: vaccine = rescheduledVaccines[indexPath.row]
+        default: return
         }
 
         let vc = VaccineDetailViewController(
@@ -549,26 +556,28 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             bundle: nil
         )
 
-        
         vc.vaccine = vaccine
         vc.vaccineIndex = allVaccines.firstIndex {
             $0.name == vaccine.name && $0.date == vaccine.date
         }
-        
+
+        // 🔥 REQUIRED — THIS WAS MISSING
+        vc.activeChild = self.activeChild
+
         vc.onSaveStatus = { [weak self] newStatus in
             guard let self = self,
-                  let index = vc.vaccineIndex else { return }
+                  let index = vc.vaccineIndex,
+                  let childId = self.activeChild?.id.uuidString
+            else { return }
 
-            // Update model
             self.allVaccines[index].status = newStatus
 
-            // SYNC GLOBAL STORE
-            VaccinationStore.shared.update(self.allVaccines)
+            VaccinationStore.shared.setVaccines(
+                self.allVaccines,
+                for: childId
+            )
 
-            // Refresh list
             self.applyFilter()
-
-            // Refresh header
             self.updateProgressUI()
             self.setupTableHeader()
         }
@@ -576,6 +585,8 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
     }
+
+
 
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -704,11 +715,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         case .ageOrder:
             result.sort { ageOrderIndex($0.ageGroup) < ageOrderIndex($1.ageGroup) }
         }
-
-        // Assign ONCE
         filteredVaccines = result
-
-        // Reload ONCE
         vaccinesTableView.reloadData()
     }
 
@@ -785,22 +792,15 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         )
 
         vc.allVaccines = allVaccines
+
         vc.modalPresentationStyle = .pageSheet
         present(vc, animated: true)
     }
+
+
     
     func updateProgressUI() {
-
-//        let completed = allVaccines.filter { $0.status == .completed }.count
-//        let upcoming = allVaccines.filter { $0.status == .upcoming }.count
-//        let skipped = allVaccines.filter { $0.status == .skipped }.count
-//        let rescheduled = allVaccines.filter { $0.status == .rescheduled }.count
-
         updateHeaderVisibility()
-
-//        let total = allVaccines.count
-//        let percent = total == 0 ? 0 : Int((Double(completed) / Double(total)) * 100)
-//        progressLabel.text = "Vaccination Progress: \(percent)%"
     }
     
     private func updateHeaderVisibility() {
@@ -949,4 +949,24 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         present(alert, animated: true)
     }
+    
+    
+    func reloadForChild() {
+        guard let child = activeChild else { return }
+
+        VaccinationStore.shared.ensureVaccinesExist(
+            for: child
+        ) { dob in
+            self.buildVaccines(from: dob)
+        }
+
+        allVaccines = VaccinationStore.shared.vaccines(for: child.id.uuidString)
+        applyFilter()
+        updateProgressUI()
+    }
+
+
+
+
+    
 }

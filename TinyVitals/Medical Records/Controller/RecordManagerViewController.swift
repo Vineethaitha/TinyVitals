@@ -466,6 +466,29 @@ class RecordManagerViewController: UIViewController {
         // 4️⃣ Refresh UI
         collectionView.reloadData()
     }
+    
+    func reloadForChild() {
+        guard let childId = activeChild?.id else { return }
+
+        isSearching = false
+        searchBarView.text = nil
+
+        recentFolders.removeAll()
+        filteredFolders.removeAll()
+        filteredRecentFolders.removeAll()
+
+        if store.foldersByChild[childId] == nil {
+            store.foldersByChild[childId] = [
+                RecordFolder(name: "Reports", icon: UIImage(systemName: "folder.fill")),
+                RecordFolder(name: "Prescriptions", icon: UIImage(systemName: "pills.fill")),
+                RecordFolder(name: "Vaccinations", icon: UIImage(systemName: "bandage.fill"))
+            ]
+            store.filesByChild[childId] = []
+        }
+
+        collectionView.reloadData()
+    }
+
 
 
 }

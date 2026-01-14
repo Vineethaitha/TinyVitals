@@ -8,26 +8,91 @@
 import Foundation
 import UIKit
 
+//final class VaccinationStore {
+//
+//    static let shared = VaccinationStore()
+//
+//    private(set) var allVaccines: [VaccinationManagerViewController.VaccineItem] = []
+//
+//    private init() {
+//        loadInitialVaccinesIfNeeded()
+//    }
+//
+//    private func loadInitialVaccinesIfNeeded() {
+//        guard allVaccines.isEmpty else { return }
+//
+//        let tempVC = VaccinationManagerViewController()
+//        allVaccines = tempVC.buildVaccines()
+//    }
+//
+//    func update(_ vaccines: [VaccinationManagerViewController.VaccineItem]) {
+//        allVaccines = vaccines
+//    }
+//}
+
+//final class VaccinationStore {
+//
+//    static let shared = VaccinationStore()
+//
+//    private init() {}
+//
+//    private(set) var vaccinesByChild: [UUID: [VaccinationManagerViewController.VaccineItem]] = [:]
+//
+//    func vaccines(for childId: UUID) -> [VaccinationManagerViewController.VaccineItem] {
+//        vaccinesByChild[childId] ?? []
+//    }
+//
+//    func setVaccines(
+//        _ vaccines: [VaccinationManagerViewController.VaccineItem],
+//        for childId: UUID
+//    ) {
+//        vaccinesByChild[childId] = vaccines
+//    }
+//
+//    func ensureVaccinesExist(
+//        for child: ChildProfile,
+//        builder: (Date) -> [VaccinationManagerViewController.VaccineItem]
+//    ) {
+//        guard vaccinesByChild[child.id] == nil else { return }
+//        vaccinesByChild[child.id] = builder(child.dob)
+//    }
+//}
+
+
 final class VaccinationStore {
 
     static let shared = VaccinationStore()
+    private init() {}
 
-    private(set) var allVaccines: [VaccinationManagerViewController.VaccineItem] = []
+    private var vaccinesByChild: [String: [VaccinationManagerViewController.VaccineItem]] = [:]
 
-    private init() {
-        loadInitialVaccinesIfNeeded()
+    // READ
+    func vaccines(for childId: String) -> [VaccinationManagerViewController.VaccineItem] {
+        vaccinesByChild[childId] ?? []
     }
 
-    private func loadInitialVaccinesIfNeeded() {
-        guard allVaccines.isEmpty else { return }
-
-        let tempVC = VaccinationManagerViewController()
-        allVaccines = tempVC.buildVaccines()
+    // WRITE
+    func setVaccines(
+        _ vaccines: [VaccinationManagerViewController.VaccineItem],
+        for childId: String
+    ) {
+        vaccinesByChild[childId] = vaccines
     }
 
-    func update(_ vaccines: [VaccinationManagerViewController.VaccineItem]) {
-        allVaccines = vaccines
+    // ENSURE INITIAL DATA
+    func ensureVaccinesExist(
+        for child: ChildProfile,
+        builder: (Date) -> [VaccinationManagerViewController.VaccineItem]
+    ) {
+        let key = child.id.uuidString
+
+        if vaccinesByChild[key] == nil {
+            vaccinesByChild[key] = builder(child.dob)
+        }
     }
+
 }
+
+
 
 

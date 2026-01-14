@@ -9,6 +9,9 @@ import UIKit
 
 class HomeScreenViewController: UIViewController {
     
+    var activeChild: ChildProfile!
+
+    
     @IBOutlet weak var articlesCollectionView: UICollectionView!
     @IBOutlet weak var pageControl: UIPageControl!
     
@@ -204,7 +207,9 @@ class HomeScreenViewController: UIViewController {
     }
 
     
-    private func setupVaccinationProgress() {
+    func setupVaccinationProgress() {
+
+        guard let child = activeChild else { return }
 
         guard let header = Bundle.main.loadNibNamed(
             "VaccinationHeaderView",
@@ -215,13 +220,15 @@ class HomeScreenViewController: UIViewController {
         header.frame = vaccinationProgressContainer.bounds
         header.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        let vaccines = VaccinationStore.shared.allVaccines
+        // ✅ LOAD CHILD-SCOPED VACCINES
+        let vaccines = VaccinationStore.shared.vaccines(
+            for: child.id.uuidString
+        )
 
         let completed = vaccines.filter { $0.status == .completed }.count
         let upcoming = vaccines.filter { $0.status == .upcoming }.count
         let skipped = vaccines.filter { $0.status == .skipped }.count
         let rescheduled = vaccines.filter { $0.status == .rescheduled }.count
-
 
         header.configure(
             completed: completed,
@@ -237,6 +244,7 @@ class HomeScreenViewController: UIViewController {
         vaccinationProgressContainer.subviews.forEach { $0.removeFromSuperview() }
         vaccinationProgressContainer.addSubview(header)
     }
+
     
     private func openVaccinesTab() {
         tabBarController?.selectedIndex = 3
