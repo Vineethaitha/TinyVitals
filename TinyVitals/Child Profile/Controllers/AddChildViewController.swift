@@ -111,49 +111,6 @@ class AddChildViewController: UIViewController {
         )
 
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//
-//        NotificationCenter.default.addObserver(
-//            self,
-//            selector: #selector(keyboardWillShow),
-//            name: UIResponder.keyboardWillShowNotification,
-//            object: nil
-//        )
-//
-//        NotificationCenter.default.addObserver(
-//            self,
-//            selector: #selector(keyboardWillHide),
-//            name: UIResponder.keyboardWillHideNotification,
-//            object: nil
-//        )
-//    }
-//
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        NotificationCenter.default.removeObserver(self)
-//    }
-//
-//    @objc private func keyboardWillShow(_ notification: Notification) {
-//        guard
-//            let userInfo = notification.userInfo,
-//            let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-//        else { return }
-//
-//        let keyboardHeight = keyboardFrame.height
-//
-//        // Move view only once
-//        if view.frame.origin.y == 0 {
-//            view.frame.origin.y -= keyboardHeight / 2
-//        }
-//    }
-//
-//    @objc private func keyboardWillHide(_ notification: Notification) {
-//        if view.frame.origin.y != 0 {
-//            view.frame.origin.y = 0
-//        }
-//    }
 
     
     @objc private func handleDismissKeyboard() {
@@ -217,21 +174,6 @@ class AddChildViewController: UIViewController {
         addDelegate?.didAddChild(newChild)
         dismiss(animated: true)
     }
-
-
-
-
-    
-//    private func updateAgeText() {
-//        let y = years[agePicker.selectedRow(inComponent: 0)]
-//        let m = months[agePicker.selectedRow(inComponent: 1)]
-//
-//        if y == 0 {
-//            ageTextField.text = "\(m) month\(m == 1 ? "" : "s")"
-//        } else {
-//            ageTextField.text = "\(y) yr \(m) mo"
-//        }
-//    }
     
     private func updateAgeText() {
         let yString = years[agePicker.selectedRow(inComponent: 0)]
@@ -264,18 +206,6 @@ class AddChildViewController: UIViewController {
         picker.delegate = self
         present(picker, animated: true)
     }
-    
-//    func saveImage(_ image: UIImage) -> String? {
-//        guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
-//
-//        let filename = UUID().uuidString + ".jpg"
-//        let url = FileManager.default
-//            .urls(for: .documentDirectory, in: .userDomainMask)[0]
-//            .appendingPathComponent(filename)
-//
-//        try? data.write(to: url)
-//        return filename
-//    }
 
     func loadImage(filename: String) -> UIImage? {
         let url = FileManager.default
