@@ -6,28 +6,13 @@
 //
 
 import UIKit
-
-//struct SymptomTimelineItem {
-//    let title: String
-//    let description: String
-//    let time: String
-//    let color: UIColor
-//    let iconName: String
-//}
+import Lottie
 
 private var currentEntries: [SymptomEntry] = []
 
 class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     var activeChild: ChildProfile!
-
-    
-//    private var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
-//    private var currentTimelineItems: [SymptomTimelineItem] = []
-//    private var currentEntries: [SymptomEntry] = []
-//    currentEntries = SymptomsDataStore.shared.entries(for: date)
-
-
     
     private let calendar = Calendar.current
     private var visibleDates: [Date] = []
@@ -46,7 +31,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var summaryLabel: UILabel!
 
 //    @IBOutlet weak var emptyStateStackView: UIStackView!
-    @IBOutlet weak var emptyImageView: UIImageView!
+    @IBOutlet weak var emptyImageView: UIView!
     @IBOutlet weak var emptyTitleLabel: UILabel!
     @IBOutlet weak var emptySubtitleLabel: UILabel!
 
@@ -55,6 +40,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var floatingAddButton: UIButton!
     @IBOutlet weak var exportButton: UIButton!
     
+    private var emptyLottieView: LottieAnimationView?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,6 +82,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             action: #selector(handleLongPress(_:))
         )
         timelineTableView.addGestureRecognizer(longPress)
+        
+        setupEmptyAnimation()
 
         
     }
@@ -138,7 +127,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
 
     private func setupUI() {
-        emptyImageView.image = UIImage(systemName: "figure.and.child.holdinghands")
+//        emptyImageView.image = UIImage(systemName: "figure.and.child.holdinghands")
         emptyImageView.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
 
         emptyTitleLabel.text = "No symptoms logged"
@@ -154,45 +143,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         floatingAddButton.tintColor = .white
 
     }
-
-//    private func showSampleData() {
-//
-//        let today = calendar.startOfDay(for: Date())
-//
-//        let fever = SymptomTimelineItem(
-//            title: "Fever",
-//            description: "High temperature",
-//            time: "09:15 AM",
-//            color: .systemRed,
-//            iconName: "thermometer"
-//        )
-//
-//        let cold = SymptomTimelineItem(
-//            title: "Cold & Cough",
-//            description: "Runny nose",
-//            time: "02:40 PM",
-//            color: .systemBlue,
-//            iconName: "wind"
-//        )
-//
-//        timelineDataByDate[today] = [fever, cold]
-//        symptomsByDate[today] = 2
-//
-//        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
-//
-//            let vomiting = SymptomTimelineItem(
-//                title: "Vomiting",
-//                description: "One episode after food",
-//                time: "11:10 AM",
-//                color: .systemOrange,
-//                iconName: "cross.case"
-//            )
-//
-//            timelineDataByDate[yesterday] = [vomiting]
-//            symptomsByDate[yesterday] = 1
-//        }
-//    }
-
     
     private func setupCalendarCollectionView() {
         calendarCollectionView.delegate = self
@@ -261,16 +211,25 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
 
         if currentEntries.isEmpty {
+
             emptyImageView.isHidden = false
             emptyTitleLabel.isHidden = false
             emptySubtitleLabel.isHidden = false
             timelineTableView.isHidden = true
+
+            emptyLottieView?.play()
+
             summaryLabel.text = "Your child doesn’t have any symptoms on this day"
+
         } else {
+
             emptyImageView.isHidden = true
             emptyTitleLabel.isHidden = true
             emptySubtitleLabel.isHidden = true
             timelineTableView.isHidden = false
+
+            emptyLottieView?.stop()
+
             summaryLabel.text = "Your child has \(currentEntries.count) symptoms today"
         }
 
@@ -381,6 +340,26 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         calendarCollectionView.reloadData()
     }
 
+    private func setupEmptyAnimation() {
+
+        let animationView = LottieAnimationView(name: "Happy boy")
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.contentMode = .scaleAspectFit
+        animationView.loopMode = .loop
+
+        emptyImageView.addSubview(animationView)
+
+        NSLayoutConstraint.activate([
+            animationView.centerXAnchor.constraint(equalTo: emptyImageView.centerXAnchor),
+            animationView.centerYAnchor.constraint(equalTo: emptyImageView.centerYAnchor),
+            animationView.widthAnchor.constraint(equalTo: emptyImageView.widthAnchor),
+            animationView.heightAnchor.constraint(equalTo: emptyImageView.heightAnchor)
+        ])
+
+        emptyLottieView = animationView
+    }
+
+    
     
 }
 
