@@ -13,7 +13,7 @@ protocol AddChildDelegate: AnyObject {
     func didAddChild(_ child: ChildProfile)
 }
 
-class AddChildViewController: UIViewController {
+class AddChildViewController: UIViewController, AddMeasureDelegate {
     
     enum Mode {
         case add
@@ -109,6 +109,10 @@ class AddChildViewController: UIViewController {
                 action: #selector(avatarTapped)
             )
         )
+        
+        weightTextField.delegate = self
+        heightTextField.delegate = self
+
 
     }
 
@@ -335,6 +339,55 @@ class AddChildViewController: UIViewController {
         }
     }
 
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+
+        if textField == weightTextField {
+            openAddMeasure(type: .weight)
+            return false
+        }
+
+        if textField == heightTextField {
+            openAddMeasure(type: .height)
+            return false
+        }
+
+        return true
+    }
+    
+    private func openAddMeasure(type: AddMeasureViewController.MeasureType) {
+
+        let vc = AddMeasureViewController(
+            nibName: "AddMeasureViewController",
+            bundle: nil
+        )
+
+        vc.measureType = type
+        vc.delegate = self
+
+        if type == .weight {
+            vc.selectedInitialValue = Double(weightTextField.text ?? "") ?? 0
+        } else {
+            vc.selectedInitialValue = Double(heightTextField.text ?? "") ?? 0
+        }
+
+        present(vc, animated: true)
+    }
+
+
+    func didSaveValue(_ value: Double, type: AddMeasureViewController.MeasureType) {
+
+        switch type {
+        case .weight:
+            weightTextField.text = String(format: "%.1f", value)
+
+        case .height:
+            heightTextField.text = String(format: "%.1f", value)
+
+        default:
+            break
+        }
+    }
 
 
 
