@@ -54,8 +54,9 @@ class ChildSelectionViewController: UIViewController {
     
     private func openMainApp(with child: ChildProfile) {
         let tabBar = MainTabBarController()
+
         tabBar.allChildren = childProfiles
-        tabBar.activeChild = child
+        tabBar.activeChild = child   // 🔥 SET BEFORE SHOWING UI
 
         guard
             let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -65,6 +66,7 @@ class ChildSelectionViewController: UIViewController {
         window.rootViewController = tabBar
         window.makeKeyAndVisible()
     }
+
 
     private func presentAddChild() {
         let vc = AddChildViewController(

@@ -19,6 +19,9 @@ private var currentEntries: [SymptomEntry] = []
 
 class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
+    var activeChild: ChildProfile!
+
+    
 //    private var timelineDataByDate: [Date: [SymptomTimelineItem]] = [:]
 //    private var currentTimelineItems: [SymptomTimelineItem] = []
 //    private var currentEntries: [SymptomEntry] = []
@@ -238,7 +241,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             nibName: "LogSymptomsViewController",
             bundle: nil
         )
-        print("Tapped")
+//        print("Tapped")
+        vc.activeChild = self.activeChild
         navigationController?.pushViewController(vc, animated: true)
     }
 
@@ -250,7 +254,11 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
 
-        currentEntries = SymptomsDataStore.shared.entries(for: date)
+        currentEntries = SymptomsDataStore.shared.entries(
+            for: date,
+            childId: activeChild.id.uuidString
+        )
+
 
         if currentEntries.isEmpty {
             emptyImageView.isHidden = false
@@ -275,12 +283,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             nibName: "SymptomsHistoryViewController",
             bundle: nil
         )
-
-//        vc.timelineDataByDate = self.timelineDataByDate
-//        vc.timelineDataByDate =
-//            SymptomsDataStore.shared.timelineDataByDate
-
-
+        vc.activeChild = self.activeChild
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
     }
@@ -293,8 +296,14 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     @objc private func exportPDF() {
 
+        let childId = activeChild.id.uuidString
+
+        guard let childEntries =
+            SymptomsDataStore.shared.entriesByChild[childId]
+        else { return }
+
         guard let pdfURL = SymptomsPDFExporter.generatePDF(
-            from: SymptomsDataStore.shared.entriesByDate,
+            from: childEntries,
             calendar: calendar
         ) else { return }
 
@@ -305,6 +314,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         present(activityVC, animated: true)
     }
+
 
     private func indexOfToday() -> IndexPath? {
         let today = calendar.startOfDay(for: Date())
@@ -353,15 +363,24 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         )
 
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
-            SymptomsDataStore.shared.deleteEntry(entry)
+            SymptomsDataStore.shared.deleteEntry(
+                entry,
+                childId: self.activeChild.id.uuidString
+            )
             self.updateSummary(for: self.selectedDate)
         })
+
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
         present(alert, animated: true)
     }
     
+    func reloadForActiveChild() {
+        updateSummary(for: selectedDate)
+        calendarCollectionView.reloadData()
+    }
+
     
 }
 
@@ -400,7 +419,11 @@ extension SymptomsTrackerViewController: UICollectionViewDataSource {
 //        let hasSymptoms =
 //            symptomsByDate[calendar.startOfDay(for: date)] != nil
         let hasSymptoms =
-            SymptomsDataStore.shared.hasSymptoms(on: date)
+        SymptomsDataStore.shared.hasSymptoms(
+            on: date,
+            childId: activeChild.id.uuidString
+        )
+
 
 
         cell.configure(

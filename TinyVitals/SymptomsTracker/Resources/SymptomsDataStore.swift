@@ -15,29 +15,34 @@ final class SymptomsDataStore {
 
     private let calendar = Calendar.current
 
-    private(set) var entriesByDate: [Date: [SymptomEntry]] = [:]
+    private(set) var entriesByChild: [String: [Date: [SymptomEntry]]] = [:]
 
-    func addEntry(_ entry: SymptomEntry) {
+    func addEntry(_ entry: SymptomEntry, for childId: String) {
         let day = calendar.startOfDay(for: entry.date)
-        entriesByDate[day, default: []].append(entry)
+        entriesByChild[childId, default: [:]][day, default: []].append(entry)
     }
 
-    func entries(for date: Date) -> [SymptomEntry] {
+
+    func entries(for date: Date, childId: String) -> [SymptomEntry] {
         let day = calendar.startOfDay(for: date)
-        return entriesByDate[day] ?? []
+        return entriesByChild[childId]?[day] ?? []
     }
 
-    func deleteEntry(_ entry: SymptomEntry) {
+
+    func deleteEntry(_ entry: SymptomEntry, childId: String) {
         let day = calendar.startOfDay(for: entry.date)
-        entriesByDate[day]?.removeAll { $0.id == entry.id }
+        entriesByChild[childId]?[day]?.removeAll { $0.id == entry.id }
     }
 
-    func hasSymptoms(on date: Date) -> Bool {
+
+    func hasSymptoms(on date: Date, childId: String) -> Bool {
         let day = calendar.startOfDay(for: date)
-        return !(entriesByDate[day]?.isEmpty ?? true)
+        return !(entriesByChild[childId]?[day]?.isEmpty ?? true)
     }
 
-    func allDates() -> [Date] {
-        entriesByDate.keys.sorted()
+
+    func allDates(for childId: String) -> [Date] {
+        entriesByChild[childId]?.keys.sorted() ?? []
     }
+
 }

@@ -54,8 +54,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     }
 
     var vaccineIndex: Int?
-    var onSaveStatus: ((VaccinationManagerViewController.VaccineStatus) -> Void)?
-    var onStatusUpdated: ((VaccinationManagerViewController.VaccineItem) -> Void)?
+    var onSaveStatus: ((VaccineStatus) -> Void)?
+    var onStatusUpdated: ((VaccineItem) -> Void)?
 
 
     private var selectedStatus: VaccinationStatus = .taken
@@ -67,7 +67,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     }
 
     
-    var vaccine: VaccinationManagerViewController.VaccineItem!
+    var vaccine: VaccineItem!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -373,7 +373,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
             }
 
             //  Save status back to list
-            let newStatus: VaccinationManagerViewController.VaccineStatus
+            let newStatus: VaccineStatus
             switch selectedStatus {
             case .taken: newStatus = .completed
             case .skipped: newStatus = .skipped

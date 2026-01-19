@@ -13,7 +13,7 @@ class VaccineCell: UITableViewCell {
     @IBOutlet weak var subtitleLabel: UILabel!
     @IBOutlet weak var cardView: UIView!
     
-    func configure(with vaccine: VaccinationManagerViewController.VaccineItem,
+    func configure(with vaccine: VaccineItem,
                    highlight searchText: String?) {
 
         titleLabel.textColor = .label

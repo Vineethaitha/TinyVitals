@@ -11,6 +11,8 @@ private let notesPlaceholder = "Add notes"
 
 final class LogSymptomsViewController: UIViewController {
     
+    var activeChild: ChildProfile!
+    
     private var selectedDate: Date = Date()
 
     // MARK: - Outlets
@@ -138,13 +140,6 @@ final class LogSymptomsViewController: UIViewController {
 //    }
 
     @IBAction func heightTapped(_ sender: UIButton) {
-//        showSampleAlert(
-//            title: "Height",
-//            message: "Sample Height: 120 cm"
-//        ) {
-//            self.addHeightButton.setTitle("120 cm", for: .normal)
-//        }
-        
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .height
         vc.selectedInitialValue = currentHeight
@@ -153,12 +148,6 @@ final class LogSymptomsViewController: UIViewController {
     }
 
     @IBAction func weightTapped(_ sender: UIButton) {
-//        showSampleAlert(
-//            title: "Weight",
-//            message: "Sample Weight: 25 kg"
-//        ) {
-//            self.addWeightButton.setTitle("25 kg", for: .normal)
-//        }
         
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .weight
@@ -216,7 +205,11 @@ final class LogSymptomsViewController: UIViewController {
                 entry.notes = notesTextView.text
                 entry.image = photoImageView.image
 
-                SymptomsDataStore.shared.addEntry(entry)
+                SymptomsDataStore.shared.addEntry(
+                    entry,
+                    for: activeChild.id.uuidString
+                )
+
             }
 
             navigationController?.popViewController(animated: true)

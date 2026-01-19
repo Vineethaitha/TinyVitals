@@ -20,9 +20,9 @@ final class VaccinationCalendarViewController : UIViewController {
     private var emptyAnimationView: LottieAnimationView?
     private let calendarView = UICalendarView()
     
-    var vaccinesByDate: [Date: [VaccinationManagerViewController.VaccineItem]] = [:]
-    var selectedVaccines: [VaccinationManagerViewController.VaccineItem] = []
-    var allVaccines: [VaccinationManagerViewController.VaccineItem] = []
+    var vaccinesByDate: [Date: [VaccineItem]] = [:]
+    var selectedVaccines: [VaccineItem] = []
+    var allVaccines: [VaccineItem] = []
     let calendar = Calendar.current
 
     override func viewDidLoad() {
@@ -156,7 +156,7 @@ final class VaccinationCalendarViewController : UIViewController {
     }
 
     private func dotColor(
-        for vaccines: [VaccinationManagerViewController.VaccineItem]
+        for vaccines: [VaccineItem]
     ) -> UIColor {
 
         if vaccines.contains(where: { $0.status == .skipped }) {

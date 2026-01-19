@@ -10,10 +10,9 @@ import UIKit
 
 final class VaccinationHeaderView: UIView {
 
-
     @IBOutlet weak var progressRingView: VaccinationProgressRingView!
     @IBOutlet weak var progressLabel: UILabel!
-    
+
     var onRingTap: (() -> Void)?
 
     override func awakeFromNib() {
@@ -22,24 +21,20 @@ final class VaccinationHeaderView: UIView {
     }
 
     func configure(
-            completed: Int,
-            upcoming: Int,
-            skipped: Int,
-            rescheduled: Int
-        ) {
-            let total = completed + upcoming + skipped + rescheduled
-            let percent = total == 0 ? 0 : Int(Double(completed) / Double(total) * 100)
+        completed: Int,
+        upcoming: Int,
+        skipped: Int,
+        rescheduled: Int
+    ) {
+        progressLabel.text = "Progress"
 
-            progressLabel.text = "Progress"
-            progressRingView.update(
+        DispatchQueue.main.async {
+            self.progressRingView.update(
                 completed: completed,
                 upcoming: upcoming,
                 skipped: skipped,
                 rescheduled: rescheduled
             )
-
-            progressRingView.onTap = { [weak self] in
-                self?.onRingTap?()
-            }
         }
     }
+}

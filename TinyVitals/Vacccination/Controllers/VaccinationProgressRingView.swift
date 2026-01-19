@@ -9,6 +9,9 @@ import UIKit
 
 final class VaccinationProgressRingView: UIView {
     
+    private var didSetupLayers = false
+
+    
     var onTap: (() -> Void)?
     
     override init(frame: CGRect) {
@@ -55,25 +58,21 @@ final class VaccinationProgressRingView: UIView {
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
-        setupLayers()
+
+        if !didSetupLayers {
+            setupLayers()
+            didSetupLayers = true
+        }
+
+        updatePathsOnly()
         setupLabel()
-        setupTap()
     }
 
+
+
+
+
     private func setupLayers() {
-        layer.sublayers?.removeAll()
-
-        let radius = min(bounds.width, bounds.height) / 2 - 16
-        let center = CGPoint(x: bounds.midX, y: bounds.midY)
-        let startAngle = -CGFloat.pi / 2
-
-        let path = UIBezierPath(
-            arcCenter: center,
-            radius: radius,
-            startAngle: startAngle,
-            endAngle: startAngle + 2 * .pi,
-            clockwise: true
-        )
 
         let layers = [
             trackLayer,
@@ -84,17 +83,15 @@ final class VaccinationProgressRingView: UIView {
         ]
 
         layers.forEach {
-            $0.path = path.cgPath
             $0.fillColor = UIColor.clear.cgColor
             $0.lineWidth = 16
             $0.lineCap = .round
         }
 
-        // Background track
-        trackLayer.strokeColor = UIColor.systemGray4.withAlphaComponent(0.4).cgColor
+        trackLayer.strokeColor =
+            UIColor.systemGray4.withAlphaComponent(0.4).cgColor
         trackLayer.strokeEnd = 1
 
-        // Simple depth
         [completedLayer, upcomingLayer, skippedLayer, rescheduledLayer].forEach {
             $0.shadowColor = UIColor.black.cgColor
             $0.shadowOpacity = 0.1
@@ -102,13 +99,13 @@ final class VaccinationProgressRingView: UIView {
             $0.shadowOffset = CGSize(width: 0, height: 1)
         }
 
-        // Order matters
         layer.addSublayer(trackLayer)
         layer.addSublayer(completedLayer)
         layer.addSublayer(upcomingLayer)
         layer.addSublayer(skippedLayer)
         layer.addSublayer(rescheduledLayer)
     }
+
 
     private func setupLabel() {
         centerLabel.frame = bounds
@@ -125,8 +122,11 @@ final class VaccinationProgressRingView: UIView {
         skipped: Int,
         rescheduled: Int
     ) {
+        guard didSetupLayers else { return }
+
         let total = completed + upcoming + skipped + rescheduled
         guard total > 0 else { return }
+
 
         let c = CGFloat(completed) / CGFloat(total)
         let u = CGFloat(upcoming) / CGFloat(total)
@@ -179,8 +179,32 @@ final class VaccinationProgressRingView: UIView {
         layer.add(pulse, forKey: "pulse")
     }
 
-    @objc private func didTap() {
-        onTap?()
+//    @objc private func didTap() {
+//        onTap?()
+//    }
+
+    private func updatePathsOnly() {
+        let radius = min(bounds.width, bounds.height) / 2 - 16
+        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let startAngle = -CGFloat.pi / 2
+
+        let path = UIBezierPath(
+            arcCenter: center,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: startAngle + 2 * .pi,
+            clockwise: true
+        )
+
+        [trackLayer,
+         completedLayer,
+         upcomingLayer,
+         skippedLayer,
+         rescheduledLayer].forEach {
+            $0.path = path.cgPath
+        }
+
+        centerLabel.frame = bounds
     }
 
 }

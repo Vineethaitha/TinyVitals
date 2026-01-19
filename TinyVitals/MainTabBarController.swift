@@ -32,7 +32,11 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let home = HomeScreenViewController()
+        let home = HomeScreenViewController(
+            nibName: "HomeScreenViewController",
+            bundle: nil
+        )
+
         home.activeChild = activeChild
         home.tabBarItem = UITabBarItem(
             title: "Home",
@@ -40,21 +44,30 @@ class MainTabBarController: UITabBarController {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let records = RecordManagerViewController()
+        let records = RecordManagerViewController(
+            nibName: "RecordManagerViewController",
+            bundle: nil
+        )
         records.tabBarItem = UITabBarItem(
             title: "Records",
             image: UIImage(systemName: "cross.case"),
             selectedImage: UIImage(systemName: "cross.case.fill")
         )
 
-        let symptoms = SymptomsTrackerViewController()
+        let symptoms = SymptomsTrackerViewController(
+            nibName: "SymptomsTrackerViewController",
+            bundle: nil
+        )
         symptoms.tabBarItem = UITabBarItem(
             title: "Symptoms",
             image: UIImage(systemName: "stethoscope"),
             selectedImage: UIImage(systemName: "stethoscope")
         )
 
-        let vaccine = VaccinationManagerViewController()
+        let vaccine = VaccinationManagerViewController(
+            nibName: "VaccinationManagerViewController",
+            bundle: nil
+        )
         vaccine.tabBarItem = UITabBarItem(
             title: "Vaccines",
             image: UIImage(systemName: "syringe"),
@@ -118,9 +131,10 @@ class MainTabBarController: UITabBarController {
 
             if let homeVC = topVC as? HomeScreenViewController {
                 homeVC.activeChild = child
-
+//                homeVC.loadViewIfNeeded()
+//                homeVC.setupVaccinationProgress()
                 if homeVC.isViewLoaded {
-                    homeVC.setupVaccinationProgress()
+                    homeVC.refreshForActiveChild()
                 }
             }
 
@@ -130,6 +144,14 @@ class MainTabBarController: UITabBarController {
 
                 if recordsVC.isViewLoaded {
                     recordsVC.reloadForChild()
+                }
+            }
+            
+            if let symptomsVC = topVC as? SymptomsTrackerViewController {
+                symptomsVC.activeChild = child
+
+                if symptomsVC.isViewLoaded {
+                    symptomsVC.reloadForActiveChild()
                 }
             }
 
@@ -255,16 +277,11 @@ class MainTabBarController: UITabBarController {
 
         nav.pushViewController(vc, animated: true)
     }
-}
+    
+//    func makeDefaultVaccines() -> [Vaccine] {
+//        VaccineSchedule.defaultVaccines()   // or however you generate them
+//    }
 
-// MARK: - Add Child Delegate
-
-extension MainTabBarController: AddChildDelegate {
-
-    func didAddChild(_ child: ChildProfile) {
-        allChildren.append(child)
-        activeChild = child
-    }
 }
 
 // MARK: - Update Child Delegate
@@ -278,5 +295,20 @@ extension MainTabBarController: ChildProfileDelegate {
     }
 }
 
+extension MainTabBarController: AddChildDelegate {
+
+    func didAddChild(_ child: ChildProfile) {
+        allChildren.append(child)
+        activeChild = child
+
+        // 🔥 ENSURE vaccines exist (do NOT build here)
+        VaccinationStore.shared.ensureVaccinesExist(
+            for: child
+        ) { dob in
+            VaccinationManagerViewController().buildVaccines(from: dob)
+        }
+    }
+
+}
 
 

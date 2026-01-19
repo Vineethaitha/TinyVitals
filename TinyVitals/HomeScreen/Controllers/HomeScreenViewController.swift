@@ -9,7 +9,13 @@ import UIKit
 
 class HomeScreenViewController: UIViewController {
     
-    var activeChild: ChildProfile!
+    var activeChild: ChildProfile? {
+        didSet {
+            guard isViewLoaded else { return }
+            refreshForActiveChild()
+        }
+    }
+
 
     
     @IBOutlet weak var articlesCollectionView: UICollectionView!
@@ -85,7 +91,10 @@ class HomeScreenViewController: UIViewController {
         
         setupSparklines()
         
-        setupVaccinationProgress()
+//        if activeChild != nil {
+//            refreshForActiveChild()
+//        }
+
 
     }
     
@@ -102,6 +111,13 @@ class HomeScreenViewController: UIViewController {
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
     
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//
+//        print("🟢 Home didAppear, child:", activeChild as Any)
+//        refreshForActiveChild()
+//    }
+
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         stopAutoScroll()
@@ -201,26 +217,17 @@ class HomeScreenViewController: UIViewController {
         // Height sparkline
         heightSparkline.frame = heightSparklineContainer.bounds
         heightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        heightSparkline.lineColor = UIColor.systemBlue
+        heightSparkline.lineColor = UIColor(
+            red: 108/255, green: 173/255, blue: 226/255, alpha: 1
+        )
         heightSparkline.values = [72.0, 73.1, 74.4, 75.0, 75.7]
         heightSparklineContainer.addSubview(heightSparkline)
     }
 
     
     func setupVaccinationProgress() {
-
         guard let child = activeChild else { return }
 
-        guard let header = Bundle.main.loadNibNamed(
-            "VaccinationHeaderView",
-            owner: nil,
-            options: nil
-        )?.first as? VaccinationHeaderView else { return }
-
-        header.frame = vaccinationProgressContainer.bounds
-        header.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-        // ✅ LOAD CHILD-SCOPED VACCINES
         let vaccines = VaccinationStore.shared.vaccines(
             for: child.id.uuidString
         )
@@ -230,25 +237,51 @@ class HomeScreenViewController: UIViewController {
         let skipped = vaccines.filter { $0.status == .skipped }.count
         let rescheduled = vaccines.filter { $0.status == .rescheduled }.count
 
+        let header: VaccinationHeaderView
+
+        if let existing = vaccinationProgressContainer.subviews.first as? VaccinationHeaderView {
+            header = existing
+        } else {
+            guard let h = Bundle.main.loadNibNamed(
+                "VaccinationHeaderView",
+                owner: nil,
+                options: nil
+            )?.first as? VaccinationHeaderView else { return }
+
+            h.frame = vaccinationProgressContainer.bounds
+            h.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            vaccinationProgressContainer.addSubview(h)
+            header = h
+        }
+
         header.configure(
             completed: completed,
             upcoming: upcoming,
             skipped: skipped,
             rescheduled: rescheduled
         )
-
-        header.onRingTap = { [weak self] in
-            self?.openVaccinesTab()
-        }
-
-        vaccinationProgressContainer.subviews.forEach { $0.removeFromSuperview() }
-        vaccinationProgressContainer.addSubview(header)
     }
+
+
+
 
     
     private func openVaccinesTab() {
         tabBarController?.selectedIndex = 3
     }
+
+    func refreshForActiveChild() {
+        print("🟡 refreshForActiveChild called")
+
+        guard let child = activeChild else {
+            print("🔴 activeChild is nil")
+            return
+        }
+
+        print("🟢 child id:", child.id)
+        setupVaccinationProgress()
+    }
+
 
 
     /*
