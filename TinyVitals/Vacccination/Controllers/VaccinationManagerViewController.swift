@@ -24,12 +24,14 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         "6 Weeks",
         "10 Weeks",
         "14 Weeks",
+        "6 Months",
         "9 Months",
         "12 Months",
         "15 Months",
-        "16–24 Months",
+        "18 Months",
+        "2 Years",
         "5–6 Years",
-        "10 Years"
+        "10–12 Years"
     ]
 
     var selectedFilterIndex = 0
@@ -161,7 +163,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
     func buildVaccines(from dob: Date) -> [VaccineItem] {
 
-//        let dob = childDOB
+        let dob = childDOB
         let cal = calendar
 
         return [
@@ -177,7 +179,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
             VaccineItem(
                 name: "OPV 0",
-                description: "Oral Polio Vaccine",
+                description: "Oral Polio",
                 ageGroup: "At Birth",
                 status: .completed,
                 date: dob
@@ -217,6 +219,14 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             ),
 
             VaccineItem(
+                name: "Hib 1",
+                description: "Haemophilus influenzae",
+                ageGroup: "6 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+            ),
+
+            VaccineItem(
                 name: "Rotavirus 1",
                 description: "Diarrhea Protection",
                 ageGroup: "6 Weeks",
@@ -250,8 +260,8 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             ),
 
             VaccineItem(
-                name: "Hepatitis B 3",
-                description: "Hep B Third Dose",
+                name: "Hib 2",
+                description: "Haemophilus influenzae",
                 ageGroup: "10 Weeks",
                 status: .upcoming,
                 date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
@@ -291,6 +301,14 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             ),
 
             VaccineItem(
+                name: "Hib 3",
+                description: "Haemophilus influenzae",
+                ageGroup: "14 Weeks",
+                status: .upcoming,
+                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+            ),
+
+            VaccineItem(
                 name: "Rotavirus 3",
                 description: "Diarrhea Protection",
                 ageGroup: "14 Weeks",
@@ -315,6 +333,14 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 date: cal.date(byAdding: .month, value: 6, to: dob)!
             ),
 
+            VaccineItem(
+                name: "Hepatitis B 3",
+                description: "Hep B Third Dose",
+                ageGroup: "6 Months",
+                status: .upcoming,
+                date: cal.date(byAdding: .month, value: 6, to: dob)!
+            ),
+
             // 9 MONTHS
             VaccineItem(
                 name: "OPV 2",
@@ -334,8 +360,8 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
             // 12 MONTHS
             VaccineItem(
-                name: "Typhoid",
-                description: "Typhoid Conjugate",
+                name: "Typhoid Conjugate",
+                description: "Typhoid",
                 ageGroup: "12 Months",
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 12, to: dob)!
@@ -365,10 +391,10 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 15, to: dob)!
             ),
-            
+
             VaccineItem(
                 name: "PCV Booster",
-                description: "PCV",
+                description: "Pneumococcal",
                 ageGroup: "15 Months",
                 status: .upcoming,
                 date: cal.date(byAdding: .month, value: 15, to: dob)!
@@ -399,7 +425,16 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 date: cal.date(byAdding: .month, value: 18, to: dob)!
             ),
 
-            // 4–6 YEARS
+            // 2 YEARS
+            VaccineItem(
+                name: "Typhoid Booster",
+                description: "Typhoid",
+                ageGroup: "2 Years",
+                status: .upcoming,
+                date: cal.date(byAdding: .year, value: 2, to: dob)!
+            ),
+
+            // 5–6 YEARS
             VaccineItem(
                 name: "DTwP Booster 2",
                 description: "DTP Booster",
@@ -442,8 +477,8 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             )
         ]
     }
-    
 
+    
     // MARK: - Setup
     func setupCollectionView() {
         filtersCollectionView.delegate = self
