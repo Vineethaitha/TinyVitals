@@ -449,6 +449,15 @@
 import UIKit
 import Lottie
 
+protocol ChildSelectionDelegate: AnyObject {
+    func didSelectChild(_ child: ChildProfile)
+}
+
+protocol ChildSelectionActions: AnyObject {
+    func requestAddChild()
+}
+
+
 class ChildSelectionViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
@@ -465,7 +474,13 @@ class ChildSelectionViewController: UIViewController {
 
 
 
-    var childProfiles: [ChildProfile] = []
+//    var childProfiles: [ChildProfile] = []
+    weak var selectionDelegate: ChildSelectionDelegate?
+    weak var actionsDelegate: ChildSelectionActions?
+
+    var childrenProvider: (() -> [ChildProfile])?
+
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -493,31 +508,37 @@ class ChildSelectionViewController: UIViewController {
         updateUI()
     }
     
-    private func openMainApp(with child: ChildProfile) {
-        let tabBar = MainTabBarController()
-
-        tabBar.allChildren = childProfiles
-        tabBar.activeChild = child   // 🔥 SET BEFORE SHOWING UI
-
-        guard
-            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-            let window = scene.windows.first
-        else { return }
-
-        window.rootViewController = tabBar
-        window.makeKeyAndVisible()
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("🟡 actionsDelegate =", actionsDelegate as Any)
     }
 
+//    private func openMainApp(with child: ChildProfile) {
+//        let tabBar = MainTabBarController()
+//
+//        tabBar.allChildren = childProfiles
+//        tabBar.activeChild = child   // 🔥 SET BEFORE SHOWING UI
+//
+//        guard
+//            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//            let window = scene.windows.first
+//        else { return }
+//
+//        window.rootViewController = tabBar
+//        window.makeKeyAndVisible()
+//    }
 
-    private func presentAddChild() {
-        let vc = AddChildViewController(
-            nibName: "AddChildViewController",
-            bundle: nil
-        )
-        vc.mode = .add
-        vc.addDelegate = self
-        present(vc, animated: true)
-    }
+
+//    private func presentAddChild() {
+//        let vc = AddChildViewController(
+//            nibName: "AddChildViewController",
+//            bundle: nil
+//        )
+//        vc.mode = .add
+//        vc.addDelegate = self
+//        present(vc, animated: true)
+//    }
     
 //    private func setupEmptyState() {
 //        let animation = LottieAnimation.named("AddChild")
@@ -668,34 +689,53 @@ class ChildSelectionViewController: UIViewController {
 
 
     
+//    private func updateUI() {
+//        let hasChildren = !childProfiles.isEmpty
+//        
+//        
+//        collectionView.isHidden = !hasChildren
+//
+//        // Empty state (0 children)
+//        emptyStateContainer.isHidden = hasChildren
+//
+//        // Selection animation (>= 1 child)
+//        selectionVCAnimationView.isHidden = !hasChildren
+//        
+//        yourChildrenLabel.isHidden = !hasChildren
+//
+//        if hasChildren {
+//            animationView?.stop()              // stop empty animation
+//            selectionAnimationView?.play()     // play selection animation
+//        } else {
+//            selectionAnimationView?.stop()
+//            animationView?.play()
+//        }
+//    }
+    
     private func updateUI() {
-        let hasChildren = !childProfiles.isEmpty
-        
-        
+        let hasChildren = !(childrenProvider?().isEmpty ?? true)
+
         collectionView.isHidden = !hasChildren
-
-        // Empty state (0 children)
         emptyStateContainer.isHidden = hasChildren
-
-        // Selection animation (>= 1 child)
         selectionVCAnimationView.isHidden = !hasChildren
-        
         yourChildrenLabel.isHidden = !hasChildren
+    }
 
-        if hasChildren {
-            animationView?.stop()              // stop empty animation
-            selectionAnimationView?.play()     // play selection animation
-        } else {
-            selectionAnimationView?.stop()
-            animationView?.play()
+
+
+    
+//    @objc private func addFirstChildTapped() {
+//        presentAddChild()
+//    }
+
+    @objc private func addFirstChildTapped() {
+        dismiss(animated: true) { [weak self] in
+            self?.actionsDelegate?.requestAddChild()
         }
     }
 
 
-    
-    @objc private func addFirstChildTapped() {
-        presentAddChild()
-    }
+
 
 
 
@@ -704,13 +744,39 @@ class ChildSelectionViewController: UIViewController {
 // MARK: - Collection DataSource
 extension ChildSelectionViewController: UICollectionViewDataSource {
 
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        numberOfItemsInSection section: Int
+//    ) -> Int {
+//        childProfiles.count + 1   // +1 for Add Child card
+//    }
+    
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        childProfiles.count + 1   // +1 for Add Child card
+        (childrenProvider?().count ?? 0) + 1
     }
 
+
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        cellForItemAt indexPath: IndexPath
+//    ) -> UICollectionViewCell {
+//
+//        let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: "ChildCardCell",
+//            for: indexPath
+//        ) as! ChildCardCell
+//
+//        if indexPath.item < childProfiles.count {
+//            cell.configure(child: childProfiles[indexPath.item])
+//        } else {
+//            cell.configureAsAdd()
+//        }
+//
+//        return cell
+//    }
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
@@ -721,41 +787,61 @@ extension ChildSelectionViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! ChildCardCell
 
-        if indexPath.item < childProfiles.count {
-            cell.configure(child: childProfiles[indexPath.item])
+        let children = childrenProvider?() ?? []
+
+        if indexPath.item < children.count {
+            cell.configure(child: children[indexPath.item])
         } else {
             cell.configureAsAdd()
         }
 
         return cell
     }
+
 }
 
 // MARK: - Collection Delegate
 extension ChildSelectionViewController: UICollectionViewDelegate {
 
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        didSelectItemAt indexPath: IndexPath
+//    ) {
+//        if indexPath.item < childProfiles.count {
+//            openMainApp(with: childProfiles[indexPath.item])
+//        } else {
+//            presentAddChild()
+//        }
+//    }
     func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        if indexPath.item < childProfiles.count {
-            openMainApp(with: childProfiles[indexPath.item])
+        let children = childrenProvider?() ?? []
+
+        if indexPath.item < children.count {
+            selectionDelegate?.didSelectChild(children[indexPath.item])
+            dismiss(animated: true)
         } else {
-            presentAddChild()
+            dismiss(animated: true) { [weak self] in
+                self?.actionsDelegate?.requestAddChild()
+            }
+
         }
     }
+
 }
 
 // MARK: - AddChildDelegate
-extension ChildSelectionViewController: AddChildDelegate {
-
-    func didAddChild(_ child: ChildProfile) {
-        childProfiles.append(child)
-        collectionView.reloadData()
-        updateUI() // 🔥 switches to collection view
-    }
-
-}
+//extension ChildSelectionViewController: AddChildDelegate {
+//
+//    func didAddChild(_ child: ChildProfile) {
+//        childProfiles.append(child)
+//        collectionView.reloadData()
+//        updateUI() // 🔥 switches to collection view
+//    }
+//
+//}
 
 extension ChildSelectionViewController: UICollectionViewDelegateFlowLayout {
 

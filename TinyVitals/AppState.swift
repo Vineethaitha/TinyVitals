@@ -12,23 +12,24 @@ final class AppState {
     static let shared = AppState()
     private init() {}
 
-    // MARK: - Auth
     private(set) var userId: String?
 
-    // MARK: - Children
     private(set) var children: [ChildProfile] = []
     private(set) var activeChild: ChildProfile?
 
-    // MARK: - Mutations
     func setUser(id: String) {
         userId = id
     }
 
-    func setChildren(_ children: [ChildProfile]) {
-        self.children = children
+    func addChild(_ child: ChildProfile) {
+        children.append(child)
+        activeChild = child
+    }
 
-        if activeChild == nil {
-            activeChild = children.first
+    func updateChild(_ child: ChildProfile) {
+        if let index = children.firstIndex(where: { $0.id == child.id }) {
+            children[index] = child
+            activeChild = child
         }
     }
 
@@ -42,4 +43,3 @@ final class AppState {
         activeChild = nil
     }
 }
-

@@ -364,21 +364,30 @@ class MainTabBarController: UITabBarController {
     
     // MARK: - State
 
-    var allChildren: [ChildProfile] = [] {
-        didSet {
-            if activeChild == nil {
-                activeChild = allChildren.first
-            }
-        }
+//    var allChildren: [ChildProfile] = [] {
+//        didSet {
+//            if activeChild == nil {
+//                activeChild = allChildren.first
+//            }
+//        }
+//    }
+//
+//    var activeChild: ChildProfile? {
+//        didSet {
+//            guard let child = activeChild else { return }
+//            propagateActiveChild(child)
+//            updateNavBarTitles()
+//        }
+//    }
+    
+//    private var children: [ChildProfile] {
+//        AppState.shared.children
+//    }
+//
+    private var activeChild: ChildProfile? {
+        AppState.shared.activeChild
     }
 
-    var activeChild: ChildProfile? {
-        didSet {
-            guard let child = activeChild else { return }
-            propagateActiveChild(child)
-            updateNavBarTitles()
-        }
-    }
 
 
     // MARK: - Lifecycle
@@ -460,11 +469,12 @@ class MainTabBarController: UITabBarController {
 
         updateNavBarTitles()
 
-        if allChildren.isEmpty {
+        if AppState.shared.children.isEmpty {
             presentAddChild()
         }
-        
     }
+
+
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -550,6 +560,7 @@ class MainTabBarController: UITabBarController {
             nibName: "AddChildViewController",
             bundle: nil
         )
+
         vc.mode = .add
         vc.addDelegate = self
 
@@ -557,6 +568,10 @@ class MainTabBarController: UITabBarController {
         nav.modalPresentationStyle = .fullScreen
         present(nav, animated: true)
     }
+
+
+
+
 
 
 
@@ -576,19 +591,43 @@ class MainTabBarController: UITabBarController {
         )
     }
 
+//    @objc private func switchChildTapped() {
+//        let vc = ChildSelectionViewController(
+//            nibName: "ChildSelectionViewController",
+//            bundle: nil
+//        )
+//
+//        vc.childrenProvider = {
+//            AppState.shared.children
+//        }
+//
+//        vc.selectionDelegate = self
+//        vc.actionsDelegate = self
+//
+//        let nav = UINavigationController(rootViewController: vc)
+//        nav.modalPresentationStyle = .pageSheet
+//        present(nav, animated: true)
+//    }
     @objc private func switchChildTapped() {
         let vc = ChildSelectionViewController(
             nibName: "ChildSelectionViewController",
             bundle: nil
         )
-        vc.childProfiles = allChildren
 
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = scene.windows.first {
-            window.rootViewController = vc
-            window.makeKeyAndVisible()
+        vc.childrenProvider = {
+            AppState.shared.children
         }
+
+        vc.selectionDelegate = self
+        vc.actionsDelegate = self   // 🔥 THIS LINE IS REQUIRED
+
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .pageSheet
+        present(nav, animated: true)
     }
+
+
+
     
     private func applyChildNavBar(to vc: UIViewController) {
         guard let child = activeChild else { return }
@@ -640,29 +679,73 @@ class MainTabBarController: UITabBarController {
 
 // MARK: - Update Child Delegate
 
+//extension MainTabBarController: ChildProfileDelegate {
+//    func didUpdateChild(_ child: ChildProfile) {
+//        activeChild = child
+//        if let index = allChildren.firstIndex(where: { $0.id == child.id }) {
+//            allChildren[index] = child
+//        }
+//    }
+//}
+
+//extension MainTabBarController: AddChildDelegate {
+//
+//    func didAddChild(_ child: ChildProfile) {
+//        allChildren.append(child)
+//        activeChild = child
+//
+//        // 🔥 ENSURE vaccines exist (do NOT build here)
+//        VaccinationStore.shared.ensureVaccinesExist(
+//            for: child
+//        ) { dob in
+//            VaccinationManagerViewController().buildVaccines(from: dob)
+//        }
+//    }
+//
+//}
+
+//extension MainTabBarController: AddChildDelegate {
+//
+//    func didAddChild(_ child: ChildProfile) {
+//        AppState.shared.addChild(child)
+//        updateNavBarTitles()
+//    }
+//}
+
 extension MainTabBarController: ChildProfileDelegate {
+
     func didUpdateChild(_ child: ChildProfile) {
-        activeChild = child
-        if let index = allChildren.firstIndex(where: { $0.id == child.id }) {
-            allChildren[index] = child
-        }
+        AppState.shared.updateChild(child)
+        propagateActiveChild(child)
+        updateNavBarTitles()
     }
 }
+
 
 extension MainTabBarController: AddChildDelegate {
 
     func didAddChild(_ child: ChildProfile) {
-        allChildren.append(child)
-        activeChild = child
-
-        // 🔥 ENSURE vaccines exist (do NOT build here)
-        VaccinationStore.shared.ensureVaccinesExist(
-            for: child
-        ) { dob in
-            VaccinationManagerViewController().buildVaccines(from: dob)
-        }
+        AppState.shared.addChild(child)
+        dismiss(animated: true)
+        propagateActiveChild(child)
+        updateNavBarTitles()
     }
-
 }
 
+
+
+extension MainTabBarController: ChildSelectionDelegate {
+    func didSelectChild(_ child: ChildProfile) {
+        AppState.shared.setActiveChild(child)
+        propagateActiveChild(child)
+        updateNavBarTitles()
+    }
+}
+
+extension MainTabBarController: ChildSelectionActions {
+    func requestAddChild() {
+        print("🔥 requestAddChild received in MainTabBarController")
+        presentAddChild()
+    }
+}
 
