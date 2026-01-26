@@ -65,12 +65,14 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         searchBarView.delegate = self
         setupSortMenu()
     }
-
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         collectionView.reloadData()
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
+        if activeChild != nil {
+            onActiveChildChanged()
+        }
     }
     
 //    @IBAction func magicWandTapped() {
