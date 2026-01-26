@@ -7,10 +7,12 @@
 
 import UIKit
 
-class RecordManagerViewController: UIViewController {
+class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     
     let store = RecordsStore.shared
-    var activeChild: ChildProfile!
+
+    var activeChild: ChildProfile?
+
     
     
 //    let store = RecordsStore.shared
@@ -41,51 +43,29 @@ class RecordManagerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         addButton.configuration = nil
         addButton.layer.cornerRadius = addButton.frame.height / 2
         addButton.clipsToBounds = true
         addButton.setImage(UIImage(systemName: "doc.badge.plus"), for: .normal)
-        
-        guard let activeChild else {
-            assertionFailure("❌ RecordManagerViewController opened without activeChild")
-            return
-        }
-
-        let childId = activeChild.id
-
-        if store.foldersByChild[childId] == nil {
-            store.foldersByChild[childId] = [
-                RecordFolder(name: "Reports", icon: UIImage(systemName: "folder.fill")),
-                RecordFolder(name: "Prescriptions", icon: UIImage(systemName: "pills.fill")),
-                RecordFolder(name: "Vaccinations", icon: UIImage(systemName: "bandage.fill"))
-            ]
-            store.filesByChild[childId] = []
-        }
-
-
 
         collectionView.dataSource = self
         collectionView.delegate = self
-
-        collectionView.backgroundColor = UIColor.clear
+        collectionView.backgroundColor = .clear
 
         let nib = UINib(nibName: "RecordCardCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: "RecordCardCell")
-        
-        collectionView.register(UICollectionReusableView.self,
+
+        collectionView.register(
+            UICollectionReusableView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "Header")
-        
+            withReuseIdentifier: "Header"
+        )
+
         searchBarView.delegate = self
-        
         setupSortMenu()
-        
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//            tap.cancelsTouchesInView = false
-//            view.addGestureRecognizer(tap)
-        // Do any additional setup after loading the view.
     }
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -278,20 +258,19 @@ class RecordManagerViewController: UIViewController {
     
     @IBAction func addFileButtonTapped(_ sender: UIButton) {
 
+        guard let childId = activeChild?.id else { return }
+
         let sheetHeight: CGFloat = 650
 
         let vc = AddRecordViewController(
             nibName: "AddRecordViewController",
             bundle: nil
         )
-        
-        vc.activeChild = activeChild
-        vc.availableFolders = store.folders(for: activeChild.id).map { $0.name }
-        vc.onRecordSaved = { [weak self] in
-            guard let self = self else { return }
 
-            // Reload folder counts
-            self.collectionView.reloadData()
+        vc.activeChild = activeChild
+        vc.availableFolders = store.folders(for: childId).map { $0.name }
+        vc.onRecordSaved = { [weak self] in
+            self?.collectionView.reloadData()
         }
 
         vc.modalPresentationStyle = .pageSheet
@@ -305,6 +284,7 @@ class RecordManagerViewController: UIViewController {
 
         present(vc, animated: true)
     }
+
 
     
     func showCreateFolderAlert() {
@@ -477,17 +457,25 @@ class RecordManagerViewController: UIViewController {
         filteredFolders.removeAll()
         filteredRecentFolders.removeAll()
 
-        if store.foldersByChild[childId] == nil {
-            store.foldersByChild[childId] = [
-                RecordFolder(name: "Reports", icon: UIImage(systemName: "folder.fill")),
-                RecordFolder(name: "Prescriptions", icon: UIImage(systemName: "pills.fill")),
-                RecordFolder(name: "Vaccinations", icon: UIImage(systemName: "bandage.fill"))
-            ]
-            store.filesByChild[childId] = []
-        }
+        store.ensureDefaultFolders(for: childId)
 
         collectionView.reloadData()
     }
+    
+    func onActiveChildChanged() {
+        guard let child = activeChild else { return }
+
+        store.ensureDefaultFolders(for: child.id)
+
+        recentFolders.removeAll()
+        filteredFolders.removeAll()
+        filteredRecentFolders.removeAll()
+        isSearching = false
+        searchBarView.text = nil
+
+        collectionView.reloadData()
+    }
+
 
 
 
@@ -509,29 +497,37 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
                         numberOfItemsInSection section: Int) -> Int {
 
         if isSearching {
-            return (section == 0) ? filteredRecentFolders.count : filteredFolders.count
+            return (section == 0)
+                ? filteredRecentFolders.count
+                : filteredFolders.count
         }
+
+        guard let childId = activeChild?.id else { return 0 }
 
         return (section == 0)
             ? recentFolders.count
-            : store.folders(for: activeChild.id).count
-
+            : store.folders(for: childId).count
     }
+
 
 
     func getFolder(for indexPath: IndexPath) -> RecordFolder {
 
         if isSearching {
-            return indexPath.section == 0 ?
-                filteredRecentFolders[indexPath.item] :
-                filteredFolders[indexPath.item]
+            return indexPath.section == 0
+                ? filteredRecentFolders[indexPath.item]
+                : filteredFolders[indexPath.item]
+        }
+
+        guard let childId = activeChild?.id else {
+            fatalError("activeChild missing in RecordManagerViewController")
         }
 
         return indexPath.section == 0
             ? recentFolders[indexPath.item]
-            : store.folders(for: activeChild.id)[indexPath.item]
-
+            : store.folders(for: childId)[indexPath.item]
     }
+
 
     // MARK: - Cell
     func collectionView(_ collectionView: UICollectionView,
@@ -542,26 +538,30 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
             for: indexPath
         ) as! RecordCardCell
 
+        guard let childId = activeChild?.id else { return cell }
+
         let folder = getFolder(for: indexPath)
         let count = store.files(
-            for: activeChild.id,
+            for: childId,
             folderName: folder.name
         ).count
 
-
         cell.configure(with: folder, fileCount: count)
 
+        cell.gestureRecognizers?.forEach {
+            cell.removeGestureRecognizer($0)
+        }
 
-        // Remove old gestures
-        cell.gestureRecognizers?.forEach { cell.removeGestureRecognizer($0) }
-
-        // Add long-press gesture
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        let longPress = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(handleLongPress(_:))
+        )
         longPress.minimumPressDuration = 0.5
         cell.addGestureRecognizer(longPress)
 
         return cell
     }
+
 
     // MARK: - Header View
     func collectionView(_ collectionView: UICollectionView,

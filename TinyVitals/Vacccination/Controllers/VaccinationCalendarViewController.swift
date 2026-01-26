@@ -22,7 +22,13 @@ final class VaccinationCalendarViewController : UIViewController {
     
     var vaccinesByDate: [Date: [VaccineItem]] = [:]
     var selectedVaccines: [VaccineItem] = []
-    var allVaccines: [VaccineItem] = []
+    var allVaccines: [VaccineItem] = [] {
+        didSet {
+            groupVaccinesByDate()
+            loadVaccinesForToday()
+        }
+    }
+
     let calendar = Calendar.current
 
     override func viewDidLoad() {
@@ -204,6 +210,8 @@ extension  VaccinationCalendarViewController : UICalendarSelectionSingleDateDele
         selectedVaccines = vaccinesByDate[day] ?? []
         tableView.reloadData()
         updateEmptyState()
+        refreshCalendarDot(for: day)
+
     }
 }
 

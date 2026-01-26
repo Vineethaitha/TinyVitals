@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 
 class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let store = RecordsStore.shared
-    var activeChild: ChildProfile!
+    var activeChild: ChildProfile?
 
     // MARK: - Outlets
     @IBOutlet weak var titleTextField: UITextField!
@@ -97,7 +97,10 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
     
     @IBAction func addButtonTapped(_ sender: UIButton) {
 
-        guard let activeChild else { return }
+        guard let activeChild else {
+            assertionFailure("AddRecordViewController opened without activeChild")
+            return
+        }
 
         guard let title = titleTextField.text, !title.isEmpty else {
             showValidationAlert(message: "Enter title")

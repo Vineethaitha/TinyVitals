@@ -87,6 +87,11 @@ class RecordListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        guard let activeChild else {
+            assertionFailure("RecordListViewController opened without activeChild")
+            return
+        }
+        
         if case .normal = mode {
             assert(activeChild != nil, "❌ RecordListViewController opened in normal mode without activeChild")
         }
@@ -599,8 +604,7 @@ class RecordListViewController: UIViewController {
             files.sort { $0.date < $1.date }
         }
 
-        store.filesByChild[activeChild.id] = store.allFiles(for: activeChild.id)
-            .map { $0.id == files.first?.id ? files.first! : $0 }
+        store.updateFiles(files, for: activeChild.id, folderName: folderName)
 
         // Update filtered list if searching
         if isSearching {

@@ -105,6 +105,15 @@ class ChildCardCell: UICollectionViewCell {
         avatarImageView.layer.cornerRadius = 40
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        avatarImageView.image = nil
+        avatarImageView.tintColor = nil
+        avatarImageView.contentMode = .scaleAspectFill
+        nameLabel.text = nil
+        ageLabel.text = nil
+    }
 
 
 
@@ -116,7 +125,7 @@ class ChildCardCell: UICollectionViewCell {
 
     func configure(child: ChildProfile) {
         nameLabel.text = child.name
-        ageLabel.text = child.ageString()
+        ageLabel.text = child.ageString
 
         avatarImageView.backgroundColor = .white
         avatarImageView.contentMode = .scaleAspectFill
@@ -124,14 +133,13 @@ class ChildCardCell: UICollectionViewCell {
         if let filename = child.photoFilename,
            let image = loadImageFromDisk(filename) {
             avatarImageView.image = image
+        } else {
+            avatarImageView.image = UIImage(systemName: "person.fill")
         }
-        
+
         avatarImageView.tintColor = nil
-        avatarImageView.contentMode = .scaleAspectFill
-
-
-        contentView.backgroundColor = .systemGray6
     }
+
 
 
 
@@ -154,7 +162,9 @@ class ChildCardCell: UICollectionViewCell {
 
         avatarImageView.tintColor = .black
         avatarImageView.contentMode = .center
+        contentView.backgroundColor = .clear
     }
+
 
 
 
@@ -170,23 +180,23 @@ class ChildCardCell: UICollectionViewCell {
 }
 
 
-extension ChildProfile {
-
-    func ageString() -> String {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents(
-            [.year, .month],
-            from: dob,
-            to: Date()
-        )
-
-        let years = components.year ?? 0
-        let months = components.month ?? 0
-
-        if years == 0 {
-            return "\(months) month\(months == 1 ? "" : "s")"
-        } else {
-            return "\(years) yr \(months) mo"
-        }
-    }
-}
+//extension ChildProfile {
+//
+//    func ageString() -> String {
+//        let calendar = Calendar.current
+//        let components = calendar.dateComponents(
+//            [.year, .month],
+//            from: dob,
+//            to: Date()
+//        )
+//
+//        let years = components.year ?? 0
+//        let months = components.month ?? 0
+//
+//        if years == 0 {
+//            return "\(months) month\(months == 1 ? "" : "s")"
+//        } else {
+//            return "\(years) yr \(months) mo"
+//        }
+//    }
+//}

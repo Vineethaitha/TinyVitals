@@ -12,7 +12,7 @@ private var currentEntries: [SymptomEntry] = []
 
 class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
-    var activeChild: ChildProfile!
+    var activeChild: ChildProfile?
     
     private let calendar = Calendar.current
     private var visibleDates: [Date] = []
@@ -50,7 +50,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 //        showSampleData()
         
         setupCalendarCollectionView()
-        updateSummary(for: Date())
+//        updateSummary(for: Date())
         
         generateDates()
         calendarCollectionView.reloadData()
@@ -116,6 +116,9 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        let today = calendar.startOfDay(for: Date())
+        selectedDate = today
+
         guard let indexPath = indexOfToday() else { return }
 
         calendarCollectionView.selectItem(
@@ -123,7 +126,10 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             animated: false,
             scrollPosition: .centeredHorizontally
         )
+
+        updateSummary(for: today)
     }
+
 
 
     private func setupUI() {
@@ -200,15 +206,16 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     private func updateSummary(for date: Date) {
 
+        guard let child = activeChild else { return }
+
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
 
         currentEntries = SymptomsDataStore.shared.entries(
             for: date,
-            childId: activeChild.id.uuidString
+            childId: child.id.uuidString
         )
-
 
         if currentEntries.isEmpty {
 
@@ -218,7 +225,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             timelineTableView.isHidden = true
 
             emptyLottieView?.play()
-
             summaryLabel.text = "Your child doesn’t have any symptoms on this day"
 
         } else {
@@ -229,12 +235,13 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             timelineTableView.isHidden = false
 
             emptyLottieView?.stop()
-
             summaryLabel.text = "Your child has \(currentEntries.count) symptoms today"
         }
 
         timelineTableView.reloadData()
     }
+
+
 
     
     @IBAction func historyTapped(_ sender: UIButton) {
@@ -255,7 +262,9 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     @objc private func exportPDF() {
 
-        let childId = activeChild.id.uuidString
+        guard let child = activeChild else { return }
+
+        let childId = child.id.uuidString
 
         guard let childEntries =
             SymptomsDataStore.shared.entriesByChild[childId]
@@ -273,6 +282,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         present(activityVC, animated: true)
     }
+
 
 
     private func indexOfToday() -> IndexPath? {
@@ -310,6 +320,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         if gesture.state != .began { return }
 
+        guard let child = activeChild else { return }
+
         let point = gesture.location(in: timelineTableView)
         guard let indexPath = timelineTableView.indexPathForRow(at: point) else { return }
 
@@ -321,19 +333,24 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             preferredStyle: .actionSheet
         )
 
-        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
-            SymptomsDataStore.shared.deleteEntry(
-                entry,
-                childId: self.activeChild.id.uuidString
-            )
-            self.updateSummary(for: self.selectedDate)
-        })
+        alert.addAction(
+            UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+                guard let self = self else { return }
 
+                SymptomsDataStore.shared.deleteEntry(
+                    entry,
+                    childId: child.id.uuidString
+                )
+
+                self.updateSummary(for: self.selectedDate)
+            }
+        )
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
         present(alert, animated: true)
     }
+
     
     func reloadForActiveChild() {
         updateSummary(for: selectedDate)
@@ -400,7 +417,7 @@ extension SymptomsTrackerViewController: UICollectionViewDataSource {
         let hasSymptoms =
         SymptomsDataStore.shared.hasSymptoms(
             on: date,
-            childId: activeChild.id.uuidString
+            childId: activeChild?.id.uuidString ?? ""
         )
 
 
@@ -477,3 +494,13 @@ extension SymptomsTrackerViewController: UITableViewDataSource {
     }
 }
 
+extension SymptomsTrackerViewController: ActiveChildReceivable {
+    func onActiveChildChanged() {
+        guard isViewLoaded else { return }
+        guard let _ = activeChild else { return }
+
+        generateDates()
+        calendarCollectionView.reloadData()
+        updateSummary(for: selectedDate)
+    }
+}

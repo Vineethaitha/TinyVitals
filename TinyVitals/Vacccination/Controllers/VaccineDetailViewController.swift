@@ -9,7 +9,7 @@ import UIKit
 
 class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    var activeChild: ChildProfile!
+    var activeChild: ChildProfile?
 
 
     @IBOutlet weak var titleLabel: UILabel!
@@ -47,33 +47,65 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     @IBOutlet weak var saveButton: UIButton!
     // MARK: - Data (Injected)
 
-    enum VaccinationStatus {
-        case taken
-        case skipped
-        case rescheduled
-    }
+//    enum VaccinationStatus {
+//        case taken
+//        case skipped
+//        case rescheduled
+//    }
 
     var vaccineIndex: Int?
     var onSaveStatus: ((VaccineStatus) -> Void)?
     var onStatusUpdated: ((VaccineItem) -> Void)?
 
 
-    private var selectedStatus: VaccinationStatus = .taken
+    private var selectedStatus: VaccineStatus = .completed
+    
+    private var vaccineKey: String {
+        guard
+            let childId = activeChild?.id.uuidString,
+            let vaccine = vaccine
+        else {
+            return "invalid_vaccine_key"
+        }
+
+        return "\(childId)_\(vaccine.date.timeIntervalSince1970)"
+    }
+
+
+
 
 
     private let notesPlaceholder = "Enter notes..."
-    private var notesStorageKey: String {
-        "notes_\(activeChild.id.uuidString)_\(vaccine.name)"
-    }
+//    private var notesStorageKey: String {
+//        "notes_\(activeChild.id.uuidString)_\(vaccine.name)"
+//    }
 
     
     var vaccine: VaccineItem!
+    
+    
+    private var notesStorageKey: String {
+        "notes_\(vaccineKey)"
+    }
+
+    private var photoStorageKey: String {
+        "photo_\(vaccineKey)"
+    }
+
+    private var detailStorageKey: String {
+        "vaccine_detail_\(vaccineKey)"
+    }
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        assert(activeChild != nil, "❌ VaccinationCalendarViewController opened without activeChild")
+
+        guard activeChild != nil else {
+            dismiss(animated: true)
+            return
+        }
+
         setupUI()
-        updateStatusUI()
         populateData()
         setupStatusTaps()
         configure()
@@ -81,11 +113,13 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         setupPhotoUI()
         loadSavedDetails()
     }
+
+
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        updateStatusUI()
-    }
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        updateStatusUI()
+//    }
 
 
     func configure() {
@@ -130,15 +164,10 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         titleLabel.text = vaccine.name
         descriptionLabel.text = vaccine.description
 
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-
-        
-        // default
-           selectedStatus = .taken
-           updateStatusUI()
+        selectedStatus = vaccine.status
+        updateStatusUI()
     }
+
 
     
     // MARK: - Actions
@@ -174,7 +203,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
 
     @objc func takenTapped() {
-        selectedStatus = .taken
+        selectedStatus = .completed
         UIView.animate(withDuration: 0.2) {
                 self.updateStatusUI()
             }
@@ -205,9 +234,9 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
            let inactiveColor = UIColor.systemGray3
         
         takenRadioImageView.image =
-            selectedStatus == .taken ? selected : unselected
+            selectedStatus == .completed ? selected : unselected
         takenRadioImageView.tintColor =
-                selectedStatus == .taken ? activeColor : inactiveColor
+                selectedStatus == .completed ? activeColor : inactiveColor
 
         skippedRadioImageView.image =
             selectedStatus == .skipped ? selected : unselected
@@ -219,7 +248,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         rescheduledRadioImageView.tintColor =
                 selectedStatus == .rescheduled ? activeColor : inactiveColor
         
-        highlightRow(statusTakenRow, active: selectedStatus == .taken)
+        highlightRow(statusTakenRow, active: selectedStatus == .completed)
         highlightRow(statusSkippedRow, active: selectedStatus == .skipped)
         highlightRow(statusRescheduledRow, active: selectedStatus == .rescheduled)
 
@@ -267,24 +296,17 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     // image adding
     
     private func setupPhotoUI() {
-    vaccineImageView.contentMode = .scaleAspectFill
-        vaccineImageView.clipsToBounds = true
-        vaccineImageView.layer.cornerRadius = 12
-
-        // IMPORTANT: hide container, not image only
-        photoCardView.isHidden = true
-        vaccineImageView.image = nil
-        photoCardView.isHidden = true
-
-        vaccineImageView.image = nil
         vaccineImageView.contentMode = .scaleAspectFill
         vaccineImageView.clipsToBounds = true
         vaccineImageView.layer.cornerRadius = 12
-   
-        loadSavedPhoto()
-        updateAddPhotoButtonTitle(hasImage: false)
 
+        vaccineImageView.image = nil
+        photoCardView.isHidden = true
+
+        loadSavedPhoto()
+        updateAddPhotoButtonTitle(hasImage: vaccineImageView.image != nil)
     }
+
 
     func imagePickerController(
         _ picker: UIImagePickerController,
@@ -293,30 +315,28 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         picker.dismiss(animated: true)
 
         guard let image =
-            (info[.editedImage] ?? info[.originalImage]) as? UIImage else {
-            print(" No image found")
-            return
-        }
-
-        print(" Image assigned")
+            (info[.editedImage] ?? info[.originalImage]) as? UIImage
+        else { return }
 
         vaccineImageView.image = image
         photoCardView.isHidden = false
         updateAddPhotoButtonTitle(hasImage: true)
+        savePhoto(image)
 
         UIView.animate(withDuration: 0.25) {
             self.view.layoutIfNeeded()
         }
     }
 
+
        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
            picker.dismiss(animated: true)
        }
     
     
-    private var photoStorageKey: String {
-        "photo_\(activeChild.id.uuidString)_\(vaccine.name)"
-    }
+//    private var photoStorageKey: String {
+//        "photo_\(activeChild.id.uuidString)_\(vaccine.name)"
+//    }
 
 
     private func savePhoto(_ image: UIImage) {
@@ -333,56 +353,44 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         }
     }
     
-    private var detailStorageKey: String {
-        "vaccine_detail_\(activeChild.id.uuidString)_\(vaccine.name)"
-    }
+//    private var detailStorageKey: String {
+//        "vaccine_detail_\(activeChild.id.uuidString)_\(vaccine.name)"
+//    }
 
 
     
     @IBAction func saveTapped(_ sender: UIButton) {
-            
-            //  Save date + time (merge date & time picker)
-            let calendar = Calendar.current
-            let finalDate = calendar.date(
-                bySettingHour: calendar.component(.hour, from: timePicker.date),
-                minute: calendar.component(.minute, from: timePicker.date),
-                second: 0,
-                of: datePicker.date
-            ) ?? datePicker.date
 
-            //  Notes
-            let notesText =
-                notesTextView.text == notesPlaceholder
-                ? nil
-                : notesTextView.text
+        let calendar = Calendar.current
+        let finalDate = calendar.date(
+            bySettingHour: calendar.component(.hour, from: timePicker.date),
+            minute: calendar.component(.minute, from: timePicker.date),
+            second: 0,
+            of: datePicker.date
+        ) ?? datePicker.date
 
-            //  Image
-            let imageData = vaccineImageView.image?
-                .jpegData(compressionQuality: 0.8)
+        let notesText =
+            notesTextView.text == notesPlaceholder
+            ? nil
+            : notesTextView.text
 
-            //  Create storage object
-            let detail = VaccineDetailStorage(
-                date: finalDate,
-                notes: notesText,
-                imageData: imageData
-            )
+        let imageData = vaccineImageView.image?
+            .jpegData(compressionQuality: 0.8)
 
-            //  Save to UserDefaults
-            if let encoded = try? JSONEncoder().encode(detail) {
-                UserDefaults.standard.set(encoded, forKey: detailStorageKey)
-            }
+        let detail = VaccineDetailStorage(
+            date: finalDate,
+            notes: notesText,
+            imageData: imageData
+        )
 
-            //  Save status back to list
-            let newStatus: VaccineStatus
-            switch selectedStatus {
-            case .taken: newStatus = .completed
-            case .skipped: newStatus = .skipped
-            case .rescheduled: newStatus = .rescheduled
-            }
+        if let encoded = try? JSONEncoder().encode(detail) {
+            UserDefaults.standard.set(encoded, forKey: detailStorageKey)
+        }
 
-            onSaveStatus?(newStatus)
-            dismiss(animated: true)
+        onSaveStatus?(selectedStatus)
+        dismiss(animated: true)
     }
+
 
     private func loadSavedDetails() {
 

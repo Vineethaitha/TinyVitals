@@ -191,30 +191,40 @@ final class LogSymptomsViewController: UIViewController {
 
     @IBAction func saveTapped(_ sender: UIButton) {
 
-            for symptom in selectedSymptoms {
+        guard !selectedSymptoms.isEmpty else {
+            let alert = UIAlertController(
+                title: "No symptoms selected",
+                message: "Please select at least one symptom.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+            return
+        }
 
-                var entry = SymptomEntry(
-                    symptom: symptom,
-                    date: selectedDate
-                )
+        for symptom in selectedSymptoms {
 
-                entry.height = currentHeight
-                entry.weight = currentWeight
-                entry.temperature = currentTemperature
-                entry.severity = currentSeverity
-                entry.notes = notesTextView.text
-                entry.image = photoImageView.image
+            var entry = SymptomEntry(
+                symptom: symptom,
+                date: selectedDate
+            )
 
-                SymptomsDataStore.shared.addEntry(
-                    entry,
-                    for: activeChild.id.uuidString
-                )
+            entry.height = currentHeight
+            entry.weight = currentWeight
+            entry.temperature = currentTemperature
+            entry.severity = currentSeverity
+            entry.notes = notesTextView.text == notesPlaceholder ? nil : notesTextView.text
+            entry.image = photoImageView.image
 
-            }
+            SymptomsDataStore.shared.addEntry(
+                entry,
+                for: activeChild.id.uuidString
+            )
+        }
 
-            navigationController?.popViewController(animated: true)
-
+        navigationController?.popViewController(animated: true)
     }
+
     
     @IBAction func selectSymptomsTapped(_ sender: UIButton) {
 

@@ -11,10 +11,10 @@ class HomeScreenViewController: UIViewController {
     
     var activeChild: ChildProfile? {
         didSet {
-            guard isViewLoaded else { return }
             refreshForActiveChild()
         }
     }
+
 
 
     
@@ -100,9 +100,10 @@ class HomeScreenViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupVaccinationProgress()
+        refreshForActiveChild()
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
+
 
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -160,9 +161,10 @@ class HomeScreenViewController: UIViewController {
     }
 
     private func setupSummaryCards() {
-        weightValueLabel.text = "9.4 kg"
-        heightValueLabel.text = "75.7 cm"
+        weightValueLabel.text = "-- kg"
+        heightValueLabel.text = "-- cm"
     }
+
 
     private func setupCardGestures() {
         let weightTap = UITapGestureRecognizer(
@@ -204,7 +206,9 @@ class HomeScreenViewController: UIViewController {
     }
 
     private func setupSparklines() {
-
+        
+        weightSparklineContainer.subviews.forEach { $0.removeFromSuperview() }
+        heightSparklineContainer.subviews.forEach { $0.removeFromSuperview() }
         // Weight sparkline
         weightSparkline.frame = weightSparklineContainer.bounds
         weightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -271,16 +275,26 @@ class HomeScreenViewController: UIViewController {
     }
 
     func refreshForActiveChild() {
-        print("🟡 refreshForActiveChild called")
+        guard isViewLoaded else { return }
+        guard let child = activeChild else { return }
 
-        guard let child = activeChild else {
-            print("🔴 activeChild is nil")
-            return
+        // Weight / Height summary
+        if let weight = child.weight {
+            weightValueLabel.text = String(format: "%.1f kg", weight)
+        } else {
+            weightValueLabel.text = "-- kg"
         }
 
-        print("🟢 child id:", child.id)
+        if let height = child.height {
+            heightValueLabel.text = String(format: "%.1f cm", height)
+        } else {
+            heightValueLabel.text = "-- cm"
+        }
+
+        // Vaccination progress
         setupVaccinationProgress()
     }
+
 
 
 

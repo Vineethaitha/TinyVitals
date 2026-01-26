@@ -1,3 +1,352 @@
+////
+////  MainTabBarController.swift
+////  ChildProfile
+////
+////  Created by admin0 on 12/21/25.
+////
+//import UIKit
+//
+//
+//
+//class MainTabBarController: UITabBarController {
+//    
+//    // MARK: - State
+//
+//    var allChildren: [ChildProfile] = [] {
+//        didSet {
+//            if activeChild == nil {
+//                activeChild = allChildren.first
+//            }
+//        }
+//    }
+//
+//    var activeChild: ChildProfile? {
+//        didSet {
+//            guard let child = activeChild else { return }
+//            propagateActiveChild(child)
+//            updateNavBarTitles()
+//        }
+//    }
+//    
+//
+//
+//    // MARK: - Lifecycle
+//
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//
+//        let home = HomeScreenViewController(
+//            nibName: "HomeScreenViewController",
+//            bundle: nil
+//        )
+//
+////        home.activeChild = activeChild
+//        home.tabBarItem = UITabBarItem(
+//            title: "Home",
+//            image: UIImage(systemName: "house"),
+//            selectedImage: UIImage(systemName: "house.fill")
+//        )
+//
+//        let records = RecordManagerViewController(
+//            nibName: "RecordManagerViewController",
+//            bundle: nil
+//        )
+//        records.tabBarItem = UITabBarItem(
+//            title: "Records",
+//            image: UIImage(systemName: "cross.case"),
+//            selectedImage: UIImage(systemName: "cross.case.fill")
+//        )
+//
+//        let symptoms = SymptomsTrackerViewController(
+//            nibName: "SymptomsTrackerViewController",
+//            bundle: nil
+//        )
+//        symptoms.tabBarItem = UITabBarItem(
+//            title: "Symptoms",
+//            image: UIImage(systemName: "stethoscope"),
+//            selectedImage: UIImage(systemName: "stethoscope")
+//        )
+//
+//        let vaccine = VaccinationManagerViewController(
+//            nibName: "VaccinationManagerViewController",
+//            bundle: nil
+//        )
+//        vaccine.tabBarItem = UITabBarItem(
+//            title: "Vaccines",
+//            image: UIImage(systemName: "syringe"),
+//            selectedImage: UIImage(systemName: "syringe.fill")
+//        )
+//
+//        let profile = ParentProfileViewController()
+//        profile.tabBarItem = UITabBarItem(
+//            title: "Profile",
+//            image: UIImage(systemName: "person"),
+//            selectedImage: UIImage(systemName: "person.fill")
+//        )
+//
+//        viewControllers = [
+//            UINavigationController(rootViewController: home),
+//            UINavigationController(rootViewController: records),
+//            UINavigationController(rootViewController: symptoms),
+//            UINavigationController(rootViewController: vaccine),
+//            UINavigationController(rootViewController: profile)
+//        ]
+//
+//        updateNavBarTitles()
+//
+//        tabBar.tintColor = UIColor(
+//            red: 237/255,
+//            green: 112/255,
+//            blue: 153/255,
+//            alpha: 1.0
+//        )
+//        tabBar.unselectedItemTintColor = .systemGray
+//        
+//        if let child = activeChild {
+//            propagateActiveChild(child)
+//        }
+//    }
+//    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//
+//        if allChildren.isEmpty {
+//            presentAddChild()
+//        }
+//    }
+//
+//
+//
+////    override func viewDidAppear(_ animated: Bool) {
+////        super.viewDidAppear(animated)
+////
+////        if shouldPresentAddChildAfterDismiss {
+////            shouldPresentAddChildAfterDismiss = false
+////            presentAddChild()
+////            return
+////        }
+////
+////        if allChildren.isEmpty {
+////            presentAddChild()
+////        }
+////    }
+//
+//    
+//    override func viewWillLayoutSubviews() {
+//        super.viewWillLayoutSubviews()
+//        updateNavBarTitles()
+//    }
+//    
+//    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+//        guard let child = activeChild else { return }
+//        propagateActiveChild(child)
+//    }
+//
+//
+//    
+//    private func propagateActiveChild(_ child: ChildProfile) {
+//        viewControllers?.forEach { vc in
+//            guard let nav = vc as? UINavigationController else { return }
+//
+//            nav.viewControllers.forEach { controller in
+//                guard let receivable = controller as? ActiveChildReceivable else { return }
+//
+//                receivable.activeChild = child
+//
+//                if let vc = controller as? UIViewController, vc.isViewLoaded {
+//                    receivable.onActiveChildChanged()
+//                }
+//            }
+//        }
+//    }
+//
+//
+//
+//
+//
+//
+//    
+//    private func updateNavBarTitles() {
+//        guard
+//            let nav = selectedViewController as? UINavigationController,
+//            let topVC = nav.topViewController
+//        else { return }
+//
+//        // ❌ Let AddChildVC manage itself
+//        if topVC is AddChildViewController {
+//            topVC.navigationItem.leftBarButtonItem = nil
+//            topVC.navigationItem.rightBarButtonItem = nil
+//            topVC.navigationItem.titleView = nil
+//            return
+//        }
+//
+//
+//        applyChildNavBar(to: topVC)
+//    }
+//
+//
+//    @objc private func addChildTapped() {
+//        presentAddChild()
+//    }
+//
+//    func presentAddChild() {
+//        let vc = AddChildViewController(
+//            nibName: "AddChildViewController",
+//            bundle: nil
+//        )
+//        vc.mode = .add
+//        vc.addDelegate = self   // 🔥 THIS IS NOW GUARANTEED
+//
+//        let nav = UINavigationController(rootViewController: vc)
+//        nav.modalPresentationStyle = .fullScreen
+//        present(nav, animated: true)
+//    }
+//
+//
+//
+//
+//
+//
+//    
+//    func refreshNavBarForVisibleVC() {
+//        updateNavBarTitles()
+//    }
+//
+//    private func makeSwitchChildButton() -> UIBarButtonItem {
+//        UIBarButtonItem(
+//            image: UIImage(systemName: "arrow.triangle.2.circlepath"),
+//            style: .plain,
+//            target: self,
+//            action: #selector(switchChildTapped)
+//        )
+//    }
+//
+//    @objc private func switchChildTapped() {
+//        let vc = ChildSelectionViewController(
+//            nibName: "ChildSelectionViewController",
+//            bundle: nil
+//        )
+//
+//        vc.childrenProvider = { [weak self] in
+//            self?.allChildren ?? []
+//        }
+//
+//        vc.selectionDelegate = self
+//        vc.actionsDelegate = self   // 🔥 ADD THIS
+//
+//        let nav = UINavigationController(rootViewController: vc)
+//        nav.modalPresentationStyle = .pageSheet
+//        present(nav, animated: true)
+//    }
+//
+//
+//
+//
+//
+//
+//    
+//    private func applyChildNavBar(to vc: UIViewController) {
+//        guard let child = activeChild else { return }
+//
+//        let titleView = ChildNavTitleView()
+//        titleView.configure(child: child)
+//
+//        // 🔥 THIS is the key connection
+//        titleView.onTap = { [weak self] in
+//            self?.openChildProfile()
+//        }
+//
+//        let leftItem = UIBarButtonItem(customView: titleView)
+//
+//        let spacer = UIBarButtonItem(
+//            barButtonSystemItem: .fixedSpace,
+//            target: nil,
+//            action: nil
+//        )
+//        spacer.width = -8
+//
+//        vc.navigationItem.leftBarButtonItems = [spacer, leftItem]
+//        vc.navigationItem.rightBarButtonItem = makeSwitchChildButton()
+//    }
+//    
+//    private func openChildProfile() {
+//        guard
+//            let child = activeChild,
+//            let nav = selectedViewController as? UINavigationController
+//        else { return }
+//
+//        let vc = AddChildViewController(
+//            nibName: "AddChildViewController",
+//            bundle: nil
+//        )
+//
+//        vc.child = child
+//        vc.mode = .view
+//        vc.updateDelegate = self
+//
+//        nav.pushViewController(vc, animated: true)
+//    }
+//    
+//    
+////    func makeDefaultVaccines() -> [Vaccine] {
+////        VaccineSchedule.defaultVaccines()   // or however you generate them
+////    }
+//
+//}
+//
+//// MARK: - Update Child Delegate
+//
+//// MARK: - Update Child Delegate
+//extension MainTabBarController: ChildProfileDelegate {
+//
+//    func didUpdateChild(_ child: ChildProfile) {
+//        activeChild = child
+//        if let index = allChildren.firstIndex(where: { $0.id == child.id }) {
+//            allChildren[index] = child
+//        }
+//    }
+//
+//    func didDeleteChild(_ child: ChildProfile) {
+//        // Remove child from list
+//        allChildren.removeAll { $0.id == child.id }
+//
+//        // Update active child safely
+//        if activeChild?.id == child.id {
+//            activeChild = allChildren.first
+//        }
+//
+//        // If no children left, show Add Child screen
+//        if allChildren.isEmpty {
+//            presentAddChild()
+//        }
+//    }
+//}
+//
+//extension MainTabBarController: AddChildDelegate {
+//
+//    func didAddChild(_ child: ChildProfile) {
+//        print("✅ CHILD RECEIVED IN TAB BAR:", child.name)
+//        allChildren.append(child)
+//        activeChild = child
+//    }
+//
+//    
+//}
+//
+//extension MainTabBarController: ChildSelectionDelegate {
+//
+//    func didSelectChild(_ child: ChildProfile) {
+//        activeChild = child
+//    }
+//}
+//
+//
+//extension MainTabBarController: ChildSelectionActions {
+//    func requestAddChild() {
+//        presentAddChild()
+//    }
+//}
+//---------------------------------------------------------------------------------------------------------------------------------
 //
 //  MainTabBarController.swift
 //  ChildProfile
@@ -5,6 +354,11 @@
 //  Created by admin0 on 12/21/25.
 //
 import UIKit
+
+protocol ActiveChildReceivable: AnyObject {
+    var activeChild: ChildProfile? { get set }
+    func onActiveChildChanged()
+}
 
 class MainTabBarController: UITabBarController {
     

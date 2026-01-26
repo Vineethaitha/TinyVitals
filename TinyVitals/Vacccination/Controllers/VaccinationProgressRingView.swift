@@ -122,11 +122,21 @@ final class VaccinationProgressRingView: UIView {
         skipped: Int,
         rescheduled: Int
     ) {
-        guard didSetupLayers else { return }
+        if !didSetupLayers {
+            setNeedsLayout()
+            layoutIfNeeded()
+        }
+
+        [completedLayer, upcomingLayer, skippedLayer, rescheduledLayer].forEach {
+            $0.removeAllAnimations()
+        }
+        layer.removeAnimation(forKey: "pulse")
 
         let total = completed + upcoming + skipped + rescheduled
-        guard total > 0 else { return }
-
+        guard total > 0 else {
+            centerLabel.text = "0%"
+            return
+        }
 
         let c = CGFloat(completed) / CGFloat(total)
         let u = CGFloat(upcoming) / CGFloat(total)
@@ -141,8 +151,14 @@ final class VaccinationProgressRingView: UIView {
         centerLabel.text = "\(percent)%"
 
         handleHaptics(percent: percent)
-        if percent == 100 { pulse() }
+
+        if percent == 100 {
+            layer.removeAnimation(forKey: "pulse")
+            pulse()
+        }
+
     }
+
 
     private func animate(
         layer: CAShapeLayer,

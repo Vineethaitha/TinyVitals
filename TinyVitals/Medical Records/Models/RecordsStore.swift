@@ -21,6 +21,7 @@
 //}
 
 import Foundation
+import UIKit
 
 final class RecordsStore {
 
@@ -41,6 +42,27 @@ final class RecordsStore {
     func allFiles(for childId: UUID) -> [MedicalFile] {
         filesByChild[childId] ?? []
     }
+    
+    func updateFiles(_ files: [MedicalFile], for childId: UUID, folderName: String) {
+        guard var all = filesByChild[childId] else { return }
+
+        all.removeAll { $0.folderName == folderName }
+        all.append(contentsOf: files)
+
+        filesByChild[childId] = all
+    }
+    
+    func ensureDefaultFolders(for childId: UUID) {
+        if foldersByChild[childId] == nil {
+            foldersByChild[childId] = [
+                RecordFolder(name: "Reports", icon: UIImage(systemName: "folder.fill")),
+                RecordFolder(name: "Prescriptions", icon: UIImage(systemName: "pills.fill")),
+                RecordFolder(name: "Vaccinations", icon: UIImage(systemName: "bandage.fill"))
+            ]
+            filesByChild[childId] = []
+        }
+    }
+
 }
 
 

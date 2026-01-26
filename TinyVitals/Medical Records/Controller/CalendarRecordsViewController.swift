@@ -11,7 +11,7 @@ import QuickLook
 
 class CalendarRecordsViewController: UIViewController {
     
-    var activeChild: ChildProfile!
+    var activeChild: ChildProfile?
 
 
     @IBOutlet weak var calendarContainerView: UIView!
@@ -40,21 +40,18 @@ class CalendarRecordsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Records"
-        view.backgroundColor = .systemBackground
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "chevron.backward"),
-            style: .plain,
-            target: self,
-            action: #selector(closeTapped)
-        )
+        guard let childId = activeChild?.id else {
+            assertionFailure("CalendarRecordsViewController opened without activeChild")
+            return
+        }
 
         setupCalendar()
         setupTable()
-        groupRecordsByDate()
+        groupRecordsByDate(childId: childId)
         selectToday()
     }
+
     
     private func selectToday() {
         let today = Calendar.current.dateComponents(
@@ -164,6 +161,8 @@ class CalendarRecordsViewController: UIViewController {
     
     func openEditRecord(_ record: MedicalFile) {
 
+        guard let childId = activeChild?.id else { return }
+
         let vc = AddRecordViewController(
             nibName: "AddRecordViewController",
             bundle: nil
@@ -171,12 +170,8 @@ class CalendarRecordsViewController: UIViewController {
 
         vc.isEditingRecord = true
         vc.existingRecord = record
-
-        // ✅ PUT THIS LINE HERE
-//        vc.availableFolders = store.folders.map { $0.name }
         vc.activeChild = activeChild
-        vc.availableFolders = store.folders(for: activeChild.id).map { $0.name }
-
+        vc.availableFolders = store.folders(for: childId).map { $0.name }
 
         vc.modalPresentationStyle = .pageSheet
         if let sheet = vc.sheetPresentationController {
@@ -189,9 +184,12 @@ class CalendarRecordsViewController: UIViewController {
 
 
 
+
     func deleteRecord(_ record: MedicalFile) {
 
-        store.filesByChild[activeChild.id]?.removeAll {
+        guard let childId = activeChild?.id else { return }
+
+        store.filesByChild[childId]?.removeAll {
             $0.id == record.id
         }
 
@@ -199,9 +197,10 @@ class CalendarRecordsViewController: UIViewController {
             $0.id == record.id
         }
 
-        groupRecordsByDate()
+        groupRecordsByDate(childId: childId)
         tableView.reloadData()
     }
+
 
     
     func showEmptyAnimation() {
@@ -262,15 +261,14 @@ extension CalendarRecordsViewController {
 
 
 
-    func groupRecordsByDate() {
+    func groupRecordsByDate(childId: UUID) {
         recordsByDate.removeAll()
 
-        for record in store.allFiles(for: activeChild.id) {
+        for record in store.allFiles(for: childId) {
             let date = record.date.toDate()!
             let normalized = Calendar.current.startOfDay(for: date)
             recordsByDate[normalized, default: []].append(record)
         }
-
 
         let components = recordsByDate.keys.map {
             Calendar.current.dateComponents([.year, .month, .day], from: $0)
@@ -278,6 +276,7 @@ extension CalendarRecordsViewController {
 
         calendarView.reloadDecorations(forDateComponents: components, animated: true)
     }
+
 
 
 

@@ -100,8 +100,10 @@ final class ChildNavTitleView: UIView {
 
 
     func configure(child: ChildProfile) {
+        resetUI()
+
         nameLabel.text = child.name
-        ageLabel.text = child.ageString()
+        ageLabel.text = child.ageString
 
         if let filename = child.photoFilename,
            let image = loadImage(filename) {
@@ -121,4 +123,11 @@ final class ChildNavTitleView: UIView {
             .appendingPathComponent(filename)
         return UIImage(contentsOfFile: url.path)
     }
+    
+    private func resetUI() {
+        avatarImageView.image = nil
+        nameLabel.text = nil
+        ageLabel.text = nil
+    }
+
 }

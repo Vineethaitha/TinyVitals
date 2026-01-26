@@ -206,6 +206,7 @@ extension SymptomsHistoryViewController: UICalendarSelectionSingleDateDelegate {
         else {
             selectedDayItems = []
             timelineTableView.reloadData()
+            updateEmptyState()
             return
         }
 
@@ -219,6 +220,7 @@ extension SymptomsHistoryViewController: UICalendarSelectionSingleDateDelegate {
             )
 
         timelineTableView.reloadData()
+        updateEmptyState()
     }
 
 

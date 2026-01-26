@@ -7,9 +7,12 @@
 
 import UIKit
 
-class VaccinationManagerViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
+class VaccinationManagerViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, ActiveChildReceivable  {
 
-    var activeChild: ChildProfile!
+    var activeChild: ChildProfile?
+
+
+
     
     // MARK: - Outlets
     @IBOutlet weak var filtersCollectionView: UICollectionView!
@@ -103,6 +106,56 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     var searchQuery: String = ""
 
     // MARK: - Lifecycle
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//
+//        vaccinesTableView.sectionHeaderTopPadding = 8
+//
+//        let headerAppearance = UITableViewHeaderFooterView.appearance()
+//        headerAppearance.tintColor = .clear
+//
+//        setupCollectionView()
+//        setupTableView()
+//        updateHeaderVisibility()
+//
+//        // ❗ REQUIRED
+//        guard let child = activeChild else {
+//            assertionFailure("❌ VaccinationManagerViewController opened without activeChild")
+//            return
+//        }
+//
+//        // Child DOB
+//        childDOB = child.dob
+//
+//        // ✅ Ensure vaccines exist ONLY ONCE per child
+//        VaccinationStore.shared.ensureVaccinesExist(
+//            for: child
+//        ) { dob in
+//            self.buildVaccines(from: dob)
+//        }
+//
+//        // ✅ Load from store
+//        allVaccines = VaccinationStore.shared.vaccines(for: child.id.uuidString)
+//
+//        // Initial UI load
+//        filteredVaccines = allVaccines
+//        vaccinesTableView.reloadData()
+//
+//        searchTextField.delegate = self
+//        searchTextField.addTarget(
+//            self,
+//            action: #selector(searchTextChanged),
+//            for: .editingChanged
+//        )
+//
+//        updateProgressUI()
+//        setupSearchClearButton()
+//        requestNotificationPermission()
+//        scheduleAllReminders()
+//
+//        vaccinesTableView.showsVerticalScrollIndicator = false
+//        vaccinesTableView.showsHorizontalScrollIndicator = false
+//    }
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -115,29 +168,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         setupTableView()
         updateHeaderVisibility()
 
-        // ❗ REQUIRED
-        guard let child = activeChild else {
-            assertionFailure("❌ VaccinationManagerViewController opened without activeChild")
-            return
-        }
-
-        // Child DOB
-        childDOB = child.dob
-
-        // ✅ Ensure vaccines exist ONLY ONCE per child
-        VaccinationStore.shared.ensureVaccinesExist(
-            for: child
-        ) { dob in
-            self.buildVaccines(from: dob)
-        }
-
-        // ✅ Load from store
-        allVaccines = VaccinationStore.shared.vaccines(for: child.id.uuidString)
-
-        // Initial UI load
-        filteredVaccines = allVaccines
-        vaccinesTableView.reloadData()
-
         searchTextField.delegate = self
         searchTextField.addTarget(
             self,
@@ -145,14 +175,15 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             for: .editingChanged
         )
 
-        updateProgressUI()
         setupSearchClearButton()
         requestNotificationPermission()
-        scheduleAllReminders()
 
         vaccinesTableView.showsVerticalScrollIndicator = false
         vaccinesTableView.showsHorizontalScrollIndicator = false
+        
+        reloadForChild()
     }
+
 
 
     
@@ -163,13 +194,17 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
     func buildVaccines(from dob: Date) -> [VaccineItem] {
 
-        let dob = childDOB
         let cal = calendar
+
+        func id(_ name: String, _ date: Date) -> String {
+            "\(name)_\(Int(date.timeIntervalSince1970))"
+        }
 
         return [
 
-            // AT BIRTH
+            // MARK: - AT BIRTH
             VaccineItem(
+                id: id("BCG", dob),
                 name: "BCG",
                 description: "Tuberculosis",
                 ageGroup: "At Birth",
@@ -178,6 +213,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             ),
 
             VaccineItem(
+                id: id("OPV0", dob),
                 name: "OPV 0",
                 description: "Oral Polio",
                 ageGroup: "At Birth",
@@ -186,6 +222,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             ),
 
             VaccineItem(
+                id: id("HepB1", dob),
                 name: "Hepatitis B 1",
                 description: "Hep B Birth Dose",
                 ageGroup: "At Birth",
@@ -193,290 +230,189 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 date: dob
             ),
 
-            // 6 WEEKS
-            VaccineItem(
-                name: "DTwP 1",
-                description: "Diphtheria, Tetanus, Pertussis",
-                ageGroup: "6 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-            ),
+            // MARK: - 6 WEEKS
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+                return VaccineItem(id: id("DTwP1", d), name: "DTwP 1", description: "Diphtheria, Tetanus, Pertussis", ageGroup: "6 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "IPV 1",
-                description: "Injectable Polio",
-                ageGroup: "6 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+                return VaccineItem(id: id("IPV1", d), name: "IPV 1", description: "Injectable Polio", ageGroup: "6 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Hepatitis B 2",
-                description: "Hep B Second Dose",
-                ageGroup: "6 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+                return VaccineItem(id: id("HepB2", d), name: "Hepatitis B 2", description: "Hep B Second Dose", ageGroup: "6 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Hib 1",
-                description: "Haemophilus influenzae",
-                ageGroup: "6 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+                return VaccineItem(id: id("Hib1", d), name: "Hib 1", description: "Haemophilus influenzae", ageGroup: "6 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Rotavirus 1",
-                description: "Diarrhea Protection",
-                ageGroup: "6 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+                return VaccineItem(id: id("Rotavirus1", d), name: "Rotavirus 1", description: "Diarrhea Protection", ageGroup: "6 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "PCV 1",
-                description: "Pneumococcal",
-                ageGroup: "6 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 6, to: dob)!
+                return VaccineItem(id: id("PCV1", d), name: "PCV 1", description: "Pneumococcal", ageGroup: "6 Weeks", status: .upcoming, date: d)
+            }(),
 
-            // 10 WEEKS
-            VaccineItem(
-                name: "DTwP 2",
-                description: "Diphtheria, Tetanus, Pertussis",
-                ageGroup: "10 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
-            ),
+            // MARK: - 10 WEEKS
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+                return VaccineItem(id: id("DTwP2", d), name: "DTwP 2", description: "Diphtheria, Tetanus, Pertussis", ageGroup: "10 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "IPV 2",
-                description: "Injectable Polio",
-                ageGroup: "10 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+                return VaccineItem(id: id("IPV2", d), name: "IPV 2", description: "Injectable Polio", ageGroup: "10 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Hib 2",
-                description: "Haemophilus influenzae",
-                ageGroup: "10 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+                return VaccineItem(id: id("Hib2", d), name: "Hib 2", description: "Haemophilus influenzae", ageGroup: "10 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Rotavirus 2",
-                description: "Diarrhea Protection",
-                ageGroup: "10 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+                return VaccineItem(id: id("Rotavirus2", d), name: "Rotavirus 2", description: "Diarrhea Protection", ageGroup: "10 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "PCV 2",
-                description: "Pneumococcal",
-                ageGroup: "10 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 10, to: dob)!
+                return VaccineItem(id: id("PCV2", d), name: "PCV 2", description: "Pneumococcal", ageGroup: "10 Weeks", status: .upcoming, date: d)
+            }(),
 
-            // 14 WEEKS
-            VaccineItem(
-                name: "DTwP 3",
-                description: "Diphtheria, Tetanus, Pertussis",
-                ageGroup: "14 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
-            ),
+            // MARK: - 14 WEEKS
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+                return VaccineItem(id: id("DTwP3", d), name: "DTwP 3", description: "Diphtheria, Tetanus, Pertussis", ageGroup: "14 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "IPV 3",
-                description: "Injectable Polio",
-                ageGroup: "14 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+                return VaccineItem(id: id("IPV3", d), name: "IPV 3", description: "Injectable Polio", ageGroup: "14 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Hib 3",
-                description: "Haemophilus influenzae",
-                ageGroup: "14 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+                return VaccineItem(id: id("Hib3", d), name: "Hib 3", description: "Haemophilus influenzae", ageGroup: "14 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Rotavirus 3",
-                description: "Diarrhea Protection",
-                ageGroup: "14 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+                return VaccineItem(id: id("Rotavirus3", d), name: "Rotavirus 3", description: "Diarrhea Protection", ageGroup: "14 Weeks", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "PCV 3",
-                description: "Pneumococcal",
-                ageGroup: "14 Weeks",
-                status: .upcoming,
-                date: cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .weekOfYear, value: 14, to: dob)!
+                return VaccineItem(id: id("PCV3", d), name: "PCV 3", description: "Pneumococcal", ageGroup: "14 Weeks", status: .upcoming, date: d)
+            }(),
 
-            // 6 MONTHS
-            VaccineItem(
-                name: "OPV 1",
-                description: "Oral Polio",
-                ageGroup: "6 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 6, to: dob)!
-            ),
+            // MARK: - 6 MONTHS
+            {
+                let d = cal.date(byAdding: .month, value: 6, to: dob)!
+                return VaccineItem(id: id("OPV1", d), name: "OPV 1", description: "Oral Polio", ageGroup: "6 Months", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Hepatitis B 3",
-                description: "Hep B Third Dose",
-                ageGroup: "6 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 6, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .month, value: 6, to: dob)!
+                return VaccineItem(id: id("HepB3", d), name: "Hepatitis B 3", description: "Hep B Third Dose", ageGroup: "6 Months", status: .upcoming, date: d)
+            }(),
 
-            // 9 MONTHS
-            VaccineItem(
-                name: "OPV 2",
-                description: "Oral Polio",
-                ageGroup: "9 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 9, to: dob)!
-            ),
+            // MARK: - 9 MONTHS
+            {
+                let d = cal.date(byAdding: .month, value: 9, to: dob)!
+                return VaccineItem(id: id("OPV2", d), name: "OPV 2", description: "Oral Polio", ageGroup: "9 Months", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "MMR 1",
-                description: "Measles, Mumps, Rubella",
-                ageGroup: "9 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 9, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .month, value: 9, to: dob)!
+                return VaccineItem(id: id("MMR1", d), name: "MMR 1", description: "Measles, Mumps, Rubella", ageGroup: "9 Months", status: .upcoming, date: d)
+            }(),
 
-            // 12 MONTHS
-            VaccineItem(
-                name: "Typhoid Conjugate",
-                description: "Typhoid",
-                ageGroup: "12 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 12, to: dob)!
-            ),
+            // MARK: - 12 MONTHS
+            {
+                let d = cal.date(byAdding: .month, value: 12, to: dob)!
+                return VaccineItem(id: id("Typhoid1", d), name: "Typhoid Conjugate", description: "Typhoid", ageGroup: "12 Months", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Hepatitis A 1",
-                description: "Hep A First Dose",
-                ageGroup: "12 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 12, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .month, value: 12, to: dob)!
+                return VaccineItem(id: id("HepA1", d), name: "Hepatitis A 1", description: "Hep A First Dose", ageGroup: "12 Months", status: .upcoming, date: d)
+            }(),
 
-            // 15 MONTHS
-            VaccineItem(
-                name: "MMR 2",
-                description: "Measles, Mumps, Rubella",
-                ageGroup: "15 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 15, to: dob)!
-            ),
+            // MARK: - 15 MONTHS
+            {
+                let d = cal.date(byAdding: .month, value: 15, to: dob)!
+                return VaccineItem(id: id("MMR2", d), name: "MMR 2", description: "Measles, Mumps, Rubella", ageGroup: "15 Months", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Varicella 1",
-                description: "Chickenpox",
-                ageGroup: "15 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 15, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .month, value: 15, to: dob)!
+                return VaccineItem(id: id("Varicella1", d), name: "Varicella 1", description: "Chickenpox", ageGroup: "15 Months", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "PCV Booster",
-                description: "Pneumococcal",
-                ageGroup: "15 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 15, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .month, value: 15, to: dob)!
+                return VaccineItem(id: id("PCVBooster", d), name: "PCV Booster", description: "Pneumococcal", ageGroup: "15 Months", status: .upcoming, date: d)
+            }(),
 
-            // 18 MONTHS
-            VaccineItem(
-                name: "DTwP Booster 1",
-                description: "DTP Booster",
-                ageGroup: "18 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 18, to: dob)!
-            ),
+            // MARK: - 18 MONTHS
+            {
+                let d = cal.date(byAdding: .month, value: 18, to: dob)!
+                return VaccineItem(id: id("DTwPBooster1", d), name: "DTwP Booster 1", description: "DTP Booster", ageGroup: "18 Months", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "IPV Booster",
-                description: "Polio Booster",
-                ageGroup: "18 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 18, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .month, value: 18, to: dob)!
+                return VaccineItem(id: id("IPVBooster", d), name: "IPV Booster", description: "Polio Booster", ageGroup: "18 Months", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Hepatitis A 2",
-                description: "Hep A Second Dose",
-                ageGroup: "18 Months",
-                status: .upcoming,
-                date: cal.date(byAdding: .month, value: 18, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .month, value: 18, to: dob)!
+                return VaccineItem(id: id("HepA2", d), name: "Hepatitis A 2", description: "Hep A Second Dose", ageGroup: "18 Months", status: .upcoming, date: d)
+            }(),
 
-            // 2 YEARS
-            VaccineItem(
-                name: "Typhoid Booster",
-                description: "Typhoid",
-                ageGroup: "2 Years",
-                status: .upcoming,
-                date: cal.date(byAdding: .year, value: 2, to: dob)!
-            ),
+            // MARK: - 2 YEARS
+            {
+                let d = cal.date(byAdding: .year, value: 2, to: dob)!
+                return VaccineItem(id: id("TyphoidBooster", d), name: "Typhoid Booster", description: "Typhoid", ageGroup: "2 Years", status: .upcoming, date: d)
+            }(),
 
-            // 5–6 YEARS
-            VaccineItem(
-                name: "DTwP Booster 2",
-                description: "DTP Booster",
-                ageGroup: "5–6 Years",
-                status: .upcoming,
-                date: cal.date(byAdding: .year, value: 5, to: dob)!
-            ),
+            // MARK: - 5–6 YEARS
+            {
+                let d = cal.date(byAdding: .year, value: 5, to: dob)!
+                return VaccineItem(id: id("DTwPBooster2", d), name: "DTwP Booster 2", description: "DTP Booster", ageGroup: "5–6 Years", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "OPV 3",
-                description: "Oral Polio",
-                ageGroup: "5–6 Years",
-                status: .upcoming,
-                date: cal.date(byAdding: .year, value: 5, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .year, value: 5, to: dob)!
+                return VaccineItem(id: id("OPV3", d), name: "OPV 3", description: "Oral Polio", ageGroup: "5–6 Years", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "Varicella 2",
-                description: "Chickenpox",
-                ageGroup: "5–6 Years",
-                status: .upcoming,
-                date: cal.date(byAdding: .year, value: 5, to: dob)!
-            ),
+            {
+                let d = cal.date(byAdding: .year, value: 5, to: dob)!
+                return VaccineItem(id: id("Varicella2", d), name: "Varicella 2", description: "Chickenpox", ageGroup: "5–6 Years", status: .upcoming, date: d)
+            }(),
 
-            // 10–12 YEARS
-            VaccineItem(
-                name: "Tdap / Td",
-                description: "Tetanus & Diphtheria",
-                ageGroup: "10–12 Years",
-                status: .upcoming,
-                date: cal.date(byAdding: .year, value: 10, to: dob)!
-            ),
+            // MARK: - 10–12 YEARS
+            {
+                let d = cal.date(byAdding: .year, value: 10, to: dob)!
+                return VaccineItem(id: id("Tdap", d), name: "Tdap / Td", description: "Tetanus & Diphtheria", ageGroup: "10–12 Years", status: .upcoming, date: d)
+            }(),
 
-            VaccineItem(
-                name: "HPV",
-                description: "Human Papillomavirus",
-                ageGroup: "10–12 Years",
-                status: .upcoming,
-                date: cal.date(byAdding: .year, value: 10, to: dob)!
-            )
+            {
+                let d = cal.date(byAdding: .year, value: 10, to: dob)!
+                return VaccineItem(id: id("HPV", d), name: "HPV", description: "Human Papillomavirus", ageGroup: "10–12 Years", status: .upcoming, date: d)
+            }()
         ]
     }
+
 
     
     // MARK: - Setup
@@ -614,7 +550,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
             self.applyFilter()
             self.updateProgressUI()
-            self.setupTableHeader()
         }
 
         let nav = UINavigationController(rootViewController: vc)
@@ -987,18 +922,37 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     
     
     func reloadForChild() {
+        guard isViewLoaded else { return }
         guard let child = activeChild else { return }
 
-        VaccinationStore.shared.ensureVaccinesExist(
+        childDOB = child.dob
+
+        let vaccines = VaccinationStore.shared.ensureVaccinesExist(
             for: child
         ) { dob in
             self.buildVaccines(from: dob)
         }
 
-        allVaccines = VaccinationStore.shared.vaccines(for: child.id.uuidString)
-        applyFilter()
-        updateProgressUI()
+        self.allVaccines = vaccines
+        self.selectedFilterIndex = 0
+        self.selectedStatusFilter = .all
+        self.searchQuery = ""
+
+        self.applyFilter()
+        self.updateProgressUI()
+        self.scheduleAllReminders()
+        print("Loaded vaccines:", allVaccines.count)
+
     }
+
+
+
+    func onActiveChildChanged() {
+        reloadForChild()
+    }
+
+
+
 
 
 

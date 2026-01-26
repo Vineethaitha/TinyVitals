@@ -7,7 +7,9 @@
 
 import Foundation
 
+
 protocol ChildProfileDelegate: AnyObject {
     func didUpdateChild(_ child: ChildProfile)
+//    func didDeleteChild(_ child: ChildProfile)
 }
 

@@ -7,8 +7,10 @@
 
 import Foundation
 
-struct VaccineItem: Codable {
 
+struct VaccineItem: Identifiable, Codable {
+
+    let id: String              // 🔥 stable ID
     let name: String
     let description: String
     let ageGroup: String

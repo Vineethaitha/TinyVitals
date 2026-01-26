@@ -16,21 +16,26 @@ class VaccineCell: UITableViewCell {
     func configure(with vaccine: VaccineItem,
                    highlight searchText: String?) {
 
+        cardView.backgroundColor = .clear
         titleLabel.textColor = .label
         subtitleLabel.textColor = .secondaryLabel
+
 
         if let searchText = searchText, !searchText.isEmpty {
             titleLabel.attributedText =
                 highlightText(
                     fullText: vaccine.name,
-                    searchText: searchText
+                    searchText: searchText,
+                    baseFont: titleLabel.font
                 )
 
             subtitleLabel.attributedText =
                 highlightText(
                     fullText: vaccine.description,
-                    searchText: searchText
+                    searchText: searchText,
+                    baseFont: subtitleLabel.font
                 )
+
         } else {
             titleLabel.text = vaccine.name
             subtitleLabel.text = vaccine.description
@@ -57,10 +62,17 @@ class VaccineCell: UITableViewCell {
 
     private func highlightText(
         fullText: String,
-        searchText: String
+        searchText: String,
+        baseFont: UIFont
     ) -> NSAttributedString {
 
-        let attributed = NSMutableAttributedString(string: fullText)
+        let attributed = NSMutableAttributedString(
+            string: fullText,
+            attributes: [
+                .font: baseFont,
+                .foregroundColor: UIColor.label
+            ]
+        )
 
         let range = (fullText as NSString)
             .range(of: searchText, options: .caseInsensitive)
@@ -69,7 +81,7 @@ class VaccineCell: UITableViewCell {
             attributed.addAttributes(
                 [
                     .foregroundColor: UIColor.systemBlue,
-                    .font: UIFont.boldSystemFont(ofSize: titleLabel.font.pointSize)
+                    .font: UIFont.boldSystemFont(ofSize: baseFont.pointSize)
                 ],
                 range: range
             )
@@ -77,6 +89,7 @@ class VaccineCell: UITableViewCell {
 
         return attributed
     }
+
 
     
     override func awakeFromNib() {

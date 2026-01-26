@@ -31,8 +31,20 @@ final class SymptomsDataStore {
 
     func deleteEntry(_ entry: SymptomEntry, childId: String) {
         let day = calendar.startOfDay(for: entry.date)
+
         entriesByChild[childId]?[day]?.removeAll { $0.id == entry.id }
+
+        // ✅ CLEAN UP EMPTY DAY
+        if entriesByChild[childId]?[day]?.isEmpty == true {
+            entriesByChild[childId]?.removeValue(forKey: day)
+        }
+
+        // ✅ CLEAN UP EMPTY CHILD
+        if entriesByChild[childId]?.isEmpty == true {
+            entriesByChild.removeValue(forKey: childId)
+        }
     }
+
 
 
     func hasSymptoms(on date: Date, childId: String) -> Bool {

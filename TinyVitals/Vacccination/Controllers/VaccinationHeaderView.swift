@@ -18,6 +18,17 @@ final class VaccinationHeaderView: UIView {
     override func awakeFromNib() {
         super.awakeFromNib()
         backgroundColor = .clear
+
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(ringTapped)
+        )
+        progressRingView.isUserInteractionEnabled = true
+        progressRingView.addGestureRecognizer(tap)
+    }
+
+    @objc private func ringTapped() {
+        onRingTap?()
     }
 
     func configure(
@@ -28,13 +39,11 @@ final class VaccinationHeaderView: UIView {
     ) {
         progressLabel.text = "Progress"
 
-        DispatchQueue.main.async {
-            self.progressRingView.update(
-                completed: completed,
-                upcoming: upcoming,
-                skipped: skipped,
-                rescheduled: rescheduled
-            )
-        }
+        progressRingView.update(
+            completed: completed,
+            upcoming: upcoming,
+            skipped: skipped,
+            rescheduled: rescheduled
+        )
     }
 }
