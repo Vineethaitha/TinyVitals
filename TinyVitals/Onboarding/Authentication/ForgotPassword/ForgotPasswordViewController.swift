@@ -6,9 +6,10 @@
 //
 
 import UIKit
-import FirebaseAuth
 
 class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
+    
+    private let authService: AuthService = FirebaseAuthService.shared
 
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var sendLinkButton: UIButton!
@@ -34,20 +35,29 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
             self.showAlert(title: "Error", message: "Please enter your email address.")
             return
         }
-        Auth.auth().sendPasswordReset(withEmail: email) { [weak self] error in
+        
+//        showLoader()
+
+        authService.resetPassword(email: email) { [weak self] result in
             guard let self = self else { return }
 
-            if let error = error {
-                self.showAlert(title: "Error", message: "Failed to send link. \(error.localizedDescription)")
-                return
-            }
-            self.showAlertAndDismiss(
-                title: "Success!",
-                message: "A password reset link has been sent to \(email). Please check your inbox.",
-                completion: {
-                    self.dismiss(animated: true, completion: nil)
+            DispatchQueue.main.async {
+//                self.hideLoader()
+
+                switch result {
+                case .success:
+                    self.showAlert(
+                        title: "Email Sent",
+                        message: "Please check your inbox to reset your password."
+                    )
+
+                case .failure(let error):
+                    self.showAlert(
+                        title: "Failed",
+                        message: error.localizedDescription
+                    )
                 }
-            )
+            }
         }
     }
     
