@@ -45,7 +45,7 @@ class CalendarRecordsViewController: UIViewController {
             assertionFailure("CalendarRecordsViewController opened without activeChild")
             return
         }
-
+        setupNavigation()
         setupCalendar()
         setupTable()
         groupRecordsByDate(childId: childId)
@@ -226,6 +226,15 @@ class CalendarRecordsViewController: UIViewController {
         }
 
         tableView.backgroundView = nil
+    }
+    
+    private func setupNavigation() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(closeTapped)
+        )
     }
     
 }

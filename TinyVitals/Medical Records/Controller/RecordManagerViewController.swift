@@ -254,7 +254,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         vc.activeChild = activeChild
 
         let nav = UINavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .fullScreen
+        nav.modalPresentationStyle = .pageSheet
         present(nav, animated: true)
     }
     
