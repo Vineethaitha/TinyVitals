@@ -81,11 +81,18 @@ final class SupabaseAuthService: AuthService {
         presentingVC: UIViewController,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        completion(.failure(NSError(
-            domain: "Google",
-            code: -1,
-            userInfo: [NSLocalizedDescriptionKey: "Google OAuth setup pending"]
-        )))
+        Task {
+            do {
+                    let session = try await client.auth.signInWithOAuth(
+                    provider: .google,
+                    redirectTo: URL(string: "https://lclsmfmmyybfsdqdnfmk.supabase.co/auth/v1/callback")
+                )
+
+                completion(.success(session.user.id.uuidString))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
 
     func logout() {
