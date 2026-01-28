@@ -6,19 +6,15 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FirebaseCore
-import GoogleSignIn
-
 
 class LoginViewController: UIViewController {
+    
+    private let authService: AuthService = FirebaseAuthService.shared
 
     @IBOutlet weak var googleSignUpButton: UIButton!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
-    
     @IBOutlet weak var loginButton: UIButton!
-    
     @IBOutlet weak var appleSignUpButton: UIButton!
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
@@ -99,26 +95,36 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginButtonTapped(_ sender: UIButton) {
         guard let email = emailTextField.text,
-              let password = passwordTextField.text,
-              !email.isEmpty,
-              !password.isEmpty else {
-            self.showAlert(title: "Required", message: "Please enter both email and password.")
-            return
-        }
-        self.showLoader()
-
-        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
-            guard let self = self else { return }
-            self.hideLoader()
-            if let error = error {
-                self.showAlert(title: "Login Failed", message: error.localizedDescription)
+                  let password = passwordTextField.text,
+                  !email.isEmpty,
+                  !password.isEmpty else {
+                showAlert(title: "Required", message: "Please enter both email and password.")
                 return
             }
-            print("User signed in: \(authResult?.user.uid ?? "N/A")")
-            self.navigateToHome()
+
+            showLoader()
+
+            authService.login(email: email, password: password) { [weak self] result in
+                guard let self = self else { return }
+
+                DispatchQueue.main.async {
+                    self.hideLoader()
+
+                    switch result {
+                    case .success(let userId):
+                        AppState.shared.setUser(id: userId)
+                        self.navigateToHome()
+
+                    case .failure(let error):
+                        self.showAlert(
+                            title: "Login Failed",
+                            message: error.localizedDescription
+                        )
+                    }
+                }
+            }
         }
-//        self.navigateToHome()
-    }
+    
     
     @IBAction func forgotPasswordButtonTapped(_ sender: UIButton) {
         let vc = ForgotPasswordViewController(nibName: "ForgotPasswordViewController", bundle: nil)
@@ -127,49 +133,28 @@ class LoginViewController: UIViewController {
     
     @IBAction func googleSignUpTapped(_ sender: UIButton) {
         
-        guard let clientID = FirebaseApp.app()?.options.clientID else {
-            self.showAlert(title: "Config Error", message: "Missing Firebase Client ID.")
-            return
-        }
-        
-        self.showLoader()
+        showLoader()
 
-        let config = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = config
+            authService.signInWithGoogle(presentingVC: self) { [weak self] result in
+                guard let self = self else { return }
 
-        GIDSignIn.sharedInstance.signIn(withPresenting: self) { result, error in
-            
-            self.hideLoader()
-            
-            if let error = error {
-                self.showAlert(title: "Google Sign-In Failed", message: error.localizedDescription)
-                return
-            }
-            
-            guard let user = result?.user,
-                  let idToken = user.idToken?.tokenString else {
-                self.showAlert(title: "Google Error", message: "Failed to retrieve tokens.")
-                return
-            }
+                DispatchQueue.main.async {
+                    self.hideLoader()
 
-            let accessToken = user.accessToken.tokenString
-            
-            let credential = GoogleAuthProvider.credential(
-                withIDToken: idToken,
-                accessToken: accessToken
-            )
+                    switch result {
+                    case .success(let userId):
+                        AppState.shared.setUser(id: userId)
+                        self.navigateToHome()
 
-            Auth.auth().signIn(with: credential) { authResult, error in
-                if let error = error {
-                    self.showAlert(title: "Firebase Auth Error", message: error.localizedDescription)
-                    return
+                    case .failure(let error):
+                        self.showAlert(
+                            title: "Google Sign-In Failed",
+                            message: error.localizedDescription
+                        )
+                    }
                 }
-
-                print("Google sign-in success")
-                self.navigateToHome()
             }
         }
-    }
     
     private func navigateToHome() {
 
