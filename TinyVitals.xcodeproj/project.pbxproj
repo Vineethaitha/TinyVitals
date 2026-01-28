@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49279F652F2A9FC30021E4CE /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 49279F642F2A9FC30021E4CE /* Auth */; };
+		49279F672F2A9FC30021E4CE /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 49279F662F2A9FC30021E4CE /* Realtime */; };
+		49279F692F2A9FC30021E4CE /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 49279F682F2A9FC30021E4CE /* Storage */; };
+		49279F6B2F2A9FC30021E4CE /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 49279F6A2F2A9FC30021E4CE /* Supabase */; };
 		B01069002EF423C300F1FA7B /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B01068FF2EF423C300F1FA7B /* Lottie */; };
 		B093FD382EF5151E00359122 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD372EF5151E00359122 /* FirebaseAnalytics */; };
 		B093FD3A2EF5151E00359122 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = B093FD392EF5151E00359122 /* FirebaseAnalyticsCore */; };
@@ -77,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49279F692F2A9FC30021E4CE /* Storage in Frameworks */,
 				B093FD402EF5151E00359122 /* FirebaseDatabase in Frameworks */,
 				B093FD382EF5151E00359122 /* FirebaseAnalytics in Frameworks */,
 				B093FD3E2EF5151E00359122 /* FirebaseCore in Frameworks */,
@@ -85,7 +90,10 @@
 				B093FD442EF5151E00359122 /* FirebaseStorage in Frameworks */,
 				B093FD3C2EF5151E00359122 /* FirebaseAuth in Frameworks */,
 				B093FD422EF5151E00359122 /* FirebaseFirestore in Frameworks */,
+				49279F652F2A9FC30021E4CE /* Auth in Frameworks */,
 				B093FD472EF5159B00359122 /* GoogleSignIn in Frameworks */,
+				49279F672F2A9FC30021E4CE /* Realtime in Frameworks */,
+				49279F6B2F2A9FC30021E4CE /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +163,10 @@
 				B093FD412EF5151E00359122 /* FirebaseFirestore */,
 				B093FD432EF5151E00359122 /* FirebaseStorage */,
 				B093FD462EF5159B00359122 /* GoogleSignIn */,
+				49279F642F2A9FC30021E4CE /* Auth */,
+				49279F662F2A9FC30021E4CE /* Realtime */,
+				49279F682F2A9FC30021E4CE /* Storage */,
+				49279F6A2F2A9FC30021E4CE /* Supabase */,
 			);
 			productName = TinyVitals;
 			productReference = B010687F2EF3D4F200F1FA7B /* TinyVitals.app */;
@@ -242,6 +254,7 @@
 				B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				B093FD362EF5151E00359122 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B093FD452EF5159B00359122 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				49279F632F2A9FC30021E4CE /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B01068802EF3D4F200F1FA7B /* Products */;
@@ -620,6 +633,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		49279F632F2A9FC30021E4CE /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase-community/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
 		B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
@@ -647,6 +668,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		49279F642F2A9FC30021E4CE /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49279F632F2A9FC30021E4CE /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		49279F662F2A9FC30021E4CE /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49279F632F2A9FC30021E4CE /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		49279F682F2A9FC30021E4CE /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49279F632F2A9FC30021E4CE /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		49279F6A2F2A9FC30021E4CE /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 49279F632F2A9FC30021E4CE /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
 		B01068FF2EF423C300F1FA7B /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B01068FE2EF423C300F1FA7B /* XCRemoteSwiftPackageReference "lottie-ios" */;

@@ -9,7 +9,7 @@ import UIKit
 
 class SignUpViewController: UIViewController, UITextFieldDelegate {
     
-    private let authService: AuthService = FirebaseAuthService.shared
+    private let authService: AuthService = SupabaseAuthService.shared
 
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var confirmPasswordTextField: UITextField!

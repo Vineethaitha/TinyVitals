@@ -9,7 +9,7 @@ import UIKit
 
 class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     
-    private let authService: AuthService = FirebaseAuthService.shared
+    private let authService: AuthService = SupabaseAuthService.shared
 
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var sendLinkButton: UIButton!

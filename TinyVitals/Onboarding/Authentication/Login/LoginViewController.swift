@@ -9,7 +9,7 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
-    private let authService: AuthService = FirebaseAuthService.shared
+    private let authService: AuthService = SupabaseAuthService.shared
 
     @IBOutlet weak var googleSignUpButton: UIButton!
     @IBOutlet weak var emailTextField: UITextField!
