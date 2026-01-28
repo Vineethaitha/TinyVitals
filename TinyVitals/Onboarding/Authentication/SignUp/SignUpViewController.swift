@@ -6,10 +6,11 @@
 //
 
 import UIKit
-import FirebaseAuth
 
 class SignUpViewController: UIViewController, UITextFieldDelegate {
     
+    private let authService: AuthService = FirebaseAuthService.shared
+
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var confirmPasswordTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
@@ -115,36 +116,29 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         
         self.showLoader()
         
-        Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
-            guard let self = self else { return }
-            
-            self.hideLoader()
-            
-            if let error = error {
-                print("Sign up error: \(error.localizedDescription)")
-                self.showAlert(title: "Sign Up Failed", message: error.localizedDescription)
-                return
-            }
+        authService.signup(
+                email: email,
+                password: password,
+                fullName: fullName
+            ) { [weak self] result in
+                guard let self = self else { return }
 
-            if let user = authResult?.user {
-                let changeRequest = user.createProfileChangeRequest()
-                changeRequest.displayName = fullName
-                
-                // Commit the display name change
-                changeRequest.commitChanges { error in
-                    if let error = error {
-                        print("Error updating display name: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.hideLoader()
+
+                    switch result {
+                    case .success(let userId):
+                        AppState.shared.setUser(id: userId)
+                        self.navigateToHome()
+
+                    case .failure(let error):
+                        self.showAlert(
+                            title: "Sign Up Failed",
+                            message: error.localizedDescription
+                        )
                     }
-                    
-                    print("User created: \(user.uid)")
-                    // Navigate to Home after profile update (successful or failed)
-                    self.navigateToHome()
                 }
-            } else {
-                // Should only happen if there's an unexpected Firebase issue
-                self.navigateToHome()
             }
-        }
     }
     
     private func navigateToHome() {
