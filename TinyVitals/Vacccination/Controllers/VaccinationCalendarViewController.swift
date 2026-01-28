@@ -25,9 +25,9 @@ final class VaccinationCalendarViewController : UIViewController {
     var allVaccines: [VaccineItem] = [] {
         didSet {
             groupVaccinesByDate()
-            loadVaccinesForToday()
         }
     }
+
 
     let calendar = Calendar.current
 

@@ -208,7 +208,7 @@ class CalendarRecordsViewController: UIViewController {
         let emptyView = EmptyStateAnimationView(
             animationName: "empty_records",
             message: "No records on this date",
-            animationSize: 180
+            animationSize: 100
         )
 
         emptyView.frame = tableView.bounds

@@ -71,6 +71,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
     var allVaccines: [VaccineItem] = []
     
+    
     enum SortOption {
         case nameAZ
         case ageOrder
