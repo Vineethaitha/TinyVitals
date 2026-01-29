@@ -126,56 +126,72 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     @IBAction func addChildTapped(_ sender: UIButton) {
 
         guard
-            let name = nameTextField.text, !name.isEmpty,
-            let gender = genderTextField.text, !gender.isEmpty,
-            let bloodGroup = bloodGroupTextField.text, !bloodGroup.isEmpty
-        else {
-            return
-        }
+                let name = nameTextField.text, !name.isEmpty,
+                let gender = genderTextField.text, !gender.isEmpty,
+                let bloodGroup = bloodGroupTextField.text, !bloodGroup.isEmpty,
+                let userId = AppState.shared.userId
+            else {
+                return
+            }
 
-        let yRow = agePicker.selectedRow(inComponent: 0)
-        let mRow = agePicker.selectedRow(inComponent: 1)
+            let yRow = agePicker.selectedRow(inComponent: 0)
+            let mRow = agePicker.selectedRow(inComponent: 1)
 
-        // 🚫 User must move picker at least once
-        guard yRow > 0 || mRow > 0 else {
-            return
-        }
+            guard yRow > 0 || mRow > 0 else { return }
 
-        let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
-        let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
+            let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
+            let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
 
-        let calendar = Calendar.current
-        let now = Date()
+            let calendar = Calendar.current
+            let now = Date()
 
-        var components = DateComponents()
-        components.year = -selectedYears
-        components.month = -selectedMonths
+            var components = DateComponents()
+            components.year = -selectedYears
+            components.month = -selectedMonths
 
-        let dob = calendar.date(byAdding: components, to: now) ?? now
+            let dob = calendar.date(byAdding: components, to: now) ?? now
 
-        let weight = Double(weightTextField.text ?? "")
-        let height = Double(heightTextField.text ?? "")
+            let weight = Double(weightTextField.text ?? "")
+            let height = Double(heightTextField.text ?? "")
 
-        var photoFilename: String?
-        if didPickAvatarImage, let image = avatarImageView.image {
-            photoFilename = saveImageToDisk(image)
-        } else {
-            photoFilename = saveImageToDisk(defaultAvatarForGender(gender))
-        }
+            var photoFilename: String?
+            if didPickAvatarImage, let image = avatarImageView.image {
+                photoFilename = saveImageToDisk(image)
+            } else {
+                photoFilename = saveImageToDisk(defaultAvatarForGender(gender))
+            }
 
-        let newChild = ChildProfile(
-            id: UUID(),
-            name: name,
-            dob: dob,
-            gender: gender,
-            bloodGroup: bloodGroup,
-            weight: weight,
-            height: height,
-            photoFilename: photoFilename
-        )
+            // 🚀 SUPABASE SAVE STARTS HERE
+            Task {
+                do {
+                    let userUUID = UUID(uuidString: userId)!
 
-        addDelegate?.didAddChild(newChild)
-        dismiss(animated: true)
+                    // 1️⃣ Save child to Supabase
+                    try await ChildService.shared.addChild(
+                        userId: userUUID,
+                        name: name,
+                        dob: dob,
+                        gender: gender
+                    )
+
+                    // 2️⃣ Fetch children from Supabase
+                    let dtos = try await ChildService.shared.fetchChildren(
+                        userId: userUUID
+                    )
+
+                    let profiles = dtos.map { ChildProfile(dto: $0) }
+
+                    AppState.shared.setChildren(profiles)
+
+                    // 4️⃣ Close onboarding / go forward
+                    DispatchQueue.main.async {
+                        self.dismiss(animated: true)
+                    }
+
+                } catch {
+                    print("❌ Failed to save child:", error)
+                }
+            }
     }
     
     private func updateAgeText() {

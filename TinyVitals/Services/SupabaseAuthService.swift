@@ -14,9 +14,9 @@ final class SupabaseAuthService: AuthService {
     static let shared = SupabaseAuthService()
     private init() {}
 
-    private let client = SupabaseClient(
+    let client = SupabaseClient(
         supabaseURL: URL(string: "https://lclsmfmmyybfsdqdnfmk.supabase.co")!,
-        supabaseKey: "sb_publishable_uXN2LscnBh2qWdF1-GnrKg_0aNtKo8Z"
+        supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjbHNtZm1teXliZnNkcWRuZm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2MjI4NDgsImV4cCI6MjA4NTE5ODg0OH0.5Wmk7IdBq0Qv0lvpsP7bQqAvKoCldK41Whn8fzXUCPY"
     )
 
     // MARK: - Email Login
@@ -60,6 +60,18 @@ final class SupabaseAuthService: AuthService {
             }
         }
     }
+
+    func restoreSession() async -> String? {
+        do {
+            let session = try await client.auth.session
+            return session.user.id.uuidString
+        } catch {
+            // No active session → user not logged in
+            return nil
+        }
+    }
+
+
 
     // MARK: - Reset Password
     func resetPassword(

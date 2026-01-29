@@ -9,6 +9,7 @@ import UIKit
 import Lottie
 
 class splashScreenViewController: UIViewController {
+    
 
     // MARK: - Title Label
     private let titleLabel: UILabel = {
@@ -70,6 +71,37 @@ class splashScreenViewController: UIViewController {
         titleLabel.center = view.center
         view.addSubview(titleLabel)
     }
+    
+    private func decideNextScreen() {
+        Task {
+            if let userId = await SupabaseAuthService.shared.restoreSession() {
+                AppState.shared.userId = userId
+                goToHome()
+            } else {
+                goToOnboarding()
+            }
+        }
+    }
+
+    private func goToHome() {
+        let tabBar = MainTabBarController()
+
+        guard
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = windowScene.windows.first
+        else { return }
+
+        UIView.transition(
+            with: window,
+            duration: 0.6,
+            options: .transitionCrossDissolve,
+            animations: {
+                window.rootViewController = tabBar
+                window.makeKeyAndVisible()
+            }
+        )
+    }
+
 
     // MARK: - Animations
     private func playSplashAnimation() {
@@ -94,7 +126,7 @@ class splashScreenViewController: UIViewController {
             },
             completion: { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                    self.goToOnboarding()
+                    self.decideNextScreen()
                 }
             }
         )

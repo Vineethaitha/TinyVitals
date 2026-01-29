@@ -128,7 +128,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
 
                     switch result {
                     case .success(let userId):
-                        AppState.shared.setUser(id: userId)
+                        AppState.shared.userId = userId
                         self.navigateToHome()
 
                     case .failure(let error):

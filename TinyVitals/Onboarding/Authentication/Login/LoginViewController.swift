@@ -112,7 +112,7 @@ class LoginViewController: UIViewController {
 
                     switch result {
                     case .success(let userId):
-                        AppState.shared.setUser(id: userId)
+                        AppState.shared.userId = userId
                         self.navigateToHome()
 
                     case .failure(let error):
@@ -143,7 +143,7 @@ class LoginViewController: UIViewController {
 
                     switch result {
                     case .success(let userId):
-                        AppState.shared.setUser(id: userId)
+                        AppState.shared.userId = userId
                         self.navigateToHome()
 
                     case .failure(let error):
