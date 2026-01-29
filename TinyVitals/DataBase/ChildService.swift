@@ -49,6 +49,15 @@ final class ChildService {
             .insert(child)
             .execute()
     }
+    
+    func deleteChild(childId: UUID) async throws {
+        try await client
+            .from("children")
+            .delete()
+            .eq("id", value: childId)
+            .execute()
+    }
+
 
 }
 

@@ -32,12 +32,14 @@ final class VaccinationService {
             .execute()
             .value
         
+        let formatter = ISO8601DateFormatter()
+        
         let records = vaccines.map { vaccine in
             ChildVaccinationInsert(
                 child_id: childId,
                 vaccine_id: vaccine.id,
-                due_date: isoDate(
-                    Calendar.current.date(
+                due_date: formatter.string(
+                    from: Calendar.current.date(
                         byAdding: .day,
                         value: vaccine.due_after_days,
                         to: dob

@@ -124,74 +124,69 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
 
     @IBAction func addChildTapped(_ sender: UIButton) {
-
+        
         guard
-                let name = nameTextField.text, !name.isEmpty,
-                let gender = genderTextField.text, !gender.isEmpty,
-                let bloodGroup = bloodGroupTextField.text, !bloodGroup.isEmpty,
-                let userId = AppState.shared.userId
-            else {
-                return
-            }
-
-            let yRow = agePicker.selectedRow(inComponent: 0)
-            let mRow = agePicker.selectedRow(inComponent: 1)
-            guard yRow > 0 || mRow > 0 else { return }
-
-            let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
-            let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
-
-            var components = DateComponents()
-            components.year = -selectedYears
-            components.month = -selectedMonths
-
-            let dob = Calendar.current.date(byAdding: components, to: Date()) ?? Date()
-
-            Task {
-                do {
-                    let userUUID = UUID(uuidString: userId)!
-
-                    // 1️⃣ Create child
-                    try await ChildService.shared.addChild(
-                        userId: userUUID,
-                        name: name,
-                        dob: dob,
-                        gender: gender
-                    )
-
-                    // 2️⃣ Fetch children
-                    let childDTOs = try await ChildService.shared.fetchChildren(
-                        userId: userUUID
-                    )
-
-                    let profiles = childDTOs.map { ChildProfile(dto: $0) }
-                    AppState.shared.setChildren(profiles)
-
-                    if let newChild = profiles.last {
-                        AppState.shared.setActiveChild(newChild)
-                    }
-
-                    // 3️⃣ Save to AppState
-                    AppState.shared.setChildren(profiles)
-
-                    // 4️⃣ Generate vaccines for the NEW child
-                    if let newChild = childDTOs.last, let childId = newChild.id {
-                        try await VaccinationService.shared.generateVaccinesForChild(
+            let name = nameTextField.text, !name.isEmpty,
+            let gender = genderTextField.text, !gender.isEmpty,
+            let bloodGroup = bloodGroupTextField.text, !bloodGroup.isEmpty,
+            let userId = AppState.shared.userId
+        else {
+            return
+        }
+        
+        let yRow = agePicker.selectedRow(inComponent: 0)
+        let mRow = agePicker.selectedRow(inComponent: 1)
+        guard yRow > 0 || mRow > 0 else { return }
+        
+        let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
+        let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
+        
+        var components = DateComponents()
+        components.year = -selectedYears
+        components.month = -selectedMonths
+        
+        let dob = Calendar.current.date(byAdding: components, to: Date()) ?? Date()
+        Task {
+            do {
+                let userUUID = UUID(uuidString: userId)!
+                
+                // 1️⃣ Create child (THIS WORKS)
+                try await ChildService.shared.addChild(
+                    userId: userUUID,
+                    name: name,
+                    dob: dob,
+                    gender: gender
+                )
+                
+                // 2️⃣ Fetch children
+                let childDTOs = try await ChildService.shared.fetchChildren(userId: userUUID)
+                let profiles = childDTOs.map { ChildProfile(dto: $0) }
+                
+                AppState.shared.setChildren(profiles)
+                
+                if let newChild = profiles.last {
+                    AppState.shared.setActiveChild(newChild)
+                }
+                
+                // ✅ DISMISS FIRST — UI MUST WIN
+                DispatchQueue.main.async {
+                    self.dismiss(animated: true)
+                }
+                
+                // 3️⃣ Fire-and-forget vaccine generation
+                if let newChildDTO = childDTOs.last, let childId = newChildDTO.id {
+                    Task.detached {
+                        try? await VaccinationService.shared.generateVaccinesForChild(
                             childId: childId,
                             dob: dob
                         )
                     }
-
-                    // 5️⃣ Close screen
-                    DispatchQueue.main.async {
-                        self.dismiss(animated: true)
-                    }
-
-                } catch {
-                    print("❌ Failed to save child:", error)
                 }
+                
+            } catch {
+                print("❌ Child creation failed:", error)
             }
-        
+        }
     }
     
     private func updateAgeText() {
@@ -277,28 +272,87 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                 target: self,
                 action: #selector(closeTapped)
             )
+            navigationItem.rightBarButtonItem = nil
 
         case .view:
             title = "Child Profile"
-            navigationItem.rightBarButtonItem =
-                UIBarButtonItem(
-                    title: "Edit",
-                    style: .plain,
-                    target: self,
-                    action: #selector(editTapped)
-                )
+
+            let deleteButton = UIBarButtonItem(
+                title: "Delete",
+                style: .plain,
+                target: self,
+                action: #selector(deleteTapped)
+            )
+            deleteButton.tintColor = .systemRed
+
+            let editButton = UIBarButtonItem(
+                title: "Edit",
+                style: .plain,
+                target: self,
+                action: #selector(editTapped)
+            )
+
+            navigationItem.rightBarButtonItems = [editButton, deleteButton]
 
         case .edit:
             title = "Edit Child"
-            navigationItem.rightBarButtonItem =
-                UIBarButtonItem(
-                    title: "Save",
-                    style: .done,
-                    target: self,
-                    action: #selector(saveEditsTapped)
-                )
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: "Save",
+                style: .done,
+                target: self,
+                action: #selector(saveEditsTapped)
+            )
         }
     }
+
+
+    @objc private func deleteTapped() {
+        let alert = UIAlertController(
+            title: "Delete Child?",
+            message: "This will permanently delete all records for this child.",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        alert.addAction(UIAlertAction(
+            title: "Delete",
+            style: .destructive
+        ) { _ in
+            self.performDelete()
+        })
+
+        present(alert, animated: true)
+    }
+
+    private func performDelete() {
+        guard let child = child else { return }
+
+        Task {
+            do {
+                try await ChildService.shared.deleteChild(childId: child.id)
+
+                AppState.shared.removeChild(child)
+
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+
+                    if let tabBar = UIApplication.shared
+                        .connectedScenes
+                        .compactMap({ ($0 as? UIWindowScene)?.windows.first })
+                        .first?
+                        .rootViewController as? MainTabBarController {
+
+                        tabBar.handlePostDeleteFlow()
+                    }
+                }
+
+            } catch {
+                print("❌ Failed to delete child:", error)
+            }
+        }
+    }
+
 
     
     @objc private func editTapped() {

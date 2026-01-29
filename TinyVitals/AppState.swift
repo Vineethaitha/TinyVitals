@@ -45,5 +45,14 @@ final class AppState {
         children = []
         activeChild = nil
     }
+    
+    func removeChild(_ child: ChildProfile) {
+        children.removeAll { $0.id == child.id }
+
+        if activeChild?.id == child.id {
+            activeChild = children.first
+        }
+    }
+
 }
 

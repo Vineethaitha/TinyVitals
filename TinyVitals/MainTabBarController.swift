@@ -179,6 +179,15 @@ class MainTabBarController: UITabBarController {
         applyChildNavBar(to: topVC)
     }
 
+    func handlePostDeleteFlow() {
+        if AppState.shared.children.isEmpty {
+            presentAddChild()
+        } else if let newActive = AppState.shared.activeChild {
+            propagateActiveChild(newActive)
+            refreshNavBarForVisibleVC()
+        }
+    }
+
 
     @objc private func addChildTapped() {
         presentAddChild()
