@@ -15,6 +15,12 @@ final class VaccinationService {
     
     private let client = SupabaseAuthService.shared.client
     
+    private func isoDate(_ date: Date) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        return formatter.string(from: date)
+    }
+    
     func generateVaccinesForChild(
         childId: UUID,
         dob: Date
@@ -26,22 +32,23 @@ final class VaccinationService {
             .execute()
             .value
         
-        let records: [ChildVaccinationInsertDTO] = vaccines.map { vaccine in
-            ChildVaccinationInsertDTO(
+        let records = vaccines.map { vaccine in
+            ChildVaccinationInsert(
                 child_id: childId,
                 vaccine_id: vaccine.id,
-                due_date: Calendar.current.date(
-                    byAdding: .day,
-                    value: vaccine.due_after_days,
-                    to: dob
-                )!
+                due_date: isoDate(
+                    Calendar.current.date(
+                        byAdding: .day,
+                        value: vaccine.due_after_days,
+                        to: dob
+                    )!
+                )
             )
         }
         
         try await client
             .from("child_vaccinations")
             .insert(records)
-            .select()   // 🔥 THIS LINE FIXES PGRST100
             .execute()
     }
 }
