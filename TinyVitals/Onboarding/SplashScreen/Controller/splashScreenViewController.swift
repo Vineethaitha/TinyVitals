@@ -74,14 +74,54 @@ class splashScreenViewController: UIViewController {
     
     private func decideNextScreen() {
         Task {
-            if let userId = await SupabaseAuthService.shared.restoreSession() {
-                AppState.shared.userId = userId
-                goToHome()
-            } else {
+            guard let userId = await SupabaseAuthService.shared.restoreSession() else {
                 goToOnboarding()
+                return
+            }
+            
+            AppState.shared.userId = userId
+            
+            do {
+                let userUUID = UUID(uuidString: userId)!
+                
+                let dtos = try await ChildService.shared.fetchChildren(
+                    userId: userUUID
+                )
+                
+                let profiles = dtos.map { ChildProfile(dto: $0) }
+                
+                AppState.shared.setChildren(profiles)
+                
+                if let first = profiles.first {
+                    AppState.shared.setActiveChild(first)
+                    goToHome()
+                } else {
+                    goToAddChildFlow()
+                }
+                
+            } catch {
+                print("❌ Failed to fetch children:", error)
+                goToAddChildFlow()
             }
         }
     }
+
+    private func goToAddChildFlow() {
+        let tabBar = MainTabBarController()
+
+        guard
+            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = scene.windows.first
+        else { return }
+
+        window.rootViewController = tabBar
+        window.makeKeyAndVisible()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            tabBar.presentAddChild()
+        }
+    }
+//    MainTabBarController
 
     private func goToHome() {
         let tabBar = MainTabBarController()

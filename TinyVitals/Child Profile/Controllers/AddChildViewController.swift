@@ -136,37 +136,22 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
             let yRow = agePicker.selectedRow(inComponent: 0)
             let mRow = agePicker.selectedRow(inComponent: 1)
-
             guard yRow > 0 || mRow > 0 else { return }
 
             let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
             let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
 
-            let calendar = Calendar.current
-            let now = Date()
-
             var components = DateComponents()
             components.year = -selectedYears
             components.month = -selectedMonths
 
-            let dob = calendar.date(byAdding: components, to: now) ?? now
+            let dob = Calendar.current.date(byAdding: components, to: Date()) ?? Date()
 
-            let weight = Double(weightTextField.text ?? "")
-            let height = Double(heightTextField.text ?? "")
-
-            var photoFilename: String?
-            if didPickAvatarImage, let image = avatarImageView.image {
-                photoFilename = saveImageToDisk(image)
-            } else {
-                photoFilename = saveImageToDisk(defaultAvatarForGender(gender))
-            }
-
-            // 🚀 SUPABASE SAVE STARTS HERE
             Task {
                 do {
                     let userUUID = UUID(uuidString: userId)!
 
-                    // 1️⃣ Save child to Supabase
+                    // 1️⃣ Create child
                     try await ChildService.shared.addChild(
                         userId: userUUID,
                         name: name,
@@ -174,16 +159,30 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                         gender: gender
                     )
 
-                    // 2️⃣ Fetch children from Supabase
-                    let dtos = try await ChildService.shared.fetchChildren(
+                    // 2️⃣ Fetch children
+                    let childDTOs = try await ChildService.shared.fetchChildren(
                         userId: userUUID
                     )
 
-                    let profiles = dtos.map { ChildProfile(dto: $0) }
-
+                    let profiles = childDTOs.map { ChildProfile(dto: $0) }
                     AppState.shared.setChildren(profiles)
 
-                    // 4️⃣ Close onboarding / go forward
+                    if let newChild = profiles.last {
+                        AppState.shared.setActiveChild(newChild)
+                    }
+
+                    // 3️⃣ Save to AppState
+                    AppState.shared.setChildren(profiles)
+
+                    // 4️⃣ Generate vaccines for the NEW child
+                    if let newChild = childDTOs.last, let childId = newChild.id {
+                        try await VaccinationService.shared.generateVaccinesForChild(
+                            childId: childId,
+                            dob: dob
+                        )
+                    }
+
+                    // 5️⃣ Close screen
                     DispatchQueue.main.async {
                         self.dismiss(animated: true)
                     }
@@ -192,6 +191,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                     print("❌ Failed to save child:", error)
                 }
             }
+        
     }
     
     private func updateAgeText() {

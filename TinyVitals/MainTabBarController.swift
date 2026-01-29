@@ -184,7 +184,7 @@ class MainTabBarController: UITabBarController {
         presentAddChild()
     }
 
-    private func presentAddChild() {
+    func presentAddChild() {
         let vc = AddChildViewController(
             nibName: "AddChildViewController",
             bundle: nil
