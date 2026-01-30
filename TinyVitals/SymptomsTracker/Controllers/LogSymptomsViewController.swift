@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Supabase
 
 private let notesPlaceholder = "Add notes"
 
@@ -191,39 +192,52 @@ final class LogSymptomsViewController: UIViewController {
 
     @IBAction func saveTapped(_ sender: UIButton) {
 
-        guard !selectedSymptoms.isEmpty else {
-            let alert = UIAlertController(
-                title: "No symptoms selected",
-                message: "Please select at least one symptom.",
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
-            return
+            guard let child = activeChild else { return }
+            guard !selectedSymptoms.isEmpty else { return }
+
+            Task {
+                do {
+                    var imagePath: String?
+
+                    if let image = photoImageView.image {
+                        let data = image.jpegData(compressionQuality: 0.8)!
+                        let name = "\(UUID().uuidString).jpg"
+                        let path = "\(child.id.uuidString)/\(name)"
+
+                        try await SupabaseAuthService.shared.client
+                            .storage
+                            .from("symptom-images")
+                            .upload(path: path, file: data)
+
+                        imagePath = path
+                    }
+
+                    for symptom in selectedSymptoms {
+                        let dto = SymptomLogDTO(
+                            id: nil,
+                            child_id: child.id,
+                            symptom_title: symptom.title,
+                            symptom_icon: symptom.iconName,
+//                            symptom_color: symptom.tintColor.description,
+                            logged_at: selectedDate,
+                            height: currentHeight,
+                            weight: currentWeight,
+                            temperature: currentTemperature,
+                            severity: Int(currentSeverity),
+                            notes: notesTextView.text == notesPlaceholder ? nil : notesTextView.text,
+                            image_path: imagePath
+                        )
+
+                        try await SymptomService.shared.addSymptom(dto)
+                    }
+
+                    navigationController?.popViewController(animated: true)
+
+                } catch {
+                    print("❌ Symptom save failed:", error)
+                }
+            }
         }
-
-        for symptom in selectedSymptoms {
-
-            var entry = SymptomEntry(
-                symptom: symptom,
-                date: selectedDate
-            )
-
-            entry.height = currentHeight
-            entry.weight = currentWeight
-            entry.temperature = currentTemperature
-            entry.severity = currentSeverity
-            entry.notes = notesTextView.text == notesPlaceholder ? nil : notesTextView.text
-            entry.image = photoImageView.image
-
-            SymptomsDataStore.shared.addEntry(
-                entry,
-                for: activeChild.id.uuidString
-            )
-        }
-
-        navigationController?.popViewController(animated: true)
-    }
 
     
     @IBAction func selectSymptomsTapped(_ sender: UIButton) {

@@ -33,7 +33,7 @@ final class SymptomsSelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        allSymptoms = loadSymptoms()
+        allSymptoms = SymptomsSelectionViewController.loadSymptoms()
         filteredSymptoms = allSymptoms
 
         setupCollectionViews()
@@ -80,8 +80,9 @@ final class SymptomsSelectionViewController: UIViewController {
         applyButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
     }
 
+    
     // MARK: - Data Source
-    private func loadSymptoms() -> [SymptomItem] {
+    static func loadSymptoms() -> [SymptomItem] {
         [
             SymptomItem(title: "Fever", iconName: "thermometer", tintColor: .systemRed),
             SymptomItem(title: "Cold", iconName: "wind", tintColor: .systemBlue),

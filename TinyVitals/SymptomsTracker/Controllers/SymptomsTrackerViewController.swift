@@ -212,35 +212,51 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
 
-        currentEntries = SymptomsDataStore.shared.entries(
-            for: date,
-            childId: child.id.uuidString
-        )
+        Task {
+            do {
+                let dtos = try await SymptomService.shared
+                    .fetchSymptoms(childId: child.id)
 
-        if currentEntries.isEmpty {
+                currentEntries = dtos
+                    .filter {
+                        Calendar.current.isDate($0.logged_at, inSameDayAs: date)
+                    }
+                    .map {
+                        SymptomEntry(dto: $0)
+                    }
 
-            emptyImageView.isHidden = false
-            emptyTitleLabel.isHidden = false
-            emptySubtitleLabel.isHidden = false
-            timelineTableView.isHidden = true
+                DispatchQueue.main.async {
+                    if currentEntries.isEmpty {
 
-            emptyLottieView?.play()
-            summaryLabel.text = "Your child doesn’t have any symptoms on this day"
+                        self.emptyImageView.isHidden = false
+                        self.emptyTitleLabel.isHidden = false
+                        self.emptySubtitleLabel.isHidden = false
+                        self.timelineTableView.isHidden = true
 
-        } else {
+                        self.emptyLottieView?.play()
+                        self.summaryLabel.text =
+                            "Your child doesn’t have any symptoms on this day"
 
-            emptyImageView.isHidden = true
-            emptyTitleLabel.isHidden = true
-            emptySubtitleLabel.isHidden = true
-            timelineTableView.isHidden = false
+                    } else {
 
-            emptyLottieView?.stop()
-            summaryLabel.text = "Your child has \(currentEntries.count) symptoms today"
+                        self.emptyImageView.isHidden = true
+                        self.emptyTitleLabel.isHidden = true
+                        self.emptySubtitleLabel.isHidden = true
+                        self.timelineTableView.isHidden = false
+
+                        self.emptyLottieView?.stop()
+                        self.summaryLabel.text =
+                            "Your child has \(currentEntries.count) symptoms today"
+                    }
+
+                    self.timelineTableView.reloadData()
+                }
+
+            } catch {
+                print("❌ Failed to load symptoms:", error)
+            }
         }
-
-        timelineTableView.reloadData()
     }
-
 
 
     

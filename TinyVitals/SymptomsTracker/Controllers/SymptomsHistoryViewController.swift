@@ -213,42 +213,70 @@ extension SymptomsHistoryViewController: UICalendarSelectionSingleDateDelegate {
         let day = calendar.startOfDay(for: date)
         selectedDate = day
 
-        selectedDayItems =
-            SymptomsDataStore.shared.entries(
-                for: day,
-                childId: activeChild.id.uuidString
-            )
+        Task {
+            do {
+                let dtos = try await SymptomService.shared
+                    .fetchSymptoms(childId: activeChild.id)
 
-        timelineTableView.reloadData()
-        updateEmptyState()
+                selectedDayItems = dtos
+                    .filter {
+                        calendar.isDate($0.logged_at, inSameDayAs: day)
+                    }
+                    .map {
+                        SymptomEntry(dto: $0)
+                    }
+
+                DispatchQueue.main.async {
+                    self.timelineTableView.reloadData()
+                    self.updateEmptyState()
+                }
+
+            } catch {
+                print("❌ Failed to load symptoms history:", error)
+            }
+        }
     }
 
 
     func selectToday() {
+
         let todayComponents = calendar.dateComponents(
             [.year, .month, .day],
             from: Date()
         )
 
-        if let selection = calendarView.selectionBehavior
-            as? UICalendarSelectionSingleDate {
+        if let selection =
+            calendarView.selectionBehavior as? UICalendarSelectionSingleDate {
 
             selection.setSelected(todayComponents, animated: false)
+        }
 
-            let today = calendar.startOfDay(for: Date())
-            selectedDate = today
+        let today = calendar.startOfDay(for: Date())
+        selectedDate = today
 
-            selectedDayItems =
-                SymptomsDataStore.shared.entries(
-                    for: today,
-                    childId: activeChild.id.uuidString
-                )
+        Task {
+            do {
+                let dtos = try await SymptomService.shared
+                    .fetchSymptoms(childId: activeChild.id)
 
+                selectedDayItems = dtos
+                    .filter {
+                        calendar.isDate($0.logged_at, inSameDayAs: today)
+                    }
+                    .map {
+                        SymptomEntry(dto: $0)
+                    }
 
-            timelineTableView.reloadData()
+                DispatchQueue.main.async {
+                    self.timelineTableView.reloadData()
+                    self.updateEmptyState()
+                }
+
+            } catch {
+                print("❌ Failed to load today symptoms:", error)
+            }
         }
     }
-
 }
 
 extension SymptomsHistoryViewController: UITableViewDataSource {

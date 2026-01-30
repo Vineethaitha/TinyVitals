@@ -12,28 +12,25 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     let store = RecordsStore.shared
 
     var activeChild: ChildProfile? {
-            didSet {
-                guard let child = activeChild else { return }
+    didSet {
+        guard let child = activeChild else { return }
+        guard isViewLoaded else { return }   // ✅ THIS LINE FIXES EVERYTHING
 
-                Task {
-                    do {
-                        // 1️⃣ Ensure default folders exist in Supabase
-                        try await RecordFolderService.shared
-                            .createDefaultFoldersIfNeeded(childId: child.id)
+        Task {
+            do {
+                try await RecordFolderService.shared
+                    .createDefaultFoldersIfNeeded(childId: child.id)
 
-                        // 2️⃣ Load folders
-                        await loadFoldersForActiveChild(child.id)
+                await loadFoldersForActiveChild(child.id)
+                await loadRecordsForActiveChild(child)
 
-                        // 3️⃣ Load records
-                        await loadRecordsForActiveChild(child)
-
-                    } catch {
-                        print("❌ Failed to load child data:", error)
-                    }
-                }
+            } catch {
+                print("❌ Failed to load child data:", error)
             }
         }
-    
+    }
+}
+
 //    var activeChild: ChildProfile?
     
 //    let store = RecordsStore.shared
@@ -547,7 +544,13 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
                     // 🔄 Reload fresh data from Supabase
                     await self.loadFoldersForActiveChild(childId)
-                    await self.loadRecordsForActiveChild(self.activeChild!)
+
+                    guard let child = self.activeChild else {
+                        print("⚠️ activeChild missing after rename")
+                        return
+                    }
+
+                    await self.loadRecordsForActiveChild(child)
 
                 } catch {
                     print("❌ Folder rename failed:", error)
@@ -638,6 +641,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     }
     
     func onActiveChildChanged() {
+        guard isViewLoaded else { return } 
         guard let child = activeChild else { return }
 
         recentFolders.removeAll()
