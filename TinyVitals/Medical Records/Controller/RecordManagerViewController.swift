@@ -9,6 +9,12 @@ import UIKit
 
 class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     
+    private let recordDateFormatter: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+
     let store = RecordsStore.shared
 
     var activeChild: ChildProfile? {
@@ -417,57 +423,25 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             let dtos = try await MedicalRecordService.shared
                 .fetchRecords(childId: child.id)
 
-            var files: [MedicalFile] = []
-
-            for dto in dtos {
-
-                let signedURL = try await MedicalRecordService.shared
-                    .getSignedFileURL(path: dto.file_path)
-
-                if dto.file_type == "image" {
-
-                    // ✅ IMAGE FLOW
-                    let image = try await MedicalRecordService.shared
-                        .downloadImage(from: signedURL)
-
-                    let file = MedicalFile(
-                        id: dto.id.uuidString,
-                        childId: dto.child_id,
-                        title: dto.title,
-                        hospital: dto.hospital,
-                        date: dto.visit_date,
-                        thumbnail: image,      // ✅ NOW IMAGE SHOWS
-                        pdfURL: nil,
-                        folderName: dto.folder_name
-                    )
-
-                    files.append(file)
-
-                } else {
-
-                    // ✅ PDF FLOW
-                    let localURL = try await MedicalRecordService.shared
-                        .downloadFile(from: signedURL)
-
-                    let file = MedicalFile(
-                        id: dto.id.uuidString,
-                        childId: dto.child_id,
-                        title: dto.title,
-                        hospital: dto.hospital,
-                        date: dto.visit_date,
-                        thumbnail: nil,
-                        pdfURL: localURL,     // ✅ LOCAL FILE
-                        folderName: dto.folder_name
-                    )
-
-                    files.append(file)
-                }
+            let files = dtos.map { dto in
+                MedicalFile(
+                    id: dto.id.uuidString,
+                    childId: dto.child_id,
+                    title: dto.title,
+                    hospital: dto.hospital,
+                    date: dto.visit_date.toDate(),
+                    folderName: dto.folder_name,
+                    filePath: dto.file_path,
+                    fileType: dto.file_type,
+                    thumbnail: nil,     // ⛔ NOT downloaded here
+                    pdfURL: nil
+                )
             }
 
             RecordsStore.shared.filesByChild[child.id] = files
 
             DispatchQueue.main.async {
-                self.collectionView.reloadData()
+                self.collectionView.reloadData()   // ⚡ INSTANT
             }
 
         } catch {
@@ -774,6 +748,7 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
         cell.addGestureRecognizer(longPress)
 
         return cell
+        
     }
 
 

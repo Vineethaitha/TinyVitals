@@ -769,8 +769,9 @@ extension RecordListViewController: UISearchBarDelegate {
         filteredFiles = currentFiles.filter {
             $0.title.lowercased().contains(text) ||
             $0.hospital.lowercased().contains(text) ||
-            $0.date.lowercased().contains(text)
+            $0.date.toString().lowercased().contains(text)
         }
+
 
         tableView.reloadData()
     }

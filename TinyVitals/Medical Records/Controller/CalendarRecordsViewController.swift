@@ -274,7 +274,7 @@ extension CalendarRecordsViewController {
         recordsByDate.removeAll()
 
         for record in store.allFiles(for: childId) {
-            let date = record.date.toDate()!
+            let date = record.date
             let normalized = Calendar.current.startOfDay(for: date)
             recordsByDate[normalized, default: []].append(record)
         }

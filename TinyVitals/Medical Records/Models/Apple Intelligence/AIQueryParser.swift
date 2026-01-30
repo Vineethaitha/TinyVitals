@@ -95,7 +95,7 @@ private extension AIQueryParser {
         let searchableText = (
             record.title + " " +
             record.hospital + " " +
-            record.date
+            record.date.toSearchableString()
         ).lowercased()
 
         for keyword in keywords {
@@ -105,13 +105,10 @@ private extension AIQueryParser {
         }
 
         if let date = dateConstraint,
-           let recordDate = record.date.toDate(),
-           recordDate >= date {
+           record.date >= date {
             score += 3
         }
 
         return score
     }
 }
-
-

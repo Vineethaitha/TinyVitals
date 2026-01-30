@@ -13,12 +13,15 @@ struct MedicalFile {
     let childId: UUID
     let title: String
     let hospital: String
-    let date: String
-    let thumbnail: UIImage?   // ← for images
-    let pdfURL: URL?          // ← LOCAL file URL only
-    var folderName: String
-}
+    let date: Date
+    let folderName: String
 
+    let filePath: String
+    let fileType: String
+
+    var thumbnail: UIImage?
+    var pdfURL: URL?
+}
 
 
 

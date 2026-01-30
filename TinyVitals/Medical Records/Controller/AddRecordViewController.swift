@@ -59,8 +59,7 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
         if isEditingRecord, let record = existingRecord {
             titleTextField.text = record.title
             clinicTextField.text = record.hospital
-            visitDate.date = record.date.toDate()
-
+            visitDate.date = record.date
             selectedFolderName = record.folderName
             selectedSectionLabel.text = selectedFolderName
 

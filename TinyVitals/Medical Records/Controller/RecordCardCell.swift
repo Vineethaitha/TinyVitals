@@ -32,12 +32,32 @@ class RecordCardCell: UICollectionViewCell {
         titleLabel.text = folder.name
 
         subtitleLabel.text = (fileCount == 0) ? "No files" : "\(fileCount) files"
-
+        imageViewThumb.image = UIImage(systemName: "doc")
         imageViewThumb.image = folder.icon
         containerView.backgroundColor = folder.color
     }
 
 
+    func loadThumbnail(file: MedicalFile) {
+        guard file.fileType == "image" else { return }
+
+        Task.detached {
+            do {
+                let signedURL = try await MedicalRecordService.shared
+                    .getSignedFileURL(path: file.filePath)
+
+                let (data, _) = try await URLSession.shared.data(from: signedURL)
+
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self.imageViewThumb.image = image
+                    }
+                }
+            } catch {
+                print("❌ Thumbnail load failed")
+            }
+        }
+    }
 
 
 
