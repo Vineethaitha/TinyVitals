@@ -26,6 +26,7 @@ final class SymptomDetailViewController: UIViewController {
         super.viewDidLoad()
         setupSheet()
         populate()
+        loadImageIfNeeded()
     }
 
     private func setupSheet() {
@@ -70,6 +71,36 @@ final class SymptomDetailViewController: UIViewController {
         severityLabel.font = UIFont(descriptor: descriptor!, size: 17)
 //        notesLabel.font = UIFont(descriptor: descriptor!, size: 22)
     }
+    
+    private func loadImageIfNeeded() {
+        guard let path = entry.imagePath else {
+            photoImageView.isHidden = true
+            return
+        }
+
+        Task {
+            do {
+                let signedURL = try await SymptomService.shared
+                    .signedImageURL(path: path)
+
+                let (data, _) = try await URLSession.shared.data(from: signedURL)
+                let image = UIImage(data: data)
+
+                DispatchQueue.main.async {
+                    self.entry.image = image
+                    self.photoImageView.image = image
+                    self.photoImageView.isHidden = image == nil
+                }
+
+            } catch {
+                print("❌ Failed to load symptom image:", error)
+                DispatchQueue.main.async {
+                    self.photoImageView.isHidden = true
+                }
+            }
+        }
+    }
+
 
 //    @IBAction func deleteTapped() {
 //        SymptomsDataStore.shared.deleteEntry(entry)

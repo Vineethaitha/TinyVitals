@@ -11,7 +11,6 @@ struct SymptomLogDTO: Codable {
     let id: UUID?
     let child_id: UUID
     let symptom_title: String
-    let symptom_icon: String   // 👈 ADD THIS
     let logged_at: Date
 
     let height: Double?

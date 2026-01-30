@@ -8,7 +8,6 @@
 import UIKit
 
 struct SymptomEntry {
-
     let id: UUID
     let symptom: SymptomItem
     let date: Date
@@ -19,5 +18,6 @@ struct SymptomEntry {
     let severity: Double?
 
     let notes: String?
-    let image: UIImage?
+    let imagePath: String?   // ✅ ADD THIS
+    var image: UIImage?      // loaded lazily
 }

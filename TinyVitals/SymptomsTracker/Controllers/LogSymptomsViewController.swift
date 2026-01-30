@@ -195,49 +195,51 @@ final class LogSymptomsViewController: UIViewController {
             guard let child = activeChild else { return }
             guard !selectedSymptoms.isEmpty else { return }
 
-            Task {
-                do {
-                    var imagePath: String?
-
-                    if let image = photoImageView.image {
-                        let data = image.jpegData(compressionQuality: 0.8)!
-                        let name = "\(UUID().uuidString).jpg"
-                        let path = "\(child.id.uuidString)/\(name)"
-
-                        try await SupabaseAuthService.shared.client
-                            .storage
-                            .from("symptom-images")
-                            .upload(path: path, file: data)
-
-                        imagePath = path
-                    }
-
-                    for symptom in selectedSymptoms {
-                        let dto = SymptomLogDTO(
-                            id: nil,
-                            child_id: child.id,
-                            symptom_title: symptom.title,
-                            symptom_icon: symptom.iconName,
-//                            symptom_color: symptom.tintColor.description,
-                            logged_at: selectedDate,
-                            height: currentHeight,
-                            weight: currentWeight,
-                            temperature: currentTemperature,
-                            severity: Int(currentSeverity),
-                            notes: notesTextView.text == notesPlaceholder ? nil : notesTextView.text,
-                            image_path: imagePath
-                        )
-
-                        try await SymptomService.shared.addSymptom(dto)
-                    }
-
-                    navigationController?.popViewController(animated: true)
-
-                } catch {
-                    print("❌ Symptom save failed:", error)
+        Task {
+            do {
+                var imagePath: String?
+                
+                if let image = photoImageView.image {
+                    let data = image.jpegData(compressionQuality: 0.8)!
+                    let name = "\(UUID().uuidString).jpg"
+                    let path = "\(child.id.uuidString)/\(name)"
+                    
+                    try await SupabaseAuthService.shared.client
+                        .storage
+                        .from("symptom-images")
+                        .upload(path: path, file: data)
+                    
+                    imagePath = path
                 }
+                
+                for symptom in selectedSymptoms {
+                    let dto = SymptomLogDTO(
+                        id: nil,
+                        child_id: child.id,
+                        symptom_title: symptom.title,   // ✅ ONLY TITLE STORED
+                        logged_at: selectedDate,
+                        height: currentHeight,
+                        weight: currentWeight,
+                        temperature: currentTemperature,
+                        severity: Int(currentSeverity),
+                        notes: notesTextView.text == notesPlaceholder ? nil : notesTextView.text,
+                        image_path: imagePath
+                    )
+                    
+                    
+                    try await SymptomService.shared.addSymptom(dto)
+                }
+                
+                navigationController?.popViewController(animated: true)
+                
+            } catch {
+                print("❌ Symptom save failed:", error)
             }
+            
+            print("🚨 Testing storage upload")
+            
         }
+    }
 
     
     @IBAction func selectSymptomsTapped(_ sender: UIButton) {

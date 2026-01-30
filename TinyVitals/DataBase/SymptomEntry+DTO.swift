@@ -10,17 +10,17 @@ import UIKit
 extension SymptomEntry {
 
     init(dto: SymptomLogDTO) {
+            self.id = dto.id ?? UUID()
+            self.symptom = SymptomItem.item(for: dto.symptom_title)
+            self.date = dto.logged_at
 
-        self.id = dto.id ?? UUID()
-        self.symptom = SymptomItem.item(for: dto.symptom_title)
-        self.date = dto.logged_at
+            self.height = dto.height
+            self.weight = dto.weight
+            self.temperature = dto.temperature
+            self.severity = dto.severity.map { Double($0) }
 
-        self.height = dto.height
-        self.weight = dto.weight
-        self.temperature = dto.temperature
-        self.severity = dto.severity.map { Double($0) }
-
-        self.notes = dto.notes
-        self.image = nil
-    }
+            self.notes = dto.notes
+            self.imagePath = dto.image_path   // ✅ STORE PATH
+            self.image = nil                  // load later
+        }
 }
