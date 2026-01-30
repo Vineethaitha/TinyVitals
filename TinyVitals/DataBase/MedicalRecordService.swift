@@ -7,6 +7,7 @@
 
 import Foundation
 import Supabase
+import UIKit
 
 final class MedicalRecordService {
 
@@ -51,6 +52,37 @@ final class MedicalRecordService {
             .eq("child_id", value: childId)
             .eq("folder_name", value: folderName)
             .execute()
+    }
+
+    func getSignedFileURL(path: String) async throws -> URL {
+        let signedURL = try await client
+            .storage
+            .from("medical-records") // ⚠️ YOUR BUCKET NAME
+            .createSignedURL(
+                path: path,
+                expiresIn: 3600 // 1 hour
+            )
+
+        return signedURL
+    }
+
+    func downloadFile(from url: URL) async throws -> URL {
+        let (data, _) = try await URLSession.shared.data(from: url)
+
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+
+        try data.write(to: tempURL)
+        return tempURL
+    }
+
+    func downloadImage(from url: URL) async throws -> UIImage {
+        let (data, _) = try await URLSession.shared.data(from: url)
+
+        guard let image = UIImage(data: data) else {
+            throw NSError(domain: "ImageDecodeError", code: 0)
+        }
+        return image
     }
 
 }

@@ -49,7 +49,6 @@
 		B01068A72EF3D4F300F1FA7B /* Exceptions for "TinyVitals" folder in "TinyVitals" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				DataBase/Untitled.swift,
 				Info.plist,
 			);
 			target = B010687E2EF3D4F200F1FA7B /* TinyVitals */;

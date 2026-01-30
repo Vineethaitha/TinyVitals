@@ -420,7 +420,52 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             let dtos = try await MedicalRecordService.shared
                 .fetchRecords(childId: child.id)
 
-            let files = dtos.map { MedicalFile(dto: $0) }
+            var files: [MedicalFile] = []
+
+            for dto in dtos {
+
+                let signedURL = try await MedicalRecordService.shared
+                    .getSignedFileURL(path: dto.file_path)
+
+                if dto.file_type == "image" {
+
+                    // ✅ IMAGE FLOW
+                    let image = try await MedicalRecordService.shared
+                        .downloadImage(from: signedURL)
+
+                    let file = MedicalFile(
+                        id: dto.id.uuidString,
+                        childId: dto.child_id,
+                        title: dto.title,
+                        hospital: dto.hospital,
+                        date: dto.visit_date,
+                        thumbnail: image,      // ✅ NOW IMAGE SHOWS
+                        pdfURL: nil,
+                        folderName: dto.folder_name
+                    )
+
+                    files.append(file)
+
+                } else {
+
+                    // ✅ PDF FLOW
+                    let localURL = try await MedicalRecordService.shared
+                        .downloadFile(from: signedURL)
+
+                    let file = MedicalFile(
+                        id: dto.id.uuidString,
+                        childId: dto.child_id,
+                        title: dto.title,
+                        hospital: dto.hospital,
+                        date: dto.visit_date,
+                        thumbnail: nil,
+                        pdfURL: localURL,     // ✅ LOCAL FILE
+                        folderName: dto.folder_name
+                    )
+
+                    files.append(file)
+                }
+            }
 
             RecordsStore.shared.filesByChild[child.id] = files
 
@@ -432,7 +477,6 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             print("❌ Failed to load records:", error)
         }
     }
-
 
 
 

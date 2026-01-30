@@ -14,8 +14,8 @@ struct MedicalFile {
     let title: String
     let hospital: String
     let date: String
-    let thumbnail: UIImage?
-    let pdfURL: URL?
+    let thumbnail: UIImage?   // ← for images
+    let pdfURL: URL?          // ← LOCAL file URL only
     var folderName: String
 }
 
