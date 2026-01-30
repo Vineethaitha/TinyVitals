@@ -11,9 +11,30 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     
     let store = RecordsStore.shared
 
-    var activeChild: ChildProfile?
+    var activeChild: ChildProfile? {
+            didSet {
+                guard let child = activeChild else { return }
 
+                Task {
+                    do {
+                        // 1️⃣ Ensure default folders exist in Supabase
+                        try await RecordFolderService.shared
+                            .createDefaultFoldersIfNeeded(childId: child.id)
+
+                        // 2️⃣ Load folders
+                        await loadFoldersForActiveChild(child.id)
+
+                        // 3️⃣ Load records
+                        await loadRecordsForActiveChild(child)
+
+                    } catch {
+                        print("❌ Failed to load child data:", error)
+                    }
+                }
+            }
+        }
     
+//    var activeChild: ChildProfile?
     
 //    let store = RecordsStore.shared
 
@@ -66,14 +87,29 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         setupSortMenu()
     }
     
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        collectionView.reloadData()
+//        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
+//        if activeChild != nil {
+//            onActiveChildChanged()
+//        }
+//        if let child = activeChild {
+//                   loadRecordsForActiveChild(child)
+//               }
+//    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         collectionView.reloadData()
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
-        if activeChild != nil {
-            onActiveChildChanged()
-        }
+
+//        if activeChild != nil {
+//            onActiveChildChanged()
+//        }
     }
+
     
 //    @IBAction func magicWandTapped() {
 //        let vc = AIQueryViewController(
@@ -315,6 +351,25 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         present(alert, animated: true)
     }
     
+//    func createFolder(named name: String) {
+//
+//        guard let childId = activeChild?.id else { return }
+//
+//        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+//        guard !trimmedName.isEmpty else { return }
+//
+//        let newFolder = RecordFolder(
+//            name: trimmedName,
+//            icon: UIImage(systemName: "folder.fill"),
+//            color: UIColor.randomIOSFolderColor()
+//        )
+//
+//        // Append to CHILD-SCOPED folders
+////        store.foldersByChild[childId, default: []].append(newFolder)
+////
+////        collectionView.reloadData()
+//    }
+    
     func createFolder(named name: String) {
 
         guard let childId = activeChild?.id else { return }
@@ -322,17 +377,63 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         let trimmedName = name.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else { return }
 
-        let newFolder = RecordFolder(
-            name: trimmedName,
-            icon: UIImage(systemName: "folder.fill"),
-            color: UIColor.randomIOSFolderColor()
-        )
+        Task {
+            do {
+                try await RecordFolderService.shared
+                    .createFolder(childId: childId, name: trimmedName)
 
-        // Append to CHILD-SCOPED folders
-        store.foldersByChild[childId, default: []].append(newFolder)
+                await loadFoldersForActiveChild(childId)
 
-        collectionView.reloadData()
+            } catch {
+                print("❌ Folder create failed:", error)
+            }
+        }
     }
+
+    
+    func loadFoldersForActiveChild(_ childId: UUID) async {
+        do {
+            let dtos = try await RecordFolderService.shared
+                .fetchFolders(childId: childId)
+
+            let folders = dtos.map {
+                RecordFolder(
+                    name: $0.name,
+                    icon: UIImage(systemName: "folder.fill"),
+                    color: UIColor.randomIOSFolderColor()
+                )
+            }
+
+            RecordsStore.shared.foldersByChild[childId] = folders
+
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+
+        } catch {
+            print("❌ Failed to load folders:", error)
+        }
+    }
+
+    func loadRecordsForActiveChild(_ child: ChildProfile) async {
+        do {
+            let dtos = try await MedicalRecordService.shared
+                .fetchRecords(childId: child.id)
+
+            let files = dtos.map { MedicalFile(dto: $0) }
+
+            RecordsStore.shared.filesByChild[child.id] = files
+
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+
+        } catch {
+            print("❌ Failed to load records:", error)
+        }
+    }
+
+
 
 
     
@@ -384,6 +485,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             textField.text = oldName
         }
 
+        // ✅ THIS IS WHERE YOUR CODE GOES
         alert.addAction(UIAlertAction(title: "Save", style: .default) { _ in
 
             guard let newName = alert.textFields?.first?.text,
@@ -391,63 +493,90 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                   newName != oldName
             else { return }
 
-            // 1️⃣ Update folders list (CHILD-SCOPED)
-            if var folders = self.store.foldersByChild[childId],
-               let index = folders.firstIndex(where: { $0.name == oldName }) {
+            Task {
+                do {
+                    try await RecordFolderService.shared.renameFolder(
+                        childId: childId,
+                        oldName: oldName,
+                        newName: newName
+                    )
 
-                folders[index].name = newName
-                self.store.foldersByChild[childId] = folders
-            }
+                    // 🔄 Reload fresh data from Supabase
+                    await self.loadFoldersForActiveChild(childId)
+                    await self.loadRecordsForActiveChild(self.activeChild!)
 
-            // 2️⃣ Update records folderName (NO MOVING KEYS ANYMORE)
-            self.store.filesByChild[childId] = self.store.filesByChild[childId]?.map {
-                var file = $0
-                if file.folderName == oldName {
-                    file.folderName = newName
+                } catch {
+                    print("❌ Folder rename failed:", error)
                 }
-                return file
             }
-
-            // 3️⃣ Update recents
-            if let rIndex = self.recentFolders.firstIndex(where: { $0.name == oldName }) {
-                self.recentFolders[rIndex].name = newName
-            }
-
-            self.collectionView.reloadData()
         })
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true)
     }
 
-
+    
+//    func loadRecordsForActiveChild(_ child: ChildProfile) async {
+//        do {
+//            let dtos = try await MedicalRecordService.shared
+//                .fetchRecords(childId: child.id)
+//
+//            let files = dtos.map { MedicalFile(dto: $0) }
+//
+//            RecordsStore.shared.filesByChild[child.id] = files
+//
+//            DispatchQueue.main.async {
+//                self.collectionView.reloadData()
+//            }
+//
+//        } catch {
+//            print("❌ Failed to load records:", error)
+//        }
+//    }
 
     
     func deleteFolder(at indexPath: IndexPath) {
 
-        guard let childId = activeChild?.id else { return }
+        guard let child = activeChild else { return }
 
         let folder = getFolder(for: indexPath)
         let folderName = folder.name
 
-        // 1️⃣ Remove folder from CHILD folders list
-        store.foldersByChild[childId]?.removeAll {
-            $0.name == folderName
-        }
+        let alert = UIAlertController(
+            title: "Delete Folder",
+            message: "All records inside this folder will be deleted permanently.",
+            preferredStyle: .alert
+        )
 
-        // 2️⃣ Remove from RECENTS
-        recentFolders.removeAll {
-            $0.name == folderName
-        }
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
+            Task {
+                do {
+                    try await MedicalRecordService.shared
+                        .deleteRecordsInFolder(
+                            childId: child.id,
+                            folderName: folderName
+                        )
 
-        // 3️⃣ Remove all records belonging to this folder
-        store.filesByChild[childId]?.removeAll {
-            $0.folderName == folderName
-        }
+                    try await RecordFolderService.shared
+                        .deleteFolder(
+                            childId: child.id,
+                            name: folderName
+                        )
 
-        // 4️⃣ Refresh UI
-        collectionView.reloadData()
+                    await self.loadFoldersForActiveChild(child.id)
+                    await self.loadRecordsForActiveChild(child)
+
+                } catch {
+                    print("❌ Folder delete failed:", error)
+                }
+            }
+        })
+
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
     }
+
     
     func reloadForChild() {
         guard let childId = activeChild?.id else { return }
@@ -459,7 +588,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         filteredFolders.removeAll()
         filteredRecentFolders.removeAll()
 
-        store.ensureDefaultFolders(for: childId)
+//        store.ensureDefaultFolders(for: childId)
 
         collectionView.reloadData()
     }
@@ -467,19 +596,54 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     func onActiveChildChanged() {
         guard let child = activeChild else { return }
 
-        store.ensureDefaultFolders(for: child.id)
-
         recentFolders.removeAll()
         filteredFolders.removeAll()
         filteredRecentFolders.removeAll()
         isSearching = false
         searchBarView.text = nil
 
-        collectionView.reloadData()
+        Task {
+            do {
+                // 1️⃣ Ensure default folders (Supabase)
+                try await RecordFolderService.shared
+                    .createDefaultFoldersIfNeeded(childId: child.id)
+
+                // 2️⃣ Load folders
+                await loadFoldersForActiveChild(child.id)
+
+                // 3️⃣ Load records
+                await loadRecordsForActiveChild(child)
+
+            } catch {
+                print("❌ Failed to load child data:", error)
+            }
+        }
     }
 
 
 
+//    func createDefaultFoldersIfNeeded(childId: UUID) async throws {
+//
+//        let existing = try await fetchFolders(childId: childId)
+//        guard existing.isEmpty else { return }
+//
+//        let defaults = ["Reports", "Prescriptions", "Vaccinations"]
+//
+//        for name in defaults {
+//            let dto = RecordFolderDTO(
+//                id: nil,
+//                child_id: childId,
+//                name: name,
+//                created_at: nil
+//            )
+//
+//            try await client
+//                .from("record_folders")
+//                .insert(dto)
+//                .execute()
+//        }
+//    }
+//
 
 }
 

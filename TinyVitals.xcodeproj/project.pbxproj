@@ -40,15 +40,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B010687F2EF3D4F200F1FA7B /* TinyVitals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TinyVitals.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B01068952EF3D4F300F1FA7B /* TinyVitalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TinyVitalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B010689F2EF3D4F300F1FA7B /* TinyVitalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TinyVitalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		492958622F2C9F4900F48BDE /* TinyVitals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TinyVitals.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		492958632F2C9F4900F48BDE /* TinyVitalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TinyVitalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		492958642F2C9F4900F48BDE /* TinyVitalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TinyVitalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		B01068A72EF3D4F300F1FA7B /* Exceptions for "TinyVitals" folder in "TinyVitals" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				DataBase/Untitled.swift,
 				Info.plist,
 			);
 			target = B010687E2EF3D4F200F1FA7B /* TinyVitals */;
@@ -120,18 +121,10 @@
 				B01068812EF3D4F200F1FA7B /* TinyVitals */,
 				B01068982EF3D4F300F1FA7B /* TinyVitalsTests */,
 				B01068A22EF3D4F300F1FA7B /* TinyVitalsUITests */,
-				B01068802EF3D4F200F1FA7B /* Products */,
+				492958622F2C9F4900F48BDE /* TinyVitals.app */,
+				492958632F2C9F4900F48BDE /* TinyVitalsTests.xctest */,
+				492958642F2C9F4900F48BDE /* TinyVitalsUITests.xctest */,
 			);
-			sourceTree = "<group>";
-		};
-		B01068802EF3D4F200F1FA7B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B010687F2EF3D4F200F1FA7B /* TinyVitals.app */,
-				B01068952EF3D4F300F1FA7B /* TinyVitalsTests.xctest */,
-				B010689F2EF3D4F300F1FA7B /* TinyVitalsUITests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,7 +162,7 @@
 				49279F6A2F2A9FC30021E4CE /* Supabase */,
 			);
 			productName = TinyVitals;
-			productReference = B010687F2EF3D4F200F1FA7B /* TinyVitals.app */;
+			productReference = 492958622F2C9F4900F48BDE /* TinyVitals.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B01068942EF3D4F300F1FA7B /* TinyVitalsTests */ = {
@@ -192,7 +185,7 @@
 			packageProductDependencies = (
 			);
 			productName = TinyVitalsTests;
-			productReference = B01068952EF3D4F300F1FA7B /* TinyVitalsTests.xctest */;
+			productReference = 492958632F2C9F4900F48BDE /* TinyVitalsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		B010689E2EF3D4F300F1FA7B /* TinyVitalsUITests */ = {
@@ -215,7 +208,7 @@
 			packageProductDependencies = (
 			);
 			productName = TinyVitalsUITests;
-			productReference = B010689F2EF3D4F300F1FA7B /* TinyVitalsUITests.xctest */;
+			productReference = 492958642F2C9F4900F48BDE /* TinyVitalsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -257,7 +250,7 @@
 				49279F632F2A9FC30021E4CE /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = B01068802EF3D4F200F1FA7B /* Products */;
+			productRefGroup = B01068762EF3D4F200F1FA7B;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import Supabase
 import UniformTypeIdentifiers
 
 class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let store = RecordsStore.shared
     var activeChild: ChildProfile?
+    var uploadedPath: String?
+
 
     // MARK: - Outlets
     @IBOutlet weak var titleTextField: UITextField!
@@ -96,57 +99,129 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
 
     
     @IBAction func addButtonTapped(_ sender: UIButton) {
-
+        
         guard let activeChild else {
             assertionFailure("AddRecordViewController opened without activeChild")
             return
         }
-
+        
         guard let title = titleTextField.text, !title.isEmpty else {
             showValidationAlert(message: "Enter title")
             return
         }
-
+        
         guard let clinic = clinicTextField.text, !clinic.isEmpty else {
             showValidationAlert(message: "Enter hospital name")
             return
         }
-
+        
         guard let folder = selectedFolderName else {
             showValidationAlert(message: "Select folder")
             return
         }
-
+        
         guard selectedThumbnail != nil || selectedFileURL != nil else {
             showValidationAlert(message: "Upload file")
             return
         }
-
-        let newRecord = MedicalFile(
-            id: isEditingRecord ? existingRecord!.id : UUID().uuidString,
-            childId: activeChild.id,
-            title: title,
-            hospital: clinic,
-            date: visitDate.date.toString(),
-            thumbnail: selectedThumbnail,
-            pdfURL: selectedFileURL,
-            folderName: folder
-        )
-
+        
+        
         let store = RecordsStore.shared
-
+        
         if isEditingRecord {
             store.filesByChild[activeChild.id]?.removeAll {
                 $0.id == existingRecord!.id
             }
         }
+        
+        Task {
+            do {
+                let storage = SupabaseAuthService.shared.client.storage
+                let childId = activeChild.id.uuidString
+                
+                // 1️⃣ Upload
+                if let fileURL = selectedFileURL {
+                    let fileName = UUID().uuidString + "." + fileURL.pathExtension
+                    let path = "medical-records/\(childId)/reports/\(fileName)"
+                    
+                    let data = try Data(contentsOf: fileURL)
+                    
+                    try await storage
+                        .from("medical-records")
+                        .upload(
+                            path: path,
+                            file: data,
+                            options: FileOptions(
+                                contentType: "application/pdf"
+                            )
+                        )
 
-        store.filesByChild[activeChild.id, default: []].append(newRecord)
+                    
+                    uploadedPath = path
+                }
+                else if let image = selectedThumbnail {
+                    let fileName = UUID().uuidString + ".jpg"
+                    let path = "medical-records/\(childId)/images/\(fileName)"
+                    
+                    guard let data = image.jpegData(compressionQuality: 0.8) else {
+                        throw NSError(domain: "ImageError", code: 0)
+                    }
+                    
+                    try await storage
+                        .from("medical-records")
+                        .upload(
+                            path: path,
+                            file: data,
+                            options: FileOptions(
+                                contentType: "image/jpeg"
+                            )
+                        )
 
-        onRecordSaved?()
-        dismiss(animated: true)
+                    
+                    uploadedPath = path
+                }
+                
+                // 2️⃣ Ensure upload success
+                guard let uploadedPath else {
+                    throw NSError(domain: "UploadFailed", code: 0)
+                }
+                
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                formatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+                // 3️⃣ Create DTO
+                let dto = MedicalRecordDTO(
+                    id: UUID(),
+                    child_id: activeChild.id,
+                    title: title,
+                    hospital: clinic,
+                    visit_date: formatter.string(from: visitDate.date),
+                    folder_name: folder,
+                    file_path: uploadedPath,
+                    file_type: selectedFileURL != nil ? "pdf" : "image",
+                    created_at: nil
+                )
+                
+                // 4️⃣ Save to Supabase
+                try await MedicalRecordService.shared.addRecord(dto)
+                
+                // 5️⃣ Temporary local cache (until full sync)
+                let file = MedicalFile(dto: dto)
+                RecordsStore.shared.filesByChild[activeChild.id, default: []].append(file)
+                
+                // 6️⃣ Close UI
+                DispatchQueue.main.async {
+                    self.onRecordSaved?()
+                    self.dismiss(animated: true)
+                }
+                
+            } catch {
+                print("❌ Record save failed:", error)
+            }
+        }
     }
-
 
     
     func showValidationAlert(message: String) {
