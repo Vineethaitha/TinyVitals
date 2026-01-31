@@ -52,6 +52,10 @@ final class RecordsStore {
         filesByChild[childId] = all
     }
     
+    func replaceFiles(_ files: [MedicalFile], for childId: UUID) {
+        filesByChild[childId] = files
+    }
+    
     func ensureDefaultFolders(for childId: UUID) {
         if foldersByChild[childId] == nil {
             foldersByChild[childId] = [

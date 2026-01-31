@@ -144,6 +144,7 @@ class RecordListViewController: UIViewController {
         updateUI()
     }
     
+    
 //    @objc func dismissKeyboard() {
 //        view.endEditing(true)
 //    }
@@ -258,7 +259,7 @@ class RecordListViewController: UIViewController {
                     localURL = url
                 } else {
                     localURL = try await MedicalRecordService.shared
-                        .downloadFile(from: signedURL)
+                        .downloadFile(from: signedURL, fileType: record.fileType)
                 }
 
                 // 3️⃣ Open QuickLook with REAL file
@@ -721,19 +722,62 @@ class RecordListViewController: UIViewController {
         }
     }
     
+//    func presentSummary(for record: MedicalFile) {
+//
+//        let summaryVC = RecordSummaryViewController(record: record)
+//        let nav = UINavigationController(rootViewController: summaryVC)
+//
+//        nav.modalPresentationStyle = .pageSheet
+//
+//        if let sheet = nav.sheetPresentationController {
+//            sheet.detents = [.medium(), .large()]
+//            sheet.prefersGrabberVisible = true
+//        }
+//
+//        present(nav, animated: true)
+//    }
+    
     func presentSummary(for record: MedicalFile) {
 
-        let summaryVC = RecordSummaryViewController(record: record)
-        let nav = UINavigationController(rootViewController: summaryVC)
+        Task {
+            do {
+                let signedURL = try await MedicalRecordService.shared
+                    .getSignedFileURL(path: record.filePath)
 
-        nav.modalPresentationStyle = .pageSheet
+                let localURL: URL
 
-        if let sheet = nav.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
+                if record.fileType == "image" {
+                    let image = try await MedicalRecordService.shared
+                        .downloadImage(from: signedURL)
+
+                    guard let url = saveTempImage(image) else { return }
+                    localURL = url
+                } else {
+                    localURL = try await MedicalRecordService.shared
+                        .downloadFile(from: signedURL, fileType: record.fileType)
+                }
+
+                DispatchQueue.main.async {
+                    let summaryVC = RecordSummaryViewController(
+                        record: record,
+                        localFileURL: localURL
+                    )
+
+                    let nav = UINavigationController(rootViewController: summaryVC)
+                    nav.modalPresentationStyle = .pageSheet
+
+                    if let sheet = nav.sheetPresentationController {
+                        sheet.detents = [.medium(), .large()]
+                        sheet.prefersGrabberVisible = true
+                    }
+
+                    self.present(nav, animated: true)
+                }
+
+            } catch {
+                print("❌ Summary load failed:", error)
+            }
         }
-
-        present(nav, animated: true)
     }
 
 

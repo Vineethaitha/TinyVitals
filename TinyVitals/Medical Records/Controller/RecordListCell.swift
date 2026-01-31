@@ -35,13 +35,9 @@ class RecordListCell: UITableViewCell {
 
         thumbnailView.image = UIImage(systemName: "doc") // placeholder
 
-        // If thumbnail already exists (local cache)
-        if let image = record.thumbnail {
-            thumbnailView.image = image
-            return
-        }
+        // Cancel old image (cell reuse safety)
+        thumbnailView.image = nil
 
-        // Otherwise load from Supabase
         Task {
             do {
                 let signedURL = try await MedicalRecordService.shared
@@ -54,10 +50,13 @@ class RecordListCell: UITableViewCell {
                     DispatchQueue.main.async {
                         self.thumbnailView.image = image
                     }
+
                 } else {
-                    // PDF thumbnail
                     let fileURL = try await MedicalRecordService.shared
-                        .downloadFile(from: signedURL)
+                        .downloadFile(
+                            from: signedURL,
+                            fileType: record.fileType
+                        )
 
                     let image = self.generatePDFThumbnail(url: fileURL)
 

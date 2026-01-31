@@ -11,13 +11,15 @@ import Lottie
 final class RecordSummaryViewController: UIViewController {
 
     private let record: MedicalFile
+    private let localFileURL: URL
 
     private let titleLabel = UILabel()
     private let textView = UITextView()
     private var lottieView: LottieAnimationView?
 
-    init(record: MedicalFile) {
+    init(record: MedicalFile, localFileURL: URL) {
         self.record = record
+        self.localFileURL = localFileURL
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -140,7 +142,8 @@ final class RecordSummaryViewController: UIViewController {
 
         DispatchQueue.global(qos: .userInitiated).async {
 
-            let text = RecordTextExtractor.extract(from: self.record)
+//            let text = RecordTextExtractor.extract(from: self.record)
+            let text = RecordTextExtractor.extract(from: self.localFileURL)
 
             DispatchQueue.main.async {
 

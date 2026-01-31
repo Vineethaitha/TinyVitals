@@ -42,11 +42,37 @@ enum RecordTextExtractor {
 
         return UIImage(cgImage: cgImage)
     }
+    
+//    static func extract(from url: URL) -> String {
+//
+//        let ext = url.pathExtension.lowercased()
+//
+//        if ext == "pdf" {
+//            return extractFromPDF(url)
+//        } else if ["jpg", "jpeg", "png"].contains(ext) {
+//            return extractFromImage(url)
+//        } else {
+//            return ""
+//        }
+//    }
+    
+    static func extract(from url: URL) -> String {
+        if url.pathExtension.lowercased() == "pdf" {
+            return extractFromPDF(url).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        if let image = UIImage(contentsOfFile: url.path) {
+            return extractFromImage(image).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        return ""
+    }
 
     
 }
 
 private extension RecordTextExtractor {
+    
 
     static func extractFromPDF(_ url: URL) -> String {
 
@@ -65,6 +91,12 @@ private extension RecordTextExtractor {
 }
 
 private extension RecordTextExtractor {
+    
+    private static func extractFromImage(_ url: URL) -> String {
+
+        guard let image = UIImage(contentsOfFile: url.path) else { return "" }
+        return extractFromImage(image)
+    }
 
     static func extractFromImage(_ image: UIImage) -> String {
 

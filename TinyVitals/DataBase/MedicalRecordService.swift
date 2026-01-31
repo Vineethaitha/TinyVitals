@@ -66,11 +66,22 @@ final class MedicalRecordService {
         return result
     }
 
-    func downloadFile(from url: URL) async throws -> URL {
+    func downloadFile(from url: URL, fileType: String) async throws -> URL {
         let (data, _) = try await URLSession.shared.data(from: url)
+
+        let ext: String
+        switch fileType.lowercased() {
+        case "pdf":
+            ext = "pdf"
+        case "image", "jpg", "jpeg", "png":
+            ext = "jpg"
+        default:
+            ext = "dat"
+        }
 
         let tempURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension(ext)
 
         try data.write(to: tempURL)
         return tempURL
