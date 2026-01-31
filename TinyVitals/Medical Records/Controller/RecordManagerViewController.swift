@@ -403,7 +403,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                 RecordFolder(
                     name: $0.name,
                     icon: UIImage(systemName: "folder.fill"),
-                    color: UIColor.randomIOSFolderColor()
+                    color: UIColor(red: 255/255, green: 139/255, blue: 167/255, alpha: 1)
                 )
             }
 

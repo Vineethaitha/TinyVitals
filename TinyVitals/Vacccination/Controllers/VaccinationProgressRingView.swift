@@ -68,16 +68,12 @@ final class VaccinationProgressRingView: UIView {
         setupLabel()
     }
 
-
-
-
-
     private func setupLayers() {
 
         let layers = [
             trackLayer,
-            completedLayer,
             upcomingLayer,
+            completedLayer,
             skippedLayer,
             rescheduledLayer
         ]
@@ -100,10 +96,10 @@ final class VaccinationProgressRingView: UIView {
         }
 
         layer.addSublayer(trackLayer)
-        layer.addSublayer(completedLayer)
         layer.addSublayer(upcomingLayer)
         layer.addSublayer(skippedLayer)
         layer.addSublayer(rescheduledLayer)
+        layer.addSublayer(completedLayer)
     }
 
 
@@ -142,8 +138,9 @@ final class VaccinationProgressRingView: UIView {
         let u = CGFloat(upcoming) / CGFloat(total)
         let s = CGFloat(skipped) / CGFloat(total)
 
-        animate(layer: completedLayer, from: 0, to: c, color: completedColor)
+        
         animate(layer: upcomingLayer, from: c, to: c + u, color: upcomingColor)
+        animate(layer: completedLayer, from: 0, to: c, color: completedColor)
         animate(layer: skippedLayer, from: c + u, to: c + u + s, color: skippedColor)
         animate(layer: rescheduledLayer, from: c + u + s, to: 1, color: rescheduledColor)
 
