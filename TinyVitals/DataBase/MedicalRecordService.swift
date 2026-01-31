@@ -55,15 +55,15 @@ final class MedicalRecordService {
     }
 
     func getSignedFileURL(path: String) async throws -> URL {
-        let signedURL = try await client
+        let result = try await client
             .storage
-            .from("medical-records") // ⚠️ YOUR BUCKET NAME
+            .from("medical-records") // ✅ FIXED
             .createSignedURL(
                 path: path,
-                expiresIn: 3600 // 1 hour
+                expiresIn: 3600
             )
 
-        return signedURL
+        return result
     }
 
     func downloadFile(from url: URL) async throws -> URL {

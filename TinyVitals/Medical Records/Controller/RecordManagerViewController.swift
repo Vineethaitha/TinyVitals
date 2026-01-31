@@ -418,30 +418,52 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         }
     }
 
+//    func loadRecordsForActiveChild(_ child: ChildProfile) async {
+//        do {
+//            let dtos = try await MedicalRecordService.shared
+//                .fetchRecords(childId: child.id)
+//
+//            let files = dtos.map { dto in
+//                MedicalFile(
+//                    id: dto.id.uuidString,
+//                    childId: dto.child_id,
+//                    title: dto.title,
+//                    hospital: dto.hospital,
+//                    date: DateFormatter.localizedString(   // ✅ FIX
+//                        from: dto.visit_date,
+//                        dateStyle: .medium,
+//                        timeStyle: .none
+//                    ),
+//                    folderName: dto.folder_name,
+//                    filePath: dto.file_path,
+//                    fileType: dto.file_type,
+//                    thumbnail: nil,
+//                    pdfURL: nil
+//                )
+//            }
+//
+//            RecordsStore.shared.filesByChild[child.id] = files
+//
+//            await MainActor.run {
+//                self.collectionView.reloadData()
+//            }
+//
+//        } catch {
+//            print("❌ Failed to load records:", error)
+//        }
+//    }
     func loadRecordsForActiveChild(_ child: ChildProfile) async {
         do {
             let dtos = try await MedicalRecordService.shared
                 .fetchRecords(childId: child.id)
 
-            let files = dtos.map { dto in
-                MedicalFile(
-                    id: dto.id.uuidString,
-                    childId: dto.child_id,
-                    title: dto.title,
-                    hospital: dto.hospital,
-                    date: dto.visit_date.toDate(),
-                    folderName: dto.folder_name,
-                    filePath: dto.file_path,
-                    fileType: dto.file_type,
-                    thumbnail: nil,     // ⛔ NOT downloaded here
-                    pdfURL: nil
-                )
-            }
+            // ✅ Map DTO → Model WITHOUT formatting
+            let files = dtos.map { MedicalFile(dto: $0) }
 
             RecordsStore.shared.filesByChild[child.id] = files
 
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()   // ⚡ INSTANT
+            await MainActor.run {
+                self.collectionView.reloadData()
             }
 
         } catch {

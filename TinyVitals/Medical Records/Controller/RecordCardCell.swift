@@ -27,6 +27,11 @@ class RecordCardCell: UICollectionViewCell {
         imageViewThumb.layer.cornerRadius = 10
         imageViewThumb.clipsToBounds = true
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageViewThumb.image = UIImage(systemName: "doc")
+    }
 
     func configure(with folder: RecordFolder, fileCount: Int) {
         titleLabel.text = folder.name
@@ -39,22 +44,27 @@ class RecordCardCell: UICollectionViewCell {
 
 
     func loadThumbnail(file: MedicalFile) {
-        guard file.fileType == "image" else { return }
+        guard file.fileType == "image" else {
+            imageViewThumb.image = UIImage(systemName: "doc")
+            return
+        }
 
-        Task.detached {
+        // reset image to avoid reuse bugs
+        imageViewThumb.image = UIImage(systemName: "photo")
+
+        Task { @MainActor in
             do {
                 let signedURL = try await MedicalRecordService.shared
                     .getSignedFileURL(path: file.filePath)
 
                 let (data, _) = try await URLSession.shared.data(from: signedURL)
 
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.imageViewThumb.image = image
-                    }
-                }
+                guard let image = UIImage(data: data) else { return }
+
+                self.imageViewThumb.image = image
+
             } catch {
-                print("❌ Thumbnail load failed")
+                print("❌ Thumbnail load failed:", error)
             }
         }
     }

@@ -12,7 +12,7 @@ struct MedicalRecordDTO: Codable {
     let child_id: UUID
     let title: String
     let hospital: String
-    let visit_date: String
+    let visit_date: String   // ✅ FIX
     let folder_name: String
     let file_path: String
     let file_type: String

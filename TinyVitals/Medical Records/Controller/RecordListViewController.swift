@@ -79,6 +79,12 @@ class RecordListViewController: UIViewController {
         }
     }
 
+    private let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .none
+        return f
+    }()
 
 
 
@@ -241,14 +247,33 @@ class RecordListViewController: UIViewController {
         }
 
         // Normal preview logic (unchanged)
-        if let image = record.thumbnail {
-            if let url = saveTempImage(image) {
-                previewURL = url
-            }
-        }
+//        if let image = record.thumbnail {
+//            if let url = saveTempImage(image) {
+//                previewURL = url
+//            }
+//        }
+//
+//        if let pdfURL = record.pdfURL {
+//            previewURL = pdfURL
+//        }
+        Task {
+            do {
+                let signedURL = try await MedicalRecordService.shared
+                    .getSignedFileURL(path: record.filePath)
 
-        if let pdfURL = record.pdfURL {
-            previewURL = pdfURL
+                await MainActor.run {
+                    self.previewURL = signedURL
+
+                    let previewVC = QLPreviewController()
+                    previewVC.dataSource = self
+                    self.navigationController?.pushViewController(
+                        previewVC,
+                        animated: true
+                    )
+                }
+            } catch {
+                print("❌ Preview failed:", error)
+            }
         }
 
         let previewVC = QLPreviewController()
@@ -769,7 +794,7 @@ extension RecordListViewController: UISearchBarDelegate {
         filteredFiles = currentFiles.filter {
             $0.title.lowercased().contains(text) ||
             $0.hospital.lowercased().contains(text) ||
-            $0.date.toString().lowercased().contains(text)
+            dateFormatter.string(from: $0.date).lowercased().contains(text)
         }
 
 
