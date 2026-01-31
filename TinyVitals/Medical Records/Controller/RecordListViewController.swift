@@ -233,53 +233,48 @@ class RecordListViewController: UIViewController {
 
         present(activityVC, animated: true)
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let record = isSearching
             ? filteredFiles[indexPath.row]
             : currentFiles[indexPath.row]
 
-        if tableView.isEditing {
-            selectedRecords.insert(record.id)
-            updateActionButtonsState()
-            return
-        }
-
-        // Normal preview logic (unchanged)
-//        if let image = record.thumbnail {
-//            if let url = saveTempImage(image) {
-//                previewURL = url
-//            }
-//        }
-//
-//        if let pdfURL = record.pdfURL {
-//            previewURL = pdfURL
-//        }
         Task {
             do {
+                // 1️⃣ Get signed URL from Supabase
                 let signedURL = try await MedicalRecordService.shared
                     .getSignedFileURL(path: record.filePath)
 
-                await MainActor.run {
-                    self.previewURL = signedURL
+                // 2️⃣ Download actual file
+                let localURL: URL
+
+                if record.fileType == "image" {
+                    let image = try await MedicalRecordService.shared
+                        .downloadImage(from: signedURL)
+
+                    guard let url = saveTempImage(image) else { return }
+                    localURL = url
+                } else {
+                    localURL = try await MedicalRecordService.shared
+                        .downloadFile(from: signedURL)
+                }
+
+                // 3️⃣ Open QuickLook with REAL file
+                DispatchQueue.main.async {
+                    self.previewURL = localURL
 
                     let previewVC = QLPreviewController()
                     previewVC.dataSource = self
-                    self.navigationController?.pushViewController(
-                        previewVC,
-                        animated: true
-                    )
+                    self.navigationController?.pushViewController(previewVC, animated: true)
                 }
+
             } catch {
                 print("❌ Preview failed:", error)
             }
         }
-
-        let previewVC = QLPreviewController()
-        previewVC.dataSource = self
-        navigationController?.pushViewController(previewVC, animated: true)
     }
+    
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
 
