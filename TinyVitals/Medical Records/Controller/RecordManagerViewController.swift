@@ -18,24 +18,11 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     let store = RecordsStore.shared
 
     var activeChild: ChildProfile? {
-    didSet {
-        guard let child = activeChild else { return }
-        guard isViewLoaded else { return }   // ✅ THIS LINE FIXES EVERYTHING
-
-        Task {
-            do {
-                try await RecordFolderService.shared
-                    .createDefaultFoldersIfNeeded(childId: child.id)
-
-                await loadFoldersForActiveChild(child.id)
-                await loadRecordsForActiveChild(child)
-
-            } catch {
-                print("❌ Failed to load child data:", error)
-            }
+        didSet {
+            guard isViewLoaded else { return }
+            loadDataIfPossible()
         }
     }
-}
 
 //    var activeChild: ChildProfile?
     
@@ -108,11 +95,9 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         collectionView.reloadData()
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
 
-//        if activeChild != nil {
-//            onActiveChildChanged()
-//        }
+        // ✅ FIX: ensure data loads on first tab open
+        loadDataIfPossible()
     }
-
     
 //    @IBAction func magicWandTapped() {
 //        let vc = AIQueryViewController(
@@ -417,41 +402,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             print("❌ Failed to load folders:", error)
         }
     }
-
-//    func loadRecordsForActiveChild(_ child: ChildProfile) async {
-//        do {
-//            let dtos = try await MedicalRecordService.shared
-//                .fetchRecords(childId: child.id)
-//
-//            let files = dtos.map { dto in
-//                MedicalFile(
-//                    id: dto.id.uuidString,
-//                    childId: dto.child_id,
-//                    title: dto.title,
-//                    hospital: dto.hospital,
-//                    date: DateFormatter.localizedString(   // ✅ FIX
-//                        from: dto.visit_date,
-//                        dateStyle: .medium,
-//                        timeStyle: .none
-//                    ),
-//                    folderName: dto.folder_name,
-//                    filePath: dto.file_path,
-//                    fileType: dto.file_type,
-//                    thumbnail: nil,
-//                    pdfURL: nil
-//                )
-//            }
-//
-//            RecordsStore.shared.filesByChild[child.id] = files
-//
-//            await MainActor.run {
-//                self.collectionView.reloadData()
-//            }
-//
-//        } catch {
-//            print("❌ Failed to load records:", error)
-//        }
-//    }
+    
     func loadRecordsForActiveChild(_ child: ChildProfile) async {
         do {
             let dtos = try await MedicalRecordService.shared
@@ -559,25 +510,6 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     }
 
     
-//    func loadRecordsForActiveChild(_ child: ChildProfile) async {
-//        do {
-//            let dtos = try await MedicalRecordService.shared
-//                .fetchRecords(childId: child.id)
-//
-//            let files = dtos.map { MedicalFile(dto: $0) }
-//
-//            RecordsStore.shared.filesByChild[child.id] = files
-//
-//            DispatchQueue.main.async {
-//                self.collectionView.reloadData()
-//            }
-//
-//        } catch {
-//            print("❌ Failed to load records:", error)
-//        }
-//    }
-
-    
     func deleteFolder(at indexPath: IndexPath) {
 
         guard let child = activeChild else { return }
@@ -664,6 +596,22 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         }
     }
 
+    private func loadDataIfPossible() {
+        guard let child = activeChild else { return }
+
+        Task {
+            do {
+                try await RecordFolderService.shared
+                    .createDefaultFoldersIfNeeded(childId: child.id)
+
+                await loadFoldersForActiveChild(child.id)
+                await loadRecordsForActiveChild(child)
+
+            } catch {
+                print("❌ Failed to load child data:", error)
+            }
+        }
+    }
 
 
 //    func createDefaultFoldersIfNeeded(childId: UUID) async throws {
