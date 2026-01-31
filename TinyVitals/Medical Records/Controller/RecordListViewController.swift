@@ -8,6 +8,7 @@
 import UIKit
 import QuickLook
 import Lottie
+import Supabase
 
 
 class RecordListViewController: UIViewController {
@@ -300,24 +301,46 @@ class RecordListViewController: UIViewController {
         )
 
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
+            Task {
+                do {
+                    let records = self.store.filesByChild[childId]?.filter {
+                        self.selectedRecords.contains($0.id)
+                    } ?? []
 
-            // 1️⃣ Remove from STORE (child-scoped)
-            self.store.filesByChild[childId]?.removeAll {
-                self.selectedRecords.contains($0.id)
-            }
+                    for record in records {
+                        // 1️⃣ Delete DB row
+                        try await MedicalRecordService.shared
+                            .deleteRecord(id: UUID(uuidString: record.id)!)
 
-            // 2️⃣ Remove from local filtered list (search mode)
-            if self.isSearching {
-                self.filteredFiles.removeAll {
-                    self.selectedRecords.contains($0.id)
+                        // 2️⃣ Delete from storage (✅ correct bucket name)
+                        try await SupabaseAuthService.shared.client
+                            .storage
+                            .from("medical-records")
+                            .remove(paths: [record.filePath])
+                    }
+
+                    // 3️⃣ Remove locally
+                    self.store.filesByChild[childId]?.removeAll {
+                        self.selectedRecords.contains($0.id)
+                    }
+
+                    if self.isSearching {
+                        self.filteredFiles.removeAll {
+                            self.selectedRecords.contains($0.id)
+                        }
+                    }
+
+                    DispatchQueue.main.async {
+                        self.exitSelectionMode()
+                        self.updateUI()
+                    }
+
+                } catch {
+                    print("❌ Bulk delete failed:", error)
                 }
             }
-
-            // 3️⃣ Exit selection + refresh UI
-            self.exitSelectionMode()
-            self.updateUI()
         })
-
+        
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true)
     }
@@ -476,8 +499,6 @@ class RecordListViewController: UIViewController {
         navigationItem.rightBarButtonItem = nil
     }
 
-
-
     
     func deleteRecord(at indexPath: IndexPath) {
 
@@ -485,19 +506,36 @@ class RecordListViewController: UIViewController {
             ? filteredFiles[indexPath.row]
             : currentFiles[indexPath.row]
 
-        // Remove from store
-        store.filesByChild[activeChild.id]?.removeAll {
-            $0.id == record.id
+        Task {
+            do {
+                // 1️⃣ Delete DB row
+                try await MedicalRecordService.shared
+                    .deleteRecord(id: UUID(uuidString: record.id)!)
+
+                // 2️⃣ Delete file from storage
+                try await SupabaseAuthService.shared.client
+                    .storage
+                    .from("medical-records")
+                    .remove(paths: [record.filePath])
+
+                // 3️⃣ Remove locally
+                store.filesByChild[activeChild.id]?.removeAll {
+                    $0.id == record.id
+                }
+
+                if isSearching {
+                    filteredFiles.removeAll { $0.id == record.id }
+                }
+
+                // 4️⃣ Refresh UI
+                DispatchQueue.main.async {
+                    self.updateUI()
+                }
+
+            } catch {
+                print("❌ Delete failed:", error)
+            }
         }
-        
-
-        // Update search results if needed
-        if isSearching {
-            filteredFiles.removeAll { $0.id == record.id }
-        }
-
-        updateUI()
-
     }
 
 
