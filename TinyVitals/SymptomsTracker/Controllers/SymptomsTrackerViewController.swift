@@ -199,6 +199,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         )
 //        print("Tapped")
         vc.activeChild = self.activeChild
+        vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
 

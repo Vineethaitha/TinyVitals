@@ -47,8 +47,6 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     private let genderPicker = UIPickerView()
     
     private var didPickAvatarImage = false
-
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,7 +109,6 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         
         weightTextField.delegate = self
         heightTextField.delegate = self
-
 
     }
 

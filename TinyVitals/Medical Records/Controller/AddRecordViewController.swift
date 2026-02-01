@@ -386,6 +386,8 @@ class AddRecordViewController: UIViewController,
     var isEditingRecord = false
     var existingRecord: MedicalFile?
     var onRecordSaved: (() -> Void)?
+    
+    private let loader = UIActivityIndicatorView(style: .large)
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -422,6 +424,16 @@ class AddRecordViewController: UIViewController,
         if selectedSectionLabel.text?.isEmpty ?? true {
             selectedSectionLabel.text = "Select Folder"
         }
+        
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+
+        view.addSubview(loader)
+
+        NSLayoutConstraint.activate([
+            loader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 
     // MARK: - Save
@@ -445,12 +457,17 @@ class AddRecordViewController: UIViewController,
             showValidationAlert(message: "Upload file"); return
         }
 
+        // ✅ START LOADER
+        view.endEditing(true)
+        view.isUserInteractionEnabled = false
+        loader.startAnimating()
+
         Task {
             do {
                 let storage = SupabaseAuthService.shared.client.storage
                 let childId = activeChild.id.uuidString
 
-                // Upload
+                // --- upload logic unchanged ---
                 if let fileURL = selectedFileURL {
                     let name = UUID().uuidString + "." + fileURL.pathExtension
                     let path = "\(childId)/pdfs/\(name)"
@@ -461,6 +478,7 @@ class AddRecordViewController: UIViewController,
                         .upload(path: path, file: data)
 
                     uploadedPath = path
+
                 } else if let image = selectedThumbnail {
                     let name = UUID().uuidString + ".jpg"
                     let path = "\(childId)/images/\(name)"
@@ -477,7 +495,6 @@ class AddRecordViewController: UIViewController,
                     throw NSError(domain: "UploadFailed", code: 0)
                 }
 
-                // ✅ DTO — DATE PASSED DIRECTLY
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd"
                 formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -488,24 +505,32 @@ class AddRecordViewController: UIViewController,
                     child_id: activeChild.id,
                     title: title,
                     hospital: clinic,
-                    visit_date: formatter.string(from: visitDate.date), // ✅
+                    visit_date: formatter.string(from: visitDate.date),
                     folder_name: folder,
                     file_path: uploadedPath,
                     file_type: selectedFileURL != nil ? "pdf" : "image",
                     created_at: nil
                 )
-                
+
                 try await MedicalRecordService.shared.addRecord(dto)
 
                 let file = MedicalFile(dto: dto)
                 RecordsStore.shared.filesByChild[activeChild.id, default: []].append(file)
 
+                // ✅ STOP LOADER + DISMISS
                 await MainActor.run {
+                    self.loader.stopAnimating()
+                    self.view.isUserInteractionEnabled = true
                     self.onRecordSaved?()
                     self.dismiss(animated: true)
                 }
 
             } catch {
+                // ✅ STOP LOADER ON ERROR
+                await MainActor.run {
+                    self.loader.stopAnimating()
+                    self.view.isUserInteractionEnabled = true
+                }
                 print("❌ Record save failed:", error)
             }
         }

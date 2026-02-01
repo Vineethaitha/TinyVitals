@@ -240,27 +240,45 @@ class MainTabBarController: UITabBarController {
 
 
     
+//    private func applyChildNavBar(to vc: UIViewController) {
+//        guard let child = activeChild else { return }
+//
+//        let titleView = ChildNavTitleView()
+//        titleView.configure(child: child)
+//
+//        // 🔥 THIS is the key connection
+//        titleView.onTap = { [weak self] in
+//            self?.openChildProfile()
+//        }
+//
+//        let leftItem = UIBarButtonItem(customView: titleView)
+//
+//        let spacer = UIBarButtonItem(
+//            barButtonSystemItem: .fixedSpace,
+//            target: nil,
+//            action: nil
+//        )
+//        spacer.width = -8
+//
+//        vc.navigationItem.leftBarButtonItems = [spacer, leftItem]
+//        vc.navigationItem.rightBarButtonItem = makeSwitchChildButton()
+//    }
     private func applyChildNavBar(to vc: UIViewController) {
         guard let child = activeChild else { return }
 
         let titleView = ChildNavTitleView()
         titleView.configure(child: child)
 
-        // 🔥 THIS is the key connection
         titleView.onTap = { [weak self] in
             self?.openChildProfile()
         }
 
-        let leftItem = UIBarButtonItem(customView: titleView)
+        let childItem = UIBarButtonItem(customView: titleView)
 
-        let spacer = UIBarButtonItem(
-            barButtonSystemItem: .fixedSpace,
-            target: nil,
-            action: nil
-        )
-        spacer.width = -8
+        // 👇 KEEP SYSTEM BACK BUTTON
+        vc.navigationItem.leftItemsSupplementBackButton = true
+        vc.navigationItem.leftBarButtonItem = childItem
 
-        vc.navigationItem.leftBarButtonItems = [spacer, leftItem]
         vc.navigationItem.rightBarButtonItem = makeSwitchChildButton()
     }
     
