@@ -497,7 +497,7 @@ final class CalendarDotDecorationView: UIView {
         super.init(frame: CGRect(x: 0, y: 0, width: 20, height: 8))
         backgroundColor = .clear
 
-        let dotSize: CGFloat = 4
+        let dotSize: CGFloat = 5
         let spacing: CGFloat = 4
 
         let visibleDots = min(count, 2)
@@ -512,7 +512,7 @@ final class CalendarDotDecorationView: UIView {
 
         for _ in 0..<visibleDots {
             let dot = UIView(frame: CGRect(x: x, y: 2, width: dotSize, height: dotSize))
-            dot.backgroundColor = .systemPurple
+            dot.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             dot.layer.cornerRadius = dotSize / 2
             dot.alpha = 0
             addSubview(dot)
