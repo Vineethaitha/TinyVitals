@@ -50,20 +50,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     }
 
     // MARK: - Data Model
-//    struct VaccineItem {
-//        let name: String
-//        let description: String
-//        let ageGroup: String
-//        var status: VaccineStatus
-//        let date: Date
-//    }
-//
-//    enum VaccineStatus {
-//        case upcoming
-//        case completed
-//        case skipped
-//        case rescheduled
-//    }
 
     var filteredVaccines: [VaccineItem] = []
 

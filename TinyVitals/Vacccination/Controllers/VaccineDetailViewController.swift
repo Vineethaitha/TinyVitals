@@ -60,15 +60,22 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     private var selectedStatus: VaccineStatus = .completed
     
+//    private var vaccineKey: String {
+//        guard
+//            let childId = activeChild?.id.uuidString,
+//            let vaccine = vaccine
+//        else {
+//            return "invalid_vaccine_key"
+//        }
+//
+//        return "\(childId)_\(vaccine.date.timeIntervalSince1970)"
+//    }
+    
     private var vaccineKey: String {
-        guard
-            let childId = activeChild?.id.uuidString,
-            let vaccine = vaccine
-        else {
+        guard let childId = activeChild?.id.uuidString else {
             return "invalid_vaccine_key"
         }
-
-        return "\(childId)_\(vaccine.date.timeIntervalSince1970)"
+        return "\(childId)_\(vaccine.id)"
     }
 
 
