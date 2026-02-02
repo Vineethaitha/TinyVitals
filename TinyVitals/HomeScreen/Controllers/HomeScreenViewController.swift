@@ -222,7 +222,7 @@ class HomeScreenViewController: UIViewController {
         heightSparkline.frame = heightSparklineContainer.bounds
         heightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         heightSparkline.lineColor = UIColor(
-            red: 108/255, green: 173/255, blue: 226/255, alpha: 1
+            red: 237/255, green: 112/255, blue: 153/255, alpha: 1
         )
         heightSparkline.values = [72.0, 73.1, 74.4, 75.0, 75.7]
         heightSparklineContainer.addSubview(heightSparkline)

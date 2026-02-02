@@ -49,7 +49,7 @@ final class VaccinationProgressRingView: UIView {
     private let centerLabel = UILabel()
 
     // MARK: - Colors (Normal iOS system colors)
-    private let completedColor = UIColor.systemGreen
+    private let completedColor = UIColor(red: 0/255, green: 225/255, blue: 0/255, alpha: 1)
     private let upcomingColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
     private let skippedColor = UIColor.systemRed
     private let rescheduledColor = UIColor.systemBlue
