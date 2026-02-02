@@ -98,26 +98,27 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func loginButtonTapped(_ sender: UIButton) {
-        guard let email = emailTextField.text,
-              let password = passwordTextField.text,
-              !email.isEmpty,
-              !password.isEmpty else {
-            self.showAlert(title: "Required", message: "Please enter both email and password.")
-            return
-        }
-        self.showLoader()
-
-        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
-            guard let self = self else { return }
-            self.hideLoader()
-            if let error = error {
-                self.showAlert(title: "Login Failed", message: error.localizedDescription)
-                return
-            }
-            print("User signed in: \(authResult?.user.uid ?? "N/A")")
-            self.navigateToChildSelectionVC()
-        }
+//        guard let email = emailTextField.text,
+//              let password = passwordTextField.text,
+//              !email.isEmpty,
+//              !password.isEmpty else {
+//            self.showAlert(title: "Required", message: "Please enter both email and password.")
+//            return
+//        }
+//        self.showLoader()
+//
+//        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+//            guard let self = self else { return }
+//            self.hideLoader()
+//            if let error = error {
+//                self.showAlert(title: "Login Failed", message: error.localizedDescription)
+//                return
+//            }
+//            print("User signed in: \(authResult?.user.uid ?? "N/A")")
+//            self.navigateToChildSelectionVC()
+//        }
 //        self.navigateToHome()
+        self.navigateToChildSelectionVC()
     }
     
     @IBAction func forgotPasswordButtonTapped(_ sender: UIButton) {
