@@ -64,17 +64,15 @@ class GrowthGraphViewController: UIViewController {
         titleLabel.text = "Height Trend"
         graph.metric = .height
         graph.data = [
-            GrowthPoint(month: 0, value: 49.8),
-            GrowthPoint(month: 2, value: 57.2),
-            GrowthPoint(month: 4, value: 63.0),
-            GrowthPoint(month: 6, value: 66.8),
-            GrowthPoint(month: 9, value: 70.4),
-            GrowthPoint(month: 12, value: 73.6)
+            GrowthPoint(month: 0, value: 1.63),
+            GrowthPoint(month: 2, value: 1.88),
+            GrowthPoint(month: 4, value: 2.07),
+            GrowthPoint(month: 6, value: 2.19),
+            GrowthPoint(month: 9, value: 2.31),
+            GrowthPoint(month: 12, value: 2.41)
         ]
 
     }
-
-
 
     /*
     // MARK: - Navigation

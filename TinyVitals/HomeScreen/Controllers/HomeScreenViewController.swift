@@ -16,8 +16,6 @@ class HomeScreenViewController: UIViewController {
         }
     }
 
-
-    
     @IBOutlet weak var articlesCollectionView: UICollectionView!
     @IBOutlet weak var pageControl: UIPageControl!
     
@@ -161,7 +159,7 @@ class HomeScreenViewController: UIViewController {
 
     private func setupSummaryCards() {
         weightValueLabel.text = "9.4 kg"
-        heightValueLabel.text = "75.7 cm"
+        heightValueLabel.text = "2.4 ft"
     }
 
     private func setupCardGestures() {
@@ -258,23 +256,19 @@ class HomeScreenViewController: UIViewController {
         )
     }
 
-
-
-
-    
     private func openVaccinesTab() {
         tabBarController?.selectedIndex = 3
     }
 
     func refreshForActiveChild() {
-        print("🟡 refreshForActiveChild called")
+        print("refreshForActiveChild called")
 
         guard let child = activeChild else {
-            print("🔴 activeChild is nil")
+            print("activeChild is nil")
             return
         }
 
-        print("🟢 child id:", child.id)
+        print("child id:", child.id)
         setupVaccinationProgress()
     }
 

@@ -50,7 +50,8 @@ final class VaccinationProgressRingView: UIView {
 
     // MARK: - Colors (Normal iOS system colors)
     private let completedColor = UIColor.systemGreen
-    private let upcomingColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+//    private let upcomingColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+    private let upcomingColor = UIColor(red: 247/255, green: 132/255, blue: 173/255, alpha: 1)
     private let skippedColor = UIColor.systemRed
     private let rescheduledColor = UIColor.systemBlue
     
@@ -94,10 +95,10 @@ final class VaccinationProgressRingView: UIView {
             $0.shadowRadius = 2
             $0.shadowOffset = CGSize(width: 0, height: 1)
         }
-
+        
+        layer.addSublayer(upcomingLayer)
         layer.addSublayer(trackLayer)
         layer.addSublayer(completedLayer)
-        layer.addSublayer(upcomingLayer)
         layer.addSublayer(skippedLayer)
         layer.addSublayer(rescheduledLayer)
     }
@@ -175,9 +176,9 @@ final class VaccinationProgressRingView: UIView {
         layer.add(pulse, forKey: "pulse")
     }
 
-//    @objc private func didTap() {
-//        onTap?()
-//    }
+    @objc private func didTap() {
+        onTap?()
+    }
 
     private func updatePathsOnly() {
         let radius = min(bounds.width, bounds.height) / 2 - 16

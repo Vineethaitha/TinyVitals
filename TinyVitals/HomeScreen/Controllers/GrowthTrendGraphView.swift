@@ -41,10 +41,15 @@ final class GrowthTrendGraphView: UIView {
         10: 9.12, 11: 9.43, 12: 9.66
     ]
 
+//    private let optimalHeightByMonth: [Int: Double] = [
+//        0: 49.8, 1: 54.8, 2: 58.4, 3: 61.4, 4: 64.0,
+//        5: 66.0, 6: 67.5, 7: 69.0, 8: 70.6, 9: 71.8,
+//        10: 73.1, 11: 74.4, 12: 75.7
+//    ]
     private let optimalHeightByMonth: [Int: Double] = [
-        0: 49.8, 1: 54.8, 2: 58.4, 3: 61.4, 4: 64.0,
-        5: 66.0, 6: 67.5, 7: 69.0, 8: 70.6, 9: 71.8,
-        10: 73.1, 11: 74.4, 12: 75.7
+        0: 1.63, 1: 1.80, 2: 1.92, 3: 2.01, 4: 2.10,
+        5: 2.17, 6: 2.22, 7: 2.26, 8: 2.32, 9: 2.36,
+        10: 2.40, 11: 2.44, 12: 2.48
     ]
 
     // MARK: - Init
@@ -186,7 +191,7 @@ final class GrowthTrendGraphView: UIView {
                 line.setLineDash([6, 4], count: 2, phase: 0)
                 line.stroke()
 
-                let unit = metric == .weight ? "kg" : "cm"
+                let unit = metric == .weight ? "kg" : "ft"
                 var optimalLabelY = optimalY - 18
 
                 let selectedY = point(for: selected).y
@@ -227,7 +232,7 @@ final class GrowthTrendGraphView: UIView {
             UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1).setFill()
             dot.fill()
             
-            let unit = metric == .weight ? "kg" : "cm"
+            let unit = metric == .weight ? "kg" : "ft"
             let labelText = "\(String(format: "%.1f", selected.value)) \(unit)"
 
             var labelY = p.y - 18
@@ -260,7 +265,7 @@ final class GrowthTrendGraphView: UIView {
 
         
         // MARK: - Y AXIS LABELS (kg / cm)
-        let unit = metric == .weight ? "kg" : "cm"
+        let unit = metric == .weight ? "kg" : "ft"
 
         let labelAttrs: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 11),
