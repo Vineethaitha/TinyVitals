@@ -11,9 +11,7 @@ protocol AddMeasureDelegate: AnyObject {
     func didSaveValue(_ value: Double, type: AddMeasureViewController.MeasureType)
 }
 
-final class AddMeasureViewController: UIViewController,
-                                      UICollectionViewDelegate,
-                                      UICollectionViewDataSource {
+final class AddMeasureViewController: UIViewController,UICollectionViewDelegate,UICollectionViewDataSource {
 
     enum MeasureType {
         case weight
@@ -21,9 +19,7 @@ final class AddMeasureViewController: UIViewController,
         case temperature
         case severity
     }
-
-
-
+    
     weak var delegate: AddMeasureDelegate?
 
     @IBOutlet weak var titleLabel: UILabel!
@@ -45,8 +41,6 @@ final class AddMeasureViewController: UIViewController,
         }
     }
 
-
-
     private var maxValue: Double {
         switch measureType {
         case .weight: return 100.0
@@ -55,9 +49,7 @@ final class AddMeasureViewController: UIViewController,
         case .severity: return 22.0
         }
     }
-
-
-
+    
     private var step: Double {
         switch measureType {
         case .severity:
@@ -66,9 +58,7 @@ final class AddMeasureViewController: UIViewController,
             return 0.1
         }
     }
-
-
-
+    
     private var unitText: String {
         switch measureType {
         case .weight: return "kg"
@@ -77,8 +67,6 @@ final class AddMeasureViewController: UIViewController,
         case .severity: return ""
         }
     }
-
-
 
     private var titleText: String {
         switch measureType {
@@ -89,8 +77,6 @@ final class AddMeasureViewController: UIViewController,
         }
     }
 
-
-
     private var totalItems: Int {
         Int(((maxValue - minValue) / step).rounded()) + 1
     }
@@ -98,8 +84,6 @@ final class AddMeasureViewController: UIViewController,
     private var selectedValue: Double = 0
     
     private var didScrollToInitialValue = false
-
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -128,12 +112,6 @@ final class AddMeasureViewController: UIViewController,
             scrollToInitialValue()
         }
     }
-
-
-
-
-
-
 
     private func configureSheet() {
         if let sheet = sheetPresentationController {
@@ -194,10 +172,6 @@ final class AddMeasureViewController: UIViewController,
         collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
     }
 
-
-
-
-
     private func updateValueLabel() {
         switch measureType {
         case .severity:
@@ -206,7 +180,6 @@ final class AddMeasureViewController: UIViewController,
             valueLabel.text = String(format: "%.1f %@", selectedValue, unitText)
         }
     }
-
 
     @IBAction func saveTapped(_ sender: UIButton) {
         delegate?.didSaveValue(selectedValue, type: measureType)
@@ -243,10 +216,6 @@ final class AddMeasureViewController: UIViewController,
         updateValueLabel()
     }
 
-
-
-
-
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         snapToNearestTick()
     }
@@ -263,7 +232,5 @@ final class AddMeasureViewController: UIViewController,
         let offsetX = CGFloat(index) * cellWidth
         collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
     }
-
-
 
 }

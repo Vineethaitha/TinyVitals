@@ -130,18 +130,15 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
                 let changeRequest = user.createProfileChangeRequest()
                 changeRequest.displayName = fullName
                 
-                // Commit the display name change
                 changeRequest.commitChanges { error in
                     if let error = error {
                         print("Error updating display name: \(error.localizedDescription)")
                     }
                     
                     print("User created: \(user.uid)")
-                    // Navigate to Home after profile update (successful or failed)
                     self.navigateToHome()
                 }
             } else {
-                // Should only happen if there's an unexpected Firebase issue
                 self.navigateToHome()
             }
         }

@@ -76,28 +76,28 @@ final class SympCalenderDayCell: UICollectionViewCell {
     private func updateAppearance() {
         
         if isToday && isSelected {
-            // 🔥 Today AND Selected
+            
             contentView.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
             dayLabel.textColor = .systemPink
             dateLabel.textColor = .systemPink
             dateLabel.font = .systemFont(ofSize: 16, weight: .bold)
             
         } else if isToday {
-            // 🔴 Today only
+            
             contentView.backgroundColor = UIColor.systemPink.withAlphaComponent(0.25)
             dayLabel.textColor = .systemPink
             dateLabel.textColor = .systemPink
             dateLabel.font = .systemFont(ofSize: 16, weight: .bold)
             
         } else if isSelected {
-            // 🌸 Selected (not today)
+            
             contentView.backgroundColor = UIColor.systemPink.withAlphaComponent(0.15)
             dayLabel.textColor = .systemPink
             dateLabel.textColor = .systemPink
             dateLabel.font = .systemFont(ofSize: 16, weight: .semibold)
             
         } else {
-            // ⚪ Normal
+            
             contentView.backgroundColor = .clear
             dayLabel.textColor = .secondaryLabel
             dateLabel.textColor = .label

@@ -21,16 +21,11 @@ class ChildSelectionViewController: UIViewController {
     private let emptyStateLabel = UILabel()
     private var selectionAnimationView: LottieAnimationView?
 
-
-
-
     var childProfiles: [ChildProfile] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
 //        title = "Select Child"
-
         collectionView.dataSource = self
         collectionView.delegate = self
 
@@ -56,7 +51,7 @@ class ChildSelectionViewController: UIViewController {
         let tabBar = MainTabBarController()
 
         tabBar.allChildren = childProfiles
-        tabBar.activeChild = child   // 🔥 SET BEFORE SHOWING UI
+        tabBar.activeChild = child
 
         guard
             let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -78,27 +73,6 @@ class ChildSelectionViewController: UIViewController {
         present(vc, animated: true)
     }
     
-//    private func setupEmptyState() {
-//        let animation = LottieAnimation.named("AddChild")
-//        let animView = LottieAnimationView(animation: animation)
-//
-//        animView.translatesAutoresizingMaskIntoConstraints = false
-//        animView.contentMode = .scaleAspectFit
-//        animView.loopMode = .loop
-//
-//        lottieContainerView.addSubview(animView)
-//
-//        NSLayoutConstraint.activate([
-//            animView.leadingAnchor.constraint(equalTo: lottieContainerView.leadingAnchor),
-//            animView.trailingAnchor.constraint(equalTo: lottieContainerView.trailingAnchor),
-//            animView.topAnchor.constraint(equalTo: lottieContainerView.topAnchor),
-//            animView.bottomAnchor.constraint(equalTo: lottieContainerView.bottomAnchor)
-//        ])
-//
-//        animView.play()
-//        animationView = animView
-//    }
-    
     private func setupEmptyStateUI() {
         emptyStateContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(emptyStateContainer)
@@ -110,7 +84,6 @@ class ChildSelectionViewController: UIViewController {
             emptyStateContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
-        // 🔹 Lottie Animation
         let animation = LottieAnimation.named("AddChild")
         let animView = LottieAnimationView(animation: animation)
         animView.translatesAutoresizingMaskIntoConstraints = false
@@ -130,7 +103,6 @@ class ChildSelectionViewController: UIViewController {
         animView.play()
         animationView = animView
         
-        // 🔹 Empty State Caption
         emptyStateLabel.translatesAutoresizingMaskIntoConstraints = false
         emptyStateLabel.textAlignment = .center
         emptyStateLabel.numberOfLines = 0
@@ -152,8 +124,6 @@ class ChildSelectionViewController: UIViewController {
             emptyStateLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -32)
         ])
 
-
-        // 🔹 Add First Child Button
         addFirstChildButton.translatesAutoresizingMaskIntoConstraints = false
         addFirstChildButton.setTitle("Add Child", for: .normal)
         addFirstChildButton.backgroundColor = .systemPurple
@@ -172,7 +142,6 @@ class ChildSelectionViewController: UIViewController {
         addFirstChildButton.translatesAutoresizingMaskIntoConstraints = false
         addFirstChildButton.setTitle("Add Child", for: .normal)
 
-        // 🎨 RGB(237, 112, 153)
         addFirstChildButton.backgroundColor = UIColor(
             red: 237/255,
             green: 112/255,
@@ -205,7 +174,6 @@ class ChildSelectionViewController: UIViewController {
     
     private func setupSelectionVCAnimation() {
         let animation = LottieAnimation.named("SelectionVCAnimation")
-        // 👆 this must match your JSON filename exactly (without .json)
 
         let animView = LottieAnimationView(animation: animation)
         animView.translatesAutoresizingMaskIntoConstraints = false
@@ -233,30 +201,24 @@ class ChildSelectionViewController: UIViewController {
         
         collectionView.isHidden = !hasChildren
 
-        // Empty state (0 children)
         emptyStateContainer.isHidden = hasChildren
 
-        // Selection animation (>= 1 child)
         selectionVCAnimationView.isHidden = !hasChildren
         
         yourChildrenLabel.isHidden = !hasChildren
 
         if hasChildren {
-            animationView?.stop()              // stop empty animation
-            selectionAnimationView?.play()     // play selection animation
+            animationView?.stop()
+            selectionAnimationView?.play()
         } else {
             selectionAnimationView?.stop()
             animationView?.play()
         }
     }
 
-
-    
     @objc private func addFirstChildTapped() {
         presentAddChild()
     }
-
-
 
 }
 
@@ -267,7 +229,7 @@ extension ChildSelectionViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        childProfiles.count + 1   // +1 for Add Child card
+        childProfiles.count + 1
     }
 
     func collectionView(
@@ -311,7 +273,7 @@ extension ChildSelectionViewController: AddChildDelegate {
     func didAddChild(_ child: ChildProfile) {
         childProfiles.append(child)
         collectionView.reloadData()
-        updateUI() // 🔥 switches to collection view
+        updateUI()
     }
 
 }

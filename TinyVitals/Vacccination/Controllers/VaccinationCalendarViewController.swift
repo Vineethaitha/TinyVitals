@@ -58,7 +58,6 @@ final class VaccinationCalendarViewController : UIViewController {
             calendarView.bottomAnchor.constraint(equalTo: calendarContainerView.bottomAnchor)
         ])
 
-        // Native configuration
         calendarView.calendar = Calendar.current
         calendarView.locale = Locale.current
         calendarView.fontDesign = .rounded
@@ -70,10 +69,8 @@ final class VaccinationCalendarViewController : UIViewController {
                 alpha: 1
             )
 
-        // REQUIRED FOR DOTS
         calendarView.delegate = self
         
-        // Selection
         let selection = UICalendarSelectionSingleDate(delegate: self)
         calendarView.selectionBehavior = selection
     }

@@ -212,7 +212,6 @@ final class RecordSummaryViewController: UIViewController {
                     )
                 }
 
-                // Divider
                 attributed.append(
                     NSAttributedString(
                         string: "──────────────\n\n",
@@ -222,8 +221,6 @@ final class RecordSummaryViewController: UIViewController {
                         ]
                     )
                 )
-
-                // Disclaimer
                 attributed.append(self.disclaimerAttributedText())
 
                 self.textView.attributedText = attributed

@@ -23,8 +23,6 @@ final class VaccinationStore {
         vaccinesByChild[childId] = vaccines
     }
 
-
-    // ENSURE INITIAL DATA
     func ensureVaccinesExist(
         for child: ChildProfile,
         builder: (Date) -> [VaccineItem]

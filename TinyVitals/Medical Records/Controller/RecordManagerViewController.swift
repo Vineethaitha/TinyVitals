@@ -63,8 +63,6 @@ class RecordManagerViewController: UIViewController {
             store.filesByChild[childId] = []
         }
 
-
-
         collectionView.dataSource = self
         collectionView.delegate = self
 
@@ -84,7 +82,6 @@ class RecordManagerViewController: UIViewController {
 //        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
 //            tap.cancelsTouchesInView = false
 //            view.addGestureRecognizer(tap)
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -110,9 +107,6 @@ class RecordManagerViewController: UIViewController {
 //        view.endEditing(true)
 //    }
 
-
-    
-    
     func setupSortMenu() {
 
         let createFolderAction = UIAction(
@@ -181,10 +175,6 @@ class RecordManagerViewController: UIViewController {
         threeDotsButton.showsMenuAsPrimaryAction = true
     }
 
-
-
-
-
     func sortFoldersByName(ascending: Bool) {
 
         guard let childId = activeChild?.id else { return }
@@ -234,26 +224,24 @@ class RecordManagerViewController: UIViewController {
 
         let folder = getFolder(for: indexPath)
 
-        // Add to recents (avoid duplicates)
         if let index = recentFolders.firstIndex(where: { $0.name == folder.name }) {
             recentFolders.remove(at: index)
         }
         recentFolders.insert(folder, at: 0)
 
-        // Limit to last 5
         if recentFolders.count > 5 {
             recentFolders.removeLast()
         }
 
         collectionView.reloadData()
 
-        // Navigate to next screen
+
         let vc = RecordListViewController(
             nibName: "RecordListViewController",
             bundle: nil
         )
 
-        vc.activeChild = activeChild          // ✅ REQUIRED
+        vc.activeChild = activeChild
         vc.mode = .normal(folder: folder.name)
         vc.folderName = folder.name
         vc.hidesBottomBarWhenPushed = true
@@ -290,7 +278,7 @@ class RecordManagerViewController: UIViewController {
         vc.onRecordSaved = { [weak self] in
             guard let self = self else { return }
 
-            // Reload folder counts
+        
             self.collectionView.reloadData()
         }
 
@@ -346,7 +334,7 @@ class RecordManagerViewController: UIViewController {
             color: UIColor.randomIOSFolderColor()
         )
 
-        // Append to CHILD-SCOPED folders
+        
         store.foldersByChild[childId, default: []].append(newFolder)
 
         collectionView.reloadData()
@@ -409,7 +397,7 @@ class RecordManagerViewController: UIViewController {
                   newName != oldName
             else { return }
 
-            // 1️⃣ Update folders list (CHILD-SCOPED)
+            
             if var folders = self.store.foldersByChild[childId],
                let index = folders.firstIndex(where: { $0.name == oldName }) {
 
@@ -417,7 +405,7 @@ class RecordManagerViewController: UIViewController {
                 self.store.foldersByChild[childId] = folders
             }
 
-            // 2️⃣ Update records folderName (NO MOVING KEYS ANYMORE)
+            
             self.store.filesByChild[childId] = self.store.filesByChild[childId]?.map {
                 var file = $0
                 if file.folderName == oldName {
@@ -426,7 +414,7 @@ class RecordManagerViewController: UIViewController {
                 return file
             }
 
-            // 3️⃣ Update recents
+            
             if let rIndex = self.recentFolders.firstIndex(where: { $0.name == oldName }) {
                 self.recentFolders[rIndex].name = newName
             }
@@ -448,22 +436,22 @@ class RecordManagerViewController: UIViewController {
         let folder = getFolder(for: indexPath)
         let folderName = folder.name
 
-        // 1️⃣ Remove folder from CHILD folders list
+        
         store.foldersByChild[childId]?.removeAll {
             $0.name == folderName
         }
 
-        // 2️⃣ Remove from RECENTS
+        
         recentFolders.removeAll {
             $0.name == folderName
         }
 
-        // 3️⃣ Remove all records belonging to this folder
+        
         store.filesByChild[childId]?.removeAll {
             $0.folderName == folderName
         }
 
-        // 4️⃣ Refresh UI
+        
         collectionView.reloadData()
     }
     
@@ -497,7 +485,7 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
 
     // MARK: - Sections
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2  // Section 0 = Recents, Section 1 = All
+        return 2
     }
 
 //    func collectionView(_ collectionView: UICollectionView,
@@ -551,11 +539,8 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
 
         cell.configure(with: folder, fileCount: count)
 
-
-        // Remove old gestures
         cell.gestureRecognizers?.forEach { cell.removeGestureRecognizer($0) }
 
-        // Add long-press gesture
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPress.minimumPressDuration = 0.5
         cell.addGestureRecognizer(longPress)
@@ -574,10 +559,9 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
             for: indexPath
         )
 
-        // Clear old labels
+        
         header.subviews.forEach { $0.removeFromSuperview() }
 
-        // Add title
         let title = UILabel(frame: CGRect(
             x: 16,
             y: 0,
@@ -596,7 +580,6 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
 
         if isSearching {
-            // hide recents while searching
             if section == 0 { return .zero }
         } else {
             if section == 0 && recentFolders.isEmpty { return .zero }
@@ -634,12 +617,10 @@ extension RecordManagerViewController: UISearchBarDelegate {
 
         let allFolders = store.folders(for: childId)
 
-        // Filter ALL folders
         filteredFolders = allFolders.filter {
             $0.name.lowercased().contains(text)
         }
 
-        // Filter RECENTS
         filteredRecentFolders = recentFolders.filter {
             $0.name.lowercased().contains(text)
         }

@@ -114,7 +114,7 @@ class HomeScreenViewController: UIViewController {
 //    override func viewDidAppear(_ animated: Bool) {
 //        super.viewDidAppear(animated)
 //
-//        print("🟢 Home didAppear, child:", activeChild as Any)
+//        print("Home didAppear, child:", activeChild as Any)
 //        refreshForActiveChild()
 //    }
 
@@ -204,8 +204,6 @@ class HomeScreenViewController: UIViewController {
     }
 
     private func setupSparklines() {
-
-        // Weight sparkline
         weightSparkline.frame = weightSparklineContainer.bounds
         weightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         weightSparkline.lineColor = UIColor(
@@ -213,8 +211,6 @@ class HomeScreenViewController: UIViewController {
         )
         weightSparkline.values = [7.0, 7.4, 7.4, 7.5, 7.6]
         weightSparklineContainer.addSubview(weightSparkline)
-
-        // Height sparkline
         heightSparkline.frame = heightSparklineContainer.bounds
         heightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         heightSparkline.lineColor = UIColor(

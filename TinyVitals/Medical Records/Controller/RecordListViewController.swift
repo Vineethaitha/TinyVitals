@@ -78,11 +78,6 @@ class RecordListViewController: UIViewController {
             return store.files(for: childId, folderName: folder)
         }
     }
-
-
-
-
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -180,7 +175,6 @@ class RecordListViewController: UIViewController {
 
     @objc func shareButtonTapped() {
 
-        // If no records, do nothing
         let files = isSearching ? filteredFiles : currentFiles
         guard !files.isEmpty else { return }
 
@@ -235,7 +229,6 @@ class RecordListViewController: UIViewController {
             return
         }
 
-        // Normal preview logic (unchanged)
         if let image = record.thumbnail {
             if let url = saveTempImage(image) {
                 previewURL = url
@@ -275,20 +268,14 @@ class RecordListViewController: UIViewController {
         )
 
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
-
-            // 1️⃣ Remove from STORE (child-scoped)
             self.store.filesByChild[childId]?.removeAll {
                 self.selectedRecords.contains($0.id)
             }
-
-            // 2️⃣ Remove from local filtered list (search mode)
             if self.isSearching {
                 self.filteredFiles.removeAll {
                     self.selectedRecords.contains($0.id)
                 }
             }
-
-            // 3️⃣ Exit selection + refresh UI
             self.exitSelectionMode()
             self.updateUI()
         })
@@ -296,11 +283,6 @@ class RecordListViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true)
     }
-
-
-
-
-
 
     func updateShareButtonState() {
         navigationItem.rightBarButtonItem?.isEnabled = !selectedRecords.isEmpty
@@ -334,8 +316,6 @@ class RecordListViewController: UIViewController {
         vc.popoverPresentationController?.sourceView = view
         present(vc, animated: true)
     }
-
-
 
     
     func saveTempImage(_ image: UIImage) -> URL? {
@@ -440,7 +420,6 @@ class RecordListViewController: UIViewController {
 
         tableView.setEditing(false, animated: true)
 
-        // Clear visible selections
         if let selected = tableView.indexPathsForSelectedRows {
             selected.forEach {
                 tableView.deselectRow(at: $0, animated: false)
@@ -460,13 +439,10 @@ class RecordListViewController: UIViewController {
             ? filteredFiles[indexPath.row]
             : currentFiles[indexPath.row]
 
-        // Remove from store
         store.filesByChild[activeChild.id]?.removeAll {
             $0.id == record.id
         }
         
-
-        // Update search results if needed
         if isSearching {
             filteredFiles.removeAll { $0.id == record.id }
         }
@@ -474,10 +450,6 @@ class RecordListViewController: UIViewController {
         updateUI()
 
     }
-
-
-
-
 
     func openEditRecord(for indexPath: IndexPath) {
 
@@ -495,8 +467,6 @@ class RecordListViewController: UIViewController {
         vc.isEditingRecord = true
         vc.existingRecord = record
         vc.activeChild = activeChild
-
-        // ✅ FIXED: child-scoped folders
         vc.availableFolders = store.folders(for: childId).map { $0.name }
 
         vc.modalPresentationStyle = .pageSheet
@@ -507,8 +477,6 @@ class RecordListViewController: UIViewController {
 
         present(vc, animated: true)
     }
-
-    
 
     func configureSortMenu(for button: UIButton) {
 
@@ -577,9 +545,6 @@ class RecordListViewController: UIViewController {
         button.showsMenuAsPrimaryAction = true
     }
 
-
-
-    
     func applySort(_ option: RecordSortOption) {
         currentSort = option
 
@@ -602,7 +567,6 @@ class RecordListViewController: UIViewController {
         store.filesByChild[activeChild.id] = store.allFiles(for: activeChild.id)
             .map { $0.id == files.first?.id ? files.first! : $0 }
 
-        // Update filtered list if searching
         if isSearching {
             filteredFiles = files.filter {
                 $0.title.lowercased().contains(searchBar.text?.lowercased() ?? "")
@@ -702,7 +666,7 @@ extension RecordListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    editingStyleForRowAt indexPath: IndexPath)
     -> UITableViewCell.EditingStyle {
-        return .insert   // 👈 this enables selection circles
+        return .insert
     }
 
     func tableView(_ tableView: UITableView,
@@ -723,16 +687,10 @@ extension RecordListViewController: UITableViewDataSource, UITableViewDelegate {
             self?.presentSummary(for: record)
         }
         
-        // IMPORTANT: allow default iOS selection UI
         cell.selectionStyle = .default
 
         return cell
     }
-
-
-
-
-
 }
 
 

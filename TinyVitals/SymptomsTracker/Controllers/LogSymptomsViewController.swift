@@ -17,18 +17,13 @@ final class LogSymptomsViewController: UIViewController {
 
     // MARK: - Outlets
     @IBOutlet weak var mainScrollView: UIScrollView!
-//    @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var mainStackView: UIStackView!
 
-    // Date & Time
-//    @IBOutlet weak var dateValueLabel: UILabel!
     @IBOutlet weak var datePicker: UIDatePicker!
 
-    // Symptoms
     @IBOutlet weak var selectedSymptomsLabel: UILabel!
     @IBOutlet weak var symptomsPreviewLabel: UILabel!
 
-    // Vitals
     @IBOutlet weak var addHeightButton: UIButton!
     @IBOutlet weak var addWeightButton: UIButton!
     @IBOutlet weak var addTemperatureButton: UIButton!
@@ -41,18 +36,14 @@ final class LogSymptomsViewController: UIViewController {
     private var currentTemperature: Double = 98.6
     private var currentSeverity: Double = 1
 
-    // Notes
     @IBOutlet weak var notesTextView: UITextView!
 
-    // Photo
     @IBOutlet weak var photoImageView: UIImageView!
     @IBOutlet weak var addPhotoButton: UIButton!
 
-    // Save
     @IBOutlet weak var saveButton: UIButton!
 
     // MARK: - Data
-//    private var selectedSymptoms: [String] = []
     private var selectedSymptoms: [SymptomItem] = []
     private let sampleSymptoms = ["Fever", "Cold", "Cough"]
 
@@ -75,35 +66,10 @@ final class LogSymptomsViewController: UIViewController {
 
     // MARK: - Setup
     private func setupUI() {
-//        view.backgroundColor = .systemBackground
-
-        // Date label
-//        dateValueLabel.textColor = .systemBlue
-
-        // Symptoms
         symptomsPreviewLabel.text = "No symptoms selected yet"
         symptomsPreviewLabel.textColor = .secondaryLabel
-
-        // Vitals buttons
-//        [heightButton, weightButton, temperatureButton].forEach {
-//            $0?.layer.cornerRadius = 10
-//            $0?.backgroundColor = UIColor.systemGray6
-//        }
-
-        // Notes
-//        notesTextView.layer.cornerRadius = 12
-//        notesTextView.layer.borderWidth = 1
-//        notesTextView.layer.borderColor = UIColor.systemGray4.cgColor
-//        notesTextView.text = "Add note here"
-//        notesTextView.textColor = .secondaryLabel
-
-        // Photo
         photoImageView.isHidden = true
-//        photoImageView.layer.cornerRadius = 12
         photoImageView.contentMode = .scaleAspectFill
-//        photoImageView.clipsToBounds = true
-
-        // Save button
         saveButton.configuration = nil
         saveButton.layer.cornerRadius = 25
         saveButton.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
@@ -122,7 +88,6 @@ final class LogSymptomsViewController: UIViewController {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
-//        dateValueLabel.text = formatter.string(from: datePicker.date)
     }
 
     // MARK: - Actions
@@ -130,14 +95,6 @@ final class LogSymptomsViewController: UIViewController {
     @IBAction func datePickerChanged(_ sender: UIDatePicker) {
         selectedDate = sender.date
     }
-
-//    @IBAction func selectSymptomsTapped(_ sender: UIButton) {
-//        // Mock selection
-//        selectedSymptoms = sampleSymptoms
-//
-//        symptomsPreviewLabel.textColor = .label
-//        symptomsPreviewLabel.text = selectedSymptoms.joined(separator: ", ")
-//    }
 
     @IBAction func heightTapped(_ sender: UIButton) {
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
@@ -157,12 +114,6 @@ final class LogSymptomsViewController: UIViewController {
     }
 
     @IBAction func temperatureTapped(_ sender: UIButton) {
-//        showSampleAlert(
-//            title: "Temperature",
-//            message: "Sample Temperature: 98.6°F"
-//        ) {
-//            self.temperatureButton.setTitle("98.6°F", for: .normal)
-//        }
         let vc = AddMeasureViewController(
             nibName: "AddMeasureViewController",
             bundle: nil

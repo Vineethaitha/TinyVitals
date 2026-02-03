@@ -40,12 +40,10 @@ final class SymptomItemCell: UICollectionViewCell {
         titleLabel.font = UIFont(descriptor: descriptor!, size: 15)
 
         if selected {
-            // ✅ Selected style
             contentView.backgroundColor = UIColor.systemPink.withAlphaComponent(0.18)
             titleLabel.textColor = .systemPink
             iconImageView.tintColor = .systemPink
         } else {
-            // ✅ Unselected style (soft grey)
             contentView.backgroundColor = UIColor.systemGray5
             titleLabel.textColor = .label
             iconImageView.tintColor = item.tintColor

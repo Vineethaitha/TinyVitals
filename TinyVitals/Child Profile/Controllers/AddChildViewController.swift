@@ -76,7 +76,6 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             setEditable(true)
         }
 
-        // 🔥 THIS IS THE IMPORTANT LINE
         saveButton.isHidden = (mode != .add)
         saveButton.bottomAnchor.constraint(
             lessThanOrEqualTo: view.keyboardLayoutGuide.topAnchor,
@@ -112,17 +111,12 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         
         weightTextField.delegate = self
         heightTextField.delegate = self
-
-
     }
 
     
     @objc private func handleDismissKeyboard() {
         view.endEditing(true)
     }
-
-    
-
 
     @IBAction func addChildTapped(_ sender: UIButton) {
 
@@ -137,7 +131,6 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         let yRow = agePicker.selectedRow(inComponent: 0)
         let mRow = agePicker.selectedRow(inComponent: 1)
 
-        // 🚫 User must move picker at least once
         guard yRow > 0 || mRow > 0 else {
             return
         }
@@ -198,9 +191,6 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         }
     }
 
-
-
-
     @objc private func avatarTapped() {
         var config = PHPickerConfiguration()
         config.selectionLimit = 1
@@ -241,11 +231,8 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             $0?.alpha = editable ? 1.0 : 0.6
         }
 
-        // ✅ AGE FIELD
         ageTextField.isUserInteractionEnabled = (mode != .view)
         ageTextField.alpha = (mode != .view) ? 1.0 : 0.6
-
-        // ✅ AVATAR FIELD
         avatarImageView.isUserInteractionEnabled = (mode != .view)
 //        avatarImageView.alpha = 1.0
     }

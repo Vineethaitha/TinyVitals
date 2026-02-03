@@ -36,17 +36,14 @@ final class ChildNavTitleView: UIView {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         ageLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        // 🔹 Container (white pill)
         containerView.backgroundColor = .white
         containerView.layer.cornerRadius = 22
         containerView.clipsToBounds = true
 
-        // 🔹 Avatar
         avatarImageView.layer.cornerRadius = 18
         avatarImageView.clipsToBounds = true
         avatarImageView.contentMode = .scaleAspectFill
 
-        // 🔹 Labels
         nameLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         ageLabel.font = .systemFont(ofSize: 12, weight: .regular)
         ageLabel.textColor = .secondaryLabel
@@ -56,34 +53,28 @@ final class ChildNavTitleView: UIView {
         textStack.spacing = 2
         textStack.translatesAutoresizingMaskIntoConstraints = false
 
-        // Hierarchy
         addSubview(containerView)
         containerView.addSubview(avatarImageView)
         containerView.addSubview(textStack)
 
         NSLayoutConstraint.activate([
-
-            // 🔹 Container fills self
+            
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             containerView.topAnchor.constraint(equalTo: topAnchor),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            // 🔹 Avatar
             avatarImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             avatarImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             avatarImageView.widthAnchor.constraint(equalToConstant: 36),
             avatarImageView.heightAnchor.constraint(equalToConstant: 36),
 
-            // 🔹 Text
             textStack.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 10),
             textStack.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             textStack.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
 
-            // 🔹 Height
             containerView.heightAnchor.constraint(equalToConstant: 44),
 
-            // 🔹 Minimum width (IMPORTANT)
             containerView.widthAnchor.constraint(greaterThanOrEqualToConstant: 160)
         ])
         
@@ -96,8 +87,6 @@ final class ChildNavTitleView: UIView {
     @objc private func handleTap() {
         onTap?()
     }
-
-
 
     func configure(child: ChildProfile) {
         nameLabel.text = child.name

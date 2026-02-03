@@ -6,69 +6,6 @@
 //
 
 import UIKit
-
-//import UIKit
-//
-//class ChildCardCell: UICollectionViewCell {
-//
-//    @IBOutlet weak var avatarImageView: UIImageView!
-//    @IBOutlet weak var nameLabel: UILabel!
-//    @IBOutlet weak var ageLabel: UILabel!
-//
-//    override func awakeFromNib() {
-//        super.awakeFromNib()
-//
-//        avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
-//        avatarImageView.clipsToBounds = true
-//    }
-//
-////    func configure(child: ChildProfile, isAddCell: Bool = false) {
-////
-////        if isAddCell {
-////            nameLabel.text = "Add Child"
-////            ageLabel.text = ""
-////            avatarImageView.image = UIImage(systemName: "plus")
-////            return
-////        }
-////
-////        nameLabel.text = child.name
-////        ageLabel.text = child.ageString()
-////
-////        if let filename = child.photoFilename,
-////           let image = loadImageFromDisk(filename: filename) {
-////            avatarImageView.image = image
-////        } else {
-////            avatarImageView.image = UIImage(systemName: "person.fill")
-////        }
-////    }
-//
-//    func configure(child: ChildProfile) {
-//        nameLabel.text = child.name
-//        ageLabel.text = child.ageString()
-//
-//        if let filename = child.photoFilename,
-//           let image = loadImageFromDisk(filename) {
-//            avatarImageView.image = image
-//        } else {
-//            avatarImageView.image = UIImage(systemName: "person.fill")
-//        }
-//    }
-//
-//    func configureAsAdd() {
-//        nameLabel.text = "Add Child"
-//        ageLabel.text = ""
-//        avatarImageView.image = UIImage(systemName: "plus")
-//    }
-//
-//    private func loadImageFromDisk(filename: String) -> UIImage? {
-//        let url = FileManager.default
-//            .urls(for: .documentDirectory, in: .userDomainMask)[0]
-//            .appendingPathComponent(filename)
-//
-//        return UIImage(contentsOfFile: url.path)
-//    }
-//}
-import UIKit
 import Foundation
 
 class ChildCardCell: UICollectionViewCell {
@@ -83,7 +20,6 @@ class ChildCardCell: UICollectionViewCell {
 
         contentView.backgroundColor = .clear
 
-        // Shadow container
         avatarShadowView.backgroundColor = .clear
         avatarShadowView.layer.shadowColor = UIColor.black.cgColor
         avatarShadowView.layer.shadowOpacity = 0.18
@@ -91,12 +27,9 @@ class ChildCardCell: UICollectionViewCell {
         avatarShadowView.layer.shadowRadius = 8
         avatarShadowView.layer.masksToBounds = false
 
-        // Image view
         avatarImageView.clipsToBounds = true
         avatarImageView.contentMode = .scaleAspectFill
     }
-
-
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -104,13 +37,6 @@ class ChildCardCell: UICollectionViewCell {
         avatarShadowView.layer.cornerRadius = 40
         avatarImageView.layer.cornerRadius = 40
     }
-
-
-
-
-
-
-
 
     // MARK: - Normal Child Cell
 
@@ -133,9 +59,6 @@ class ChildCardCell: UICollectionViewCell {
         contentView.backgroundColor = .systemGray6
     }
 
-
-
-
     // MARK: - Add Child Cell
 
     func configureAsAdd() {
@@ -155,8 +78,6 @@ class ChildCardCell: UICollectionViewCell {
         avatarImageView.tintColor = .black
         avatarImageView.contentMode = .center
     }
-
-
 
     // MARK: - Helpers
 

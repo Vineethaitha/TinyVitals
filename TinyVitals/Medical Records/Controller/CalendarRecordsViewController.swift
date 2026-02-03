@@ -172,7 +172,6 @@ class CalendarRecordsViewController: UIViewController {
         vc.isEditingRecord = true
         vc.existingRecord = record
 
-        // ✅ PUT THIS LINE HERE
 //        vc.availableFolders = store.folders.map { $0.name }
         vc.activeChild = activeChild
         vc.availableFolders = store.folders(for: activeChild.id).map { $0.name }
@@ -464,7 +463,6 @@ final class CalendarTagDecorationView: UIView {
             addSubview(dots)
         }
 
-        // entry animation (soft bounce)
         transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
         alpha = 0
         UIView.animate(
@@ -521,7 +519,6 @@ final class CalendarDotDecorationView: UIView {
             addSubview(moreDot)
         }
 
-        // subtle appearance animation
         transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
         UIView.animate(
             withDuration: 0.25,

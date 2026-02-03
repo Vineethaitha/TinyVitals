@@ -93,7 +93,7 @@ private extension RecordTextExtractor {
 
         let text = observations
             .compactMap { $0.topCandidates(1).first }
-            .filter { $0.confidence > 0.4 }   // ⬅️ confidence threshold
+            .filter { $0.confidence > 0.4 }
             .map { $0.string }
             .joined(separator: "\n")
 

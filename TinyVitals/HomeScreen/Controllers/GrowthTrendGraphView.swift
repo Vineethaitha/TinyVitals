@@ -18,9 +18,7 @@ final class GrowthTrendGraphView: UIView {
         blue: 217/255,
         alpha: 1
     )
-
-
-
+    
     var metric: GrowthMetric = .weight {
         didSet { setNeedsDisplay() }
     }
@@ -113,8 +111,6 @@ final class GrowthTrendGraphView: UIView {
         }
 
         let points = data.map { point(for: $0) }
-
-        // GRID
         let grid = UIBezierPath()
         for i in 0...4 {
             let y = rect.height - padding - CGFloat(i) * (rect.height - 2 * padding) / 4.0
@@ -126,7 +122,6 @@ final class GrowthTrendGraphView: UIView {
         grid.lineWidth = 1
         grid.stroke()
 
-        // CURVE
         let curve = UIBezierPath()
         curve.move(to: points[0])
         for i in 1..<points.count {
@@ -141,8 +136,7 @@ final class GrowthTrendGraphView: UIView {
         UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 1).setStroke()
         curve.lineWidth = 2.5
         curve.stroke()
-
-        // GRADIENT FILL
+        
         let fill = curve.copy() as! UIBezierPath
         fill.addLine(to: CGPoint(x: points.last!.x, y: rect.height))
         fill.addLine(to: CGPoint(x: points.first!.x, y: rect.height))
@@ -172,8 +166,6 @@ final class GrowthTrendGraphView: UIView {
             options: []
         )
         context.restoreGState()
-
-        // OPTIMAL LINE (dynamic per selected month)
         if let selected = selectedPoint {
             let optimal: Double? = metric == .weight
                 ? optimalWeightByMonth[selected.month]
@@ -184,7 +176,6 @@ final class GrowthTrendGraphView: UIView {
                 let optimalY = rect.height - padding -
                                CGFloat(ratio) * (rect.height - 2 * padding)
 
-                // Draw dashed optimal line
                 let line = UIBezierPath()
                 line.move(to: CGPoint(x: padding, y: optimalY))
                 line.addLine(to: CGPoint(x: rect.width - padding, y: optimalY))
@@ -195,7 +186,6 @@ final class GrowthTrendGraphView: UIView {
                 line.setLineDash([6, 4], count: 2, phase: 0)
                 line.stroke()
 
-                // Smart label positioning (avoid collision)
                 let unit = metric == .weight ? "kg" : "cm"
                 var optimalLabelY = optimalY - 18
 
@@ -214,11 +204,9 @@ final class GrowthTrendGraphView: UIView {
             }
         }
 
-        // SELECTED POINT
         if let selected = selectedPoint {
             let p = point(for: selected)
 
-            // Vertical indicator line
             let vLine = UIBezierPath()
             vLine.move(to: CGPoint(x: p.x, y: padding))
             vLine.addLine(to: CGPoint(x: p.x, y: rect.height - padding))
@@ -227,7 +215,6 @@ final class GrowthTrendGraphView: UIView {
             vLine.lineWidth = 1
             vLine.stroke()
 
-            // Dot
             let dotRadius: CGFloat = 4
             let dot = UIBezierPath(
                 ovalIn: CGRect(
@@ -239,19 +226,16 @@ final class GrowthTrendGraphView: UIView {
             )
             UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1).setFill()
             dot.fill()
-
-            // SMART LABEL POSITIONING
+            
             let unit = metric == .weight ? "kg" : "cm"
             let labelText = "\(String(format: "%.1f", selected.value)) \(unit)"
 
             var labelY = p.y - 18
 
-            // Avoid top edge
             if labelY < padding {
                 labelY = p.y + 12
             }
 
-            // Avoid optimal label collision
             if let optimal = metric == .weight
                 ? optimalWeightByMonth[selected.month]
                 : optimalHeightByMonth[selected.month] {

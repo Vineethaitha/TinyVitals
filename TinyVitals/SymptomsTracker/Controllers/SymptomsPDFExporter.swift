@@ -14,7 +14,7 @@ final class SymptomsPDFExporter {
         calendar: Calendar
     ) -> URL? {
 
-        let pageSize = CGSize(width: 595, height: 842) // A4
+        let pageSize = CGSize(width: 595, height: 842)
         let renderer = UIGraphicsPDFRenderer(bounds: CGRect(origin: .zero, size: pageSize))
 
         let url = FileManager.default.temporaryDirectory

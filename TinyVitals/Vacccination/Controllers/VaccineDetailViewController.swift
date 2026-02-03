@@ -71,7 +71,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        assert(activeChild != nil, "❌ VaccinationCalendarViewController opened without activeChild")
+        assert(activeChild != nil, "VaccinationCalendarViewController opened without activeChild")
         setupUI()
         updateStatusUI()
         populateData()
@@ -97,13 +97,11 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     // MARK: - UI Setup
     private func setupUI() {
 
-        // Notes styling
         notesTextView.layer.cornerRadius = 12
         notesTextView.layer.borderWidth = 1
         notesTextView.layer.borderColor = UIColor.systemGray4.cgColor
         notesTextView.textContainerInset = UIEdgeInsets(top: 12, left: 8, bottom: 12, right: 8)
 
-        // Image styling
         vaccineImageView.layer.cornerRadius = 12
         vaccineImageView.clipsToBounds = true
         vaccineImageView.backgroundColor = UIColor.systemGray5
@@ -115,7 +113,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         saveButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         saveButton.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 1)
 
-        // Close button
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .close,
             target: self,
@@ -134,10 +131,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
 
-        
-        // default
-           selectedStatus = .taken
-           updateStatusUI()
+        selectedStatus = .taken
+        updateStatusUI()
     }
 
     
@@ -155,7 +150,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         dismiss(animated: true)
     }
     
-    // Status tapped
     func setupStatusTaps() {
         statusTakenRow.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(takenTapped))
@@ -226,52 +220,43 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         
     }
 
-    
-    // SET UP NOTES
     private func setupNotes() {
         notesTextView.delegate = self
         notesTextView.clipsToBounds = true
-
-        // Load saved notes
         if let savedNotes = UserDefaults.standard.string(forKey: notesStorageKey),
            !savedNotes.isEmpty {
             notesTextView.text = savedNotes
             notesTextView.textColor = .label
         } else {
-            // Show placeholder
             notesTextView.text = notesPlaceholder
             notesTextView.textColor = .secondaryLabel
         }
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-            if textView.text == notesPlaceholder {
-                textView.text = ""
-                textView.textColor = .label
-            }
+        if textView.text == notesPlaceholder {
+            textView.text = ""
+            textView.textColor = .label
         }
-
-        func textViewDidEndEditing(_ textView: UITextView) {
-
-            let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            if text.isEmpty {
-                textView.text = notesPlaceholder
-                textView.textColor = .secondaryLabel
-                UserDefaults.standard.removeObject(forKey: notesStorageKey)
-            } else {
-                UserDefaults.standard.set(text, forKey: notesStorageKey)
-            }
-        }
+    }
     
-    // image adding
+    func textViewDidEndEditing(_ textView: UITextView) {
+
+        let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if text.isEmpty {
+            textView.text = notesPlaceholder
+            textView.textColor = .secondaryLabel
+            UserDefaults.standard.removeObject(forKey: notesStorageKey)
+        } else {
+            UserDefaults.standard.set(text, forKey: notesStorageKey)
+        }
+    }
     
     private func setupPhotoUI() {
     vaccineImageView.contentMode = .scaleAspectFill
         vaccineImageView.clipsToBounds = true
         vaccineImageView.layer.cornerRadius = 12
-
-        // IMPORTANT: hide container, not image only
         photoCardView.isHidden = true
         vaccineImageView.image = nil
         photoCardView.isHidden = true
@@ -341,7 +326,6 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     
     @IBAction func saveTapped(_ sender: UIButton) {
             
-            //  Save date + time (merge date & time picker)
             let calendar = Calendar.current
             let finalDate = calendar.date(
                 bySettingHour: calendar.component(.hour, from: timePicker.date),
@@ -350,29 +334,24 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
                 of: datePicker.date
             ) ?? datePicker.date
 
-            //  Notes
             let notesText =
                 notesTextView.text == notesPlaceholder
                 ? nil
                 : notesTextView.text
 
-            //  Image
             let imageData = vaccineImageView.image?
                 .jpegData(compressionQuality: 0.8)
 
-            //  Create storage object
             let detail = VaccineDetailStorage(
                 date: finalDate,
                 notes: notesText,
                 imageData: imageData
             )
 
-            //  Save to UserDefaults
             if let encoded = try? JSONEncoder().encode(detail) {
                 UserDefaults.standard.set(encoded, forKey: detailStorageKey)
             }
 
-            //  Save status back to list
             let newStatus: VaccineStatus
             switch selectedStatus {
             case .taken: newStatus = .completed
@@ -394,17 +373,14 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
             )
         else { return }
 
-        // Date & Time
         datePicker.date = saved.date
         timePicker.date = saved.date
 
-        // Notes
         if let notes = saved.notes, !notes.isEmpty {
             notesTextView.text = notes
             notesTextView.textColor = .label
         }
 
-        // Image
         if let imgData = saved.imageData,
            let image = UIImage(data: imgData) {
             vaccineImageView.image = image

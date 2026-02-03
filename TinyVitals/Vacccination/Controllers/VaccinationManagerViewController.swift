@@ -46,22 +46,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         return total == 0 ? 0 : Double(completed) / Double(total)
     }
 
-    // MARK: - Data Model
-//    struct VaccineItem {
-//        let name: String
-//        let description: String
-//        let ageGroup: String
-//        var status: VaccineStatus
-//        let date: Date
-//    }
-//
-//    enum VaccineStatus {
-//        case upcoming
-//        case completed
-//        case skipped
-//        case rescheduled
-//    }
-
     var filteredVaccines: [VaccineItem] = []
 
     let calendar = Calendar.current
@@ -115,26 +99,18 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         setupTableView()
         updateHeaderVisibility()
 
-        // ❗ REQUIRED
         guard let child = activeChild else {
-            assertionFailure("❌ VaccinationManagerViewController opened without activeChild")
+            assertionFailure("VaccinationManagerViewController opened without activeChild")
             return
         }
 
-        // Child DOB
         childDOB = child.dob
-
-        // ✅ Ensure vaccines exist ONLY ONCE per child
         VaccinationStore.shared.ensureVaccinesExist(
             for: child
         ) { dob in
             self.buildVaccines(from: dob)
         }
-
-        // ✅ Load from store
         allVaccines = VaccinationStore.shared.vaccines(for: child.id.uuidString)
-
-        // Initial UI load
         filteredVaccines = allVaccines
         vaccinesTableView.reloadData()
 
@@ -167,8 +143,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         let cal = calendar
 
         return [
-
-            // AT BIRTH
             VaccineItem(
                 name: "BCG",
                 description: "Tuberculosis",
@@ -596,7 +570,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             $0.name == vaccine.name && $0.date == vaccine.date
         }
 
-        // 🔥 REQUIRED — THIS WAS MISSING
         vc.activeChild = self.activeChild
 
         vc.onSaveStatus = { [weak self] newStatus in
@@ -661,7 +634,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         let sheet = UIAlertController(title: "Filter & Sort", message: nil, preferredStyle: .actionSheet)
 
-        // STATUS FILTER
         sheet.addAction(UIAlertAction(title: "All", style: .default) { _ in
             self.selectedStatusFilter = .all
             self.applyFilter()
@@ -688,7 +660,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             self.applyFilter()
         })
 
-        // SORT
         sheet.addAction(UIAlertAction(title: "Sort A → Z", style: .default) { _ in
             self.selectedSort = .nameAZ
             self.applyFilter()
@@ -713,15 +684,12 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         let selectedAge = filterOptions[selectedFilterIndex]
 
-        // Start from full data
         var result = allVaccines
 
-        // Age filter
         if selectedAge != "All" {
             result = result.filter { $0.ageGroup == selectedAge }
         }
 
-        // Status filter
         switch selectedStatusFilter {
         case .all:
             break
@@ -735,15 +703,12 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             result = result.filter { $0.status == .rescheduled }
         }
 
-
-        // SEARCH FILTER (THIS WAS WRONG BEFORE)
         if !searchQuery.isEmpty {
             result = result.filter {
                 $0.name.localizedCaseInsensitiveContains(searchQuery)
             }
         }
 
-        // Sorting
         switch selectedSort {
         case .nameAZ:
             result.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
@@ -900,7 +865,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 x: 0,
                 y: 0,
                 width: vaccinesTableView.bounds.width,
-                height: 220   // reduced wasted space
+                height: 220
             )
 
         header.configure(
@@ -910,7 +875,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             rescheduled: rescheduledVaccines.count
         )
 
-        // THIS IS THE KEY PART
         header.setNeedsLayout()
         header.layoutIfNeeded()
 
@@ -962,13 +926,12 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         if let pop = alert.popoverPresentationController {
 
-            // Anchor to table (stable reference)
+            
             pop.sourceView = vaccinesTableView
 
             let headerHeight =
                 vaccinesTableView.tableHeaderView?.bounds.height ?? 220
 
-            // Ring is roughly centered in header → subtract some space
             let ringBottomOffset = headerHeight * 0.7
 
             pop.sourceRect = CGRect(
@@ -978,7 +941,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 height: 1
             )
 
-            // This creates the small "speech-bubble" arrow
             pop.permittedArrowDirections = .up
         }
 
@@ -999,9 +961,5 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         applyFilter()
         updateProgressUI()
     }
-
-
-
-
     
 }

@@ -17,10 +17,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     private let calendar = Calendar.current
     private var visibleDates: [Date] = []
     private var selectedDate: Date = Date()
-
-    // TEMP: mock symptoms count per day
-//    private var symptomsByDate: [Date: Int] = [:]
-
     
     @IBOutlet weak var mainStackView: UIStackView!
     @IBOutlet weak var historyButton: UIButton!
@@ -30,7 +26,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var summaryLabel: UILabel!
 
-//    @IBOutlet weak var emptyStateStackView: UIStackView!
     @IBOutlet weak var emptyImageView: UIView!
     @IBOutlet weak var emptyTitleLabel: UILabel!
     @IBOutlet weak var emptySubtitleLabel: UILabel!
@@ -47,20 +42,12 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         super.viewDidLoad()
         
         setupUI()
-//        showSampleData()
         
         setupCalendarCollectionView()
         updateSummary(for: Date())
         
         generateDates()
         calendarCollectionView.reloadData()
-        
-//        let today = calendar.startOfDay(for: Date())
-//        symptomsByDate[today] = 2
-
-//        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
-//            symptomsByDate[yesterday] = 1
-//        }
         
         timelineTableView.delegate = self
         timelineTableView.dataSource = self
@@ -91,13 +78,10 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
-        // pull fresh data
         updateSummary(for: selectedDate)
 
-        // update dots
         calendarCollectionView.reloadData()
 
-        // scroll to today if needed
         if let index = indexOfToday() {
             calendarCollectionView.selectItem(
                 at: index,
@@ -127,13 +111,11 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
 
     private func setupUI() {
-//        emptyImageView.image = UIImage(systemName: "figure.and.child.holdinghands")
         emptyImageView.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
 
         emptyTitleLabel.text = "No symptoms logged"
         emptyTitleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
 
-//        emptySubtitleLabel.text = ""
         emptySubtitleLabel.textColor = .secondaryLabel
 
         floatingAddButton.configuration = nil
@@ -360,11 +342,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         emptyLottieView = animationView
     }
 
-    
-    
 }
-
-
 
 extension SymptomsTrackerViewController: UICollectionViewDataSource {
 
@@ -396,15 +374,11 @@ extension SymptomsTrackerViewController: UICollectionViewDataSource {
         let day = dayFormatter.string(from: date).uppercased()
         let dayNumber = dateFormatter.string(from: date)
 
-//        let hasSymptoms =
-//            symptomsByDate[calendar.startOfDay(for: date)] != nil
         let hasSymptoms =
         SymptomsDataStore.shared.hasSymptoms(
             on: date,
             childId: activeChild.id.uuidString
         )
-
-
 
         cell.configure(
             day: day,
@@ -441,8 +415,6 @@ extension SymptomsTrackerViewController: UICollectionViewDelegate {
         selectedDate = visibleDates[indexPath.item]
 
         collectionView.reloadData()
-
-        // RE-SELECT after reload
         collectionView.selectItem(
             at: indexPath,
             animated: false,
@@ -467,7 +439,6 @@ extension SymptomsTrackerViewController: UITableViewDataSource {
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-
         let cell = tableView.dequeueReusableCell(
             withIdentifier: "SymptomTimelineCell",
             for: indexPath

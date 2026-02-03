@@ -68,7 +68,6 @@ final class SymptomDetailViewController: UIViewController {
         heightLabel.font = UIFont(descriptor: descriptor!, size: 17)
         temperatureLabel.font = UIFont(descriptor: descriptor!, size: 17)
         severityLabel.font = UIFont(descriptor: descriptor!, size: 17)
-//        notesLabel.font = UIFont(descriptor: descriptor!, size: 22)
     }
 
 //    @IBAction func deleteTapped() {

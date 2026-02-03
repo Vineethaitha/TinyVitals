@@ -68,10 +68,6 @@ final class VaccinationProgressRingView: UIView {
         setupLabel()
     }
 
-
-
-
-
     private func setupLayers() {
 
         let layers = [

@@ -21,12 +21,10 @@ final class SymptomsSelectionViewController: UIViewController {
     private var filteredSymptoms: [SymptomItem] = []
     private var selectedSymptoms = Set<SymptomItem>()
 
-    /// Ordered version of selected symptoms (for UI stability)
     private var selectedSymptomsArray: [SymptomItem] {
         allSymptoms.filter { selectedSymptoms.contains($0) }
     }
 
-    /// Callback to parent
     var onApply: (([SymptomItem]) -> Void)?
 
     // MARK: - Lifecycle
@@ -128,68 +126,45 @@ final class SymptomsSelectionViewController: UIViewController {
             SymptomItem(title: "Eye Discharge", iconName: "eye", tintColor: .systemRed),
             SymptomItem(title: "Frequent Bowel", iconName: "arrow.2.circlepath.circle", tintColor: .systemPink),
             SymptomItem(title: "Chills", iconName: "snow", tintColor: .systemBlue),
-            // General
             SymptomItem(title: "Fussy", iconName: "face.smiling", tintColor: .systemPink),
             SymptomItem(title: "Crying", iconName: "speaker.wave.2", tintColor: .systemRed),
             SymptomItem(title: "Lethargy", iconName: "zzz", tintColor: .systemGray),
             SymptomItem(title: "Weakness", iconName: "figure.walk.circle", tintColor: .systemOrange),
-
-            // Feeding
             SymptomItem(title: "Poor Feed", iconName: "fork.knife", tintColor: .systemBrown),
             SymptomItem(title: "Overfeed", iconName: "plus.circle", tintColor: .systemGreen),
             SymptomItem(title: "Spit Up", iconName: "arrow.up.circle", tintColor: .systemOrange),
             SymptomItem(title: "Choking", iconName: "exclamationmark.triangle", tintColor: .systemRed),
-
-            // Digestive
             SymptomItem(title: "Bloating", iconName: "cloud", tintColor: .systemTeal),
             SymptomItem(title: "Gas", iconName: "wind", tintColor: .systemBlue),
             SymptomItem(title: "Hard Stool", iconName: "circle.fill", tintColor: .systemBrown),
             SymptomItem(title: "Loose Stool", iconName: "drop", tintColor: .systemIndigo),
-
-            // Respiratory
             SymptomItem(title: "Fast Breath", iconName: "lungs", tintColor: .systemRed),
             SymptomItem(title: "Noisy Breath", iconName: "wind.circle", tintColor: .systemCyan),
             SymptomItem(title: "Chest Pull", iconName: "arrow.down.circle", tintColor: .systemOrange),
             SymptomItem(title: "Blue Lips", iconName: "mouth", tintColor: .systemBlue),
-
-            // Skin
             SymptomItem(title: "Dry Skin", iconName: "sun.min", tintColor: .systemOrange),
             SymptomItem(title: "Itching", iconName: "hand.raised", tintColor: .systemPurple),
             SymptomItem(title: "Peeling", iconName: "square.split.2x2", tintColor: .systemGray),
             SymptomItem(title: "Spots", iconName: "circle.grid.cross", tintColor: .systemPink),
-
-            // ENT
             SymptomItem(title: "Runny Nose", iconName: "nose", tintColor: .systemBlue),
             SymptomItem(title: "Blocked Nose", iconName: "nose.fill", tintColor: .systemGray),
             SymptomItem(title: "Hoarse Cry", iconName: "speaker.slash", tintColor: .systemOrange),
             SymptomItem(title: "Ear Fluid", iconName: "ear", tintColor: .systemMint),
-
-            // Eyes
             SymptomItem(title: "Watery Eyes", iconName: "eye", tintColor: .systemBlue),
             SymptomItem(title: "Sticky Eyes", iconName: "eye.slash", tintColor: .systemOrange),
             SymptomItem(title: "Eye Swell", iconName: "eye.circle", tintColor: .systemRed),
-
-            // Sleep
             SymptomItem(title: "No Sleep", iconName: "moon.zzz", tintColor: .systemGray),
             SymptomItem(title: "Night Cry", iconName: "moon", tintColor: .systemPurple),
             SymptomItem(title: "Restless", iconName: "bed.double", tintColor: .systemIndigo),
-
-            // Mouth / Teeth
             SymptomItem(title: "Teething", iconName: "mouth", tintColor: .systemPink),
             SymptomItem(title: "Drool", iconName: "drop", tintColor: .systemBlue),
             SymptomItem(title: "Sore Gums", iconName: "mouth.fill", tintColor: .systemRed),
-
-            // Urine / Diaper
             SymptomItem(title: "Less Urine", iconName: "drop.circle", tintColor: .systemOrange),
             SymptomItem(title: "Dark Urine", iconName: "drop.fill", tintColor: .systemBrown),
             SymptomItem(title: "Diaper Leak", iconName: "drop.triangle", tintColor: .systemPink),
-
-            // Movement
             SymptomItem(title: "Stiff Body", iconName: "figure.stand", tintColor: .systemGray),
             SymptomItem(title: "Shaking", iconName: "waveform", tintColor: .systemRed),
             SymptomItem(title: "Twitching", iconName: "waveform.path", tintColor: .systemPurple)
-
-
         ]
     }
     

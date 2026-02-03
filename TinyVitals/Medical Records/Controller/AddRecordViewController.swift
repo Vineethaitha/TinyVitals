@@ -26,7 +26,7 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
     var selectedThumbnail: UIImage?
     
     var selectedFolderName: String?
-    var availableFolders: [String] = []   // will be passed from previous VC
+    var availableFolders: [String] = []
 
     var isEditingRecord = false
     var existingRecord: MedicalFile?
@@ -85,8 +85,6 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
 //        tappp.cancelsTouchesInView = false
 //        tappp.requiresExclusiveTouchType = false
 //        view.addGestureRecognizer(tappp)
-
-        
 
     }
     
@@ -156,12 +154,6 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
         present(alert, animated: true)
     }
 
-
-
-
-
-
-    
     @objc func selectFolderTapped() {
 
         if availableFolders.isEmpty {
@@ -214,7 +206,7 @@ class AddRecordViewController: UIViewController, UIDocumentPickerDelegate, UIIma
             selectedThumbnail = img
             filePreviewImageView.image = img
             dummyImageView.isHidden = true
-            selectedFileURL = nil  // image only, no file URL
+            selectedFileURL = nil
         }
 
         picker.dismiss(animated: true)

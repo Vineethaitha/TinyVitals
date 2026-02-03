@@ -1,70 +1,3 @@
-//
-//  RecordSummarizer.swift
-//  MedicalRecords_Feat
-//
-//  Created by admin0 on 12/16/25.
-//
-
-//import NaturalLanguage
-//
-//enum RecordSummarizer {
-//
-//    static func summarize(text: String) -> String {
-//
-//        let summary = MedicalFactExtractor.extract(from: text)
-//
-//        guard !summary.isEmpty else {
-//            return "No structured medical information could be extracted."
-//        }
-//
-//        var output: [String] = []
-//
-//        if !summary.diagnosis.isEmpty {
-//            output.append("🧠 Diagnosis\n" + bullets(summary.diagnosis))
-//        }
-//
-//        if !summary.symptoms.isEmpty {
-//            output.append("📋 Symptoms\n" + bullets(summary.symptoms))
-//        }
-//
-//        if !summary.imaging.isEmpty {
-//            output.append("🧪 Imaging\n" + bullets(summary.imaging))
-//        }
-//
-//        if !summary.vitals.isEmpty {
-//            output.append("❤️ Vitals\n" + bullets(summary.vitals))
-//        }
-//
-//        if !summary.treatment.isEmpty {
-//            output.append("💊 Treatment\n" + bullets(summary.treatment))
-//        }
-//
-//        if !summary.progress.isEmpty {
-//            output.append("📈 Progress\n" + bullets(summary.progress))
-//        }
-//
-//        return output.joined(separator: "\n\n")
-//    }
-//
-//    private static func bullets(_ items: [String]) -> String {
-//        items.map { "• \($0)" }.joined(separator: "\n")
-//    }
-//}
-//
-//
-//
-
-//import Foundation
-//
-//enum RecordSummarizer {
-//
-//    static func summarize(text: String) -> [MedicalSection] {
-//        MedicalSectionParser.parse(from: text)
-//    }
-//}
-
-
-//
 //  RecordSummarizer.swift
 //  MedicalRecords_Feat
 //
@@ -105,7 +38,6 @@ enum RecordSummarizer {
         for section in parsedSections {
             let normalizedTitle: String
 
-            // Merge related medical meanings
             switch section.title {
             case "Assessment", "Impression":
                 normalizedTitle = "Diagnosis"
@@ -118,8 +50,6 @@ enum RecordSummarizer {
             merged[normalizedTitle, default: []]
                 .append(contentsOf: section.items)
         }
-
-        // Convert to ordered MedicalSection list
         let result = merged
             .map { title, items in
                 MedicalSection(
