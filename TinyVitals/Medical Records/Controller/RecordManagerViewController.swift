@@ -256,7 +256,7 @@ class RecordManagerViewController: UIViewController {
         vc.activeChild = activeChild          // ✅ REQUIRED
         vc.mode = .normal(folder: folder.name)
         vc.folderName = folder.name
-
+        vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
 //        print("hi")
     }
