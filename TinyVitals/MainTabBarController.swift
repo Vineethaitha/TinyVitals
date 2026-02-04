@@ -174,7 +174,6 @@ class MainTabBarController: UITabBarController {
             let topVC = nav.topViewController
         else { return }
 
-        // ❌ Let AddChildVC manage itself
         if topVC is AddChildViewController {
             topVC.navigationItem.leftBarButtonItem = nil
             topVC.navigationItem.rightBarButtonItem = nil
@@ -203,11 +202,6 @@ class MainTabBarController: UITabBarController {
         nav.modalPresentationStyle = .fullScreen
         present(nav, animated: true)
     }
-
-
-
-
-
     
     func refreshNavBarForVisibleVC() {
         updateNavBarTitles()
@@ -235,31 +229,7 @@ class MainTabBarController: UITabBarController {
             window.makeKeyAndVisible()
         }
     }
-    
-//    private func applyChildNavBar(to vc: UIViewController) {
-//        guard let child = activeChild else { return }
-//
-//        let titleView = ChildNavTitleView()
-//        titleView.configure(child: child)
-//
-//        // 🔥 THIS is the key connection
-//        titleView.onTap = { [weak self] in
-//            self?.openChildProfile()
-//        }
-//
-//        let leftItem = UIBarButtonItem(customView: titleView)
-//
-//        let spacer = UIBarButtonItem(
-//            barButtonSystemItem: .fixedSpace,
-//            target: nil,
-//            action: nil
-//        )
-//        spacer.width = -8
-//
-//        vc.navigationItem.leftBarButtonItems = [spacer, leftItem]
-//        vc.navigationItem.rightBarButtonItem = makeSwitchChildButton()
-//    }
-    
+
     private func applyChildNavBar(to vc: UIViewController) {
         guard let child = activeChild else { return }
 
@@ -272,7 +242,6 @@ class MainTabBarController: UITabBarController {
 
         let childItem = UIBarButtonItem(customView: titleView)
 
-        // 👇 KEEP SYSTEM BACK BUTTON
         vc.navigationItem.leftItemsSupplementBackButton = true
         vc.navigationItem.leftBarButtonItem = childItem
 

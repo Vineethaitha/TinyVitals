@@ -31,6 +31,10 @@ class HomeScreenViewController: UIViewController {
 
     @IBOutlet weak var vaccinationProgressContainer: UIView!
     
+    @IBOutlet weak var upcomingVaccinationContainer: UIView!
+    @IBOutlet weak var upcomingDateLabel: UILabel!
+    @IBOutlet weak var upcomingVaccinesLabel: UILabel!
+    
     private let weightSparkline = SparklineView()
     private let heightSparkline = SparklineView()
 
@@ -56,14 +60,15 @@ class HomeScreenViewController: UIViewController {
     private var autoScrollTimer: Timer?
     private var currentPage = 0
 
-
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Home"
         
+        upcomingVaccinationContainer.isHidden = true
+        
         setupSummaryCards()
         setupCardGestures()
+        setupUpcomingTap()
     
         articlesCollectionView.delegate = self
         articlesCollectionView.dataSource = self
@@ -99,6 +104,7 @@ class HomeScreenViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupVaccinationProgress()
+        setupUpcomingVaccination()
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
 
@@ -197,7 +203,6 @@ class HomeScreenViewController: UIViewController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
         }
-
         present(vc, animated: true)
     }
 
@@ -256,7 +261,30 @@ class HomeScreenViewController: UIViewController {
         )
     }
 
-    private func openVaccinesTab() {
+//    @objc private func openVaccinesTab() {
+//        tabBarController?.selectedIndex = 3
+//    }
+    @objc private func openVaccinesTab() {
+        guard let child = activeChild else { return }
+
+        let vaccines = VaccinationStore.shared.vaccines(
+            for: child.id.uuidString
+        )
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        let upcoming = vaccines
+            .filter { $0.status == .upcoming }
+            .filter { calendar.startOfDay(for: $0.date) >= today }
+
+        guard let nextVaccine = upcoming.min(by: { $0.date < $1.date }) else {
+            tabBarController?.selectedIndex = 3
+            return
+        }
+        
+        VaccinationNavigationContext.shared.pendingAgeGroup = nextVaccine.ageGroup
+
         tabBarController?.selectedIndex = 3
     }
 
@@ -270,9 +298,186 @@ class HomeScreenViewController: UIViewController {
 
         print("child id:", child.id)
         setupVaccinationProgress()
+        setupUpcomingVaccination()
     }
 
+    //new Feature
+    private func setupUpcomingTap() {
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(openVaccinesTab)
+        )
+        upcomingVaccinationContainer.addGestureRecognizer(tap)
+    }
+    
+//    private func setupUpcomingVaccination() {
+//        guard let child = activeChild else {
+//            upcomingVaccinationContainer.isHidden = true
+//            return
+//        }
+//
+//        let vaccines = VaccinationStore.shared.vaccines(
+//            for: child.id.uuidString
+//        )
+//
+//        let calendar = Calendar.current
+//        let today = calendar.startOfDay(for: Date())
+//
+//        let upcoming = vaccines
+//            .filter { $0.status == .upcoming }
+//            .filter { calendar.startOfDay(for: $0.date) >= today }
+//
+//        guard !upcoming.isEmpty else {
+//            upcomingVaccinationContainer.isHidden = true
+//            return
+//        }
+//
+//        let nextDate = upcoming
+//            .map { calendar.startOfDay(for: $0.date) }
+//            .min()!
+//
+//        let sameDayVaccines = upcoming.filter {
+//            calendar.isDate($0.date, inSameDayAs: nextDate)
+//        }
+//
+//        let formatter = DateFormatter()
+//        formatter.dateStyle = .medium
+//
+//        let daysDiff =
+//            calendar.dateComponents([.day], from: today, to: nextDate).day ?? 0
+//
+//        upcomingTitleLabel.text = "Upcoming Vaccination"
+//
+//        upcomingDateLabel.text =
+//            daysDiff == 0
+//            ? "Today"
+//            : "\(formatter.string(from: nextDate)) (in \(daysDiff) days)"
+//
+//        upcomingVaccinesLabel.text =
+//            sameDayVaccines
+//                .map { "• \($0.name)" }
+//                .joined(separator: "\n")
+//
+//        upcomingVaccinationContainer.isHidden = false
+//    }
+//    private func setupUpcomingVaccination() {
+//        guard let child = activeChild else {
+//            upcomingVaccinationContainer.isHidden = true
+//            return
+//        }
+//
+//        let vaccines = VaccinationStore.shared.vaccines(
+//            for: child.id.uuidString
+//        )
+//
+//        let calendar = Calendar.current
+//        let today = calendar.startOfDay(for: Date())
+//
+//        let upcoming = vaccines
+//            .filter { $0.status == .upcoming }
+//            .filter { calendar.startOfDay(for: $0.date) >= today }
+//
+//        guard !upcoming.isEmpty else {
+//            upcomingVaccinationContainer.isHidden = true
+//            return
+//        }
+//
+//        // Nearest upcoming date
+//        let nextDate = upcoming
+//            .map { calendar.startOfDay(for: $0.date) }
+//            .min()!
+//
+//        // Vaccines scheduled on that date
+//        let sameDayVaccines = upcoming.filter {
+//            calendar.isDate($0.date, inSameDayAs: nextDate)
+//        }
+//
+//        guard let firstVaccine = sameDayVaccines.first else {
+//            upcomingVaccinationContainer.isHidden = true
+//            return
+//        }
+//
+//        // Date formatting
+//        let formatter = DateFormatter()
+//        formatter.dateStyle = .medium
+//
+//        let daysDiff =
+//            calendar.dateComponents([.day], from: today, to: nextDate).day ?? 0
+//
+//        // UI
+//        upcomingTitleLabel.text = "Upcoming Vaccination"
+//
+//        upcomingDateLabel.text =
+//            daysDiff == 0
+//            ? "Today"
+//            : "\(formatter.string(from: nextDate)) (in \(daysDiff) days)"
+//
+//        // Preview + CTA
+//        let previewLine = "• \(firstVaccine.name)"
+//        let ctaLine = "View all vaccines for \(firstVaccine.ageGroup) →"
+//
+//        upcomingVaccinesLabel.text = [
+//            previewLine,
+//            "",
+//            ctaLine
+//        ].joined(separator: "\n")
+//
+//        upcomingVaccinationContainer.isHidden = false
+//    }
+    
+    private func setupUpcomingVaccination() {
+        guard let child = activeChild else {
+            upcomingVaccinationContainer.isHidden = true
+            return
+        }
 
+        let vaccines = VaccinationStore.shared.vaccines(
+            for: child.id.uuidString
+        )
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        let upcoming = vaccines
+            .filter { $0.status == .upcoming }
+            .filter { calendar.startOfDay(for: $0.date) >= today }
+
+        guard !upcoming.isEmpty else {
+            upcomingVaccinationContainer.isHidden = true
+            return
+        }
+
+        let nextDate = upcoming
+            .map { calendar.startOfDay(for: $0.date) }
+            .min()!
+
+        let sameDayVaccines = upcoming.filter {
+            calendar.isDate($0.date, inSameDayAs: nextDate)
+        }
+
+        guard let firstVaccine = sameDayVaccines.first else {
+            upcomingVaccinationContainer.isHidden = true
+            return
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+
+        let daysDiff =
+            calendar.dateComponents([.day], from: today, to: nextDate).day ?? 0
+
+//        upcomingTitleLabel.text = "Upcoming Vaccination"
+
+        upcomingDateLabel.text =
+            daysDiff == 0
+            ? "Today"
+            : "\(formatter.string(from: nextDate)) (in \(daysDiff) days)"
+
+        upcomingVaccinesLabel.text =
+            "Click to view all vaccines for \(firstVaccine.ageGroup)"
+
+        upcomingVaccinationContainer.isHidden = false
+    }
 
     /*
     // MARK: - Navigation

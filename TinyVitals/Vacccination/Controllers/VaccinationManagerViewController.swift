@@ -132,8 +132,26 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
 
     
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
+//    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if let ageGroup = VaccinationNavigationContext.shared.pendingAgeGroup,
+           let index = filterOptions.firstIndex(of: ageGroup) {
+
+            selectedFilterIndex = index
+            selectedStatusFilter = .upcoming
+            applyFilter()
+            filtersCollectionView.reloadData()
+            updateHeaderVisibility()
+
+            VaccinationNavigationContext.shared.pendingAgeGroup = nil
+        }
+
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
 
@@ -488,8 +506,19 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         return cell
     }
 
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        selectedFilterIndex = indexPath.item
+//        applyFilter()
+//        updateHeaderVisibility()
+//        collectionView.reloadData()
+//    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedFilterIndex = indexPath.item
+
+        // 🔑 IMPORTANT FIX
+        selectedStatusFilter = .all
+
         applyFilter()
         updateHeaderVisibility()
         collectionView.reloadData()
@@ -548,6 +577,51 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     }
 
 
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        tableView.deselectRow(at: indexPath, animated: true)
+//
+//        let vaccine: VaccineItem
+//        switch indexPath.section {
+//        case 0: vaccine = upcomingVaccines[indexPath.row]
+//        case 1: vaccine = completedVaccines[indexPath.row]
+//        case 2: vaccine = skippedVaccines[indexPath.row]
+//        case 3: vaccine = rescheduledVaccines[indexPath.row]
+//        default: return
+//        }
+//
+//        let vc = VaccineDetailViewController(
+//            nibName: "VaccineDetailViewController",
+//            bundle: nil
+//        )
+//
+//        vc.vaccine = vaccine
+//        vc.vaccineIndex = allVaccines.firstIndex {
+//            $0.name == vaccine.name && $0.date == vaccine.date
+//        }
+//
+//        vc.activeChild = self.activeChild
+//
+//        vc.onSaveStatus = { [weak self] newStatus in
+//            guard let self = self,
+//                  let index = vc.vaccineIndex,
+//                  let childId = self.activeChild?.id.uuidString
+//            else { return }
+//
+//            self.allVaccines[index].status = newStatus
+//
+//            VaccinationStore.shared.setVaccines(
+//                self.allVaccines,
+//                for: childId
+//            )
+//
+//            self.applyFilter()
+//            self.updateProgressUI()
+//            self.setupTableHeader()
+//        }
+//
+//        let nav = UINavigationController(rootViewController: vc)
+//        present(nav, animated: true)
+//    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
@@ -572,6 +646,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         vc.activeChild = self.activeChild
 
+        // ✅ THIS IS THE ONLY PLACE
         vc.onSaveStatus = { [weak self] newStatus in
             guard let self = self,
                   let index = vc.vaccineIndex,
@@ -585,9 +660,10 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 for: childId
             )
 
+            // 🔑 THESE TWO LINES ARE REQUIRED
             self.applyFilter()
             self.updateProgressUI()
-            self.setupTableHeader()
+//            self.setupTableHeader()
         }
 
         let nav = UINavigationController(rootViewController: vc)
