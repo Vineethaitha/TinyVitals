@@ -89,6 +89,7 @@
                                                         </label>
                                                         <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="compact" translatesAutoresizingMaskIntoConstraints="NO" id="4pw-8r-MsO">
                                                             <rect key="frame" x="193" y="3.6666666666666572" width="120" height="28"/>
+                                                            <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="120" id="77j-yY-ulM"/>
                                                                 <constraint firstAttribute="height" constant="28" id="kna-JU-Zmf"/>

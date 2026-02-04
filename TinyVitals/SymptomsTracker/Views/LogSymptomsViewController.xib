@@ -49,6 +49,7 @@
                                         </label>
                                         <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="compact" translatesAutoresizingMaskIntoConstraints="NO" id="HBg-yH-JLL">
                                             <rect key="frame" x="133" y="5" width="240" height="40"/>
+                                            <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="240" id="BPX-Ur-jpa"/>
                                                 <constraint firstAttribute="height" constant="40" id="mPC-8t-aiU"/>

@@ -80,11 +80,19 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         setupNotes()
         setupPhotoUI()
         loadSavedDetails()
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateStatusUI()
+    }
+    
+    @objc private func handleDismissKeyboard() {
+        view.endEditing(true)
     }
 
 
