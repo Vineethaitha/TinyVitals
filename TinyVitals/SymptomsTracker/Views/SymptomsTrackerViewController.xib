@@ -60,21 +60,23 @@
                             <rect key="frame" x="0.0" y="110" width="393" height="60"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zOC-rC-q6f" userLabel="historyButton">
-                                    <rect key="frame" x="263" y="13" width="49.666666666666686" height="34.333333333333336"/>
+                                    <rect key="frame" x="271.66666666666669" y="13" width="50.666666666666686" height="34.333333333333336"/>
                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="calendar.circle" catalog="system"/>
+                                    <buttonConfiguration key="configuration" style="plain" image="calendar.circle" catalog="system">
+                                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" weight="bold"/>
+                                    </buttonConfiguration>
                                     <connections>
                                         <action selector="historyTapped:" destination="-1" eventType="touchUpInside" id="sQ0-CH-I6x"/>
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iki-uQ-hxD">
-                                    <rect key="frame" x="322.66666666666669" y="13" width="50.333333333333314" height="34.333333333333336"/>
+                                    <rect key="frame" x="322.33333333333331" y="13" width="50.666666666666686" height="34.333333333333336"/>
                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <state key="normal" title="Button"/>
                                     <buttonConfiguration key="configuration" style="plain">
                                         <imageReference key="image" image="square.and.arrow.up.circle" catalog="system" symbolScale="large"/>
-                                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="semibold"/>
+                                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="bold"/>
                                     </buttonConfiguration>
                                     <connections>
                                         <action selector="exportTapped:" destination="-1" eventType="touchUpInside" id="Cxt-yg-3nP"/>
@@ -100,7 +102,7 @@
                                 <constraint firstItem="9PP-gu-wK9" firstAttribute="top" secondItem="A5x-Ta-mQB" secondAttribute="bottom" constant="5" id="Qt4-jR-nts"/>
                                 <constraint firstAttribute="height" constant="60" id="W0S-l6-PbD"/>
                                 <constraint firstItem="9PP-gu-wK9" firstAttribute="leading" secondItem="mZb-v5-dCi" secondAttribute="leading" constant="20" id="Xt9-m4-x3K"/>
-                                <constraint firstItem="iki-uQ-hxD" firstAttribute="leading" secondItem="zOC-rC-q6f" secondAttribute="trailing" constant="10" id="aP7-O6-uVr"/>
+                                <constraint firstItem="iki-uQ-hxD" firstAttribute="leading" secondItem="zOC-rC-q6f" secondAttribute="trailing" id="aP7-O6-uVr"/>
                                 <constraint firstItem="A5x-Ta-mQB" firstAttribute="centerY" secondItem="mZb-v5-dCi" secondAttribute="centerY" id="yPE-A3-wOX"/>
                                 <constraint firstItem="zOC-rC-q6f" firstAttribute="centerY" secondItem="mZb-v5-dCi" secondAttribute="centerY" id="ySN-wB-ftj"/>
                                 <constraint firstItem="iki-uQ-hxD" firstAttribute="centerY" secondItem="mZb-v5-dCi" secondAttribute="centerY" id="yjy-0x-nUT"/>

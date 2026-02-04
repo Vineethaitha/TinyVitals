@@ -10,7 +10,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VaccinationManagerViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
-                <outlet property="calendarButton" destination="5p3-2x-E9d" id="5hY-7f-GZz"/>
                 <outlet property="filtersCollectionView" destination="yw7-vP-Rlb" id="f8Y-US-XTY"/>
                 <outlet property="searchTextField" destination="vU3-1s-EcR" id="0VD-ne-JI2"/>
                 <outlet property="vaccinesTableView" destination="32G-jk-2kI" id="qqE-Ig-J1d"/>
@@ -28,21 +27,8 @@
                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Oyc-Bk-ri5">
                             <rect key="frame" x="0.0" y="0.0" width="353" height="30"/>
                             <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5p3-2x-E9d">
-                                    <rect key="frame" x="0.0" y="0.0" width="40" height="30"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="40" id="U5e-7j-IGx"/>
-                                        <constraint firstAttribute="height" constant="30" id="j8Y-X0-5xf"/>
-                                    </constraints>
-                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="calendar.circle" catalog="system"/>
-                                    <connections>
-                                        <action selector="calendarTapped:" destination="-1" eventType="touchUpInside" id="L7Y-QN-fcV"/>
-                                    </connections>
-                                </button>
                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalCompressionResistancePriority="250" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="yw7-vP-Rlb">
-                                    <rect key="frame" x="48" y="0.0" width="305" height="30"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="30"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="30" id="J6m-5q-1wh"/>
@@ -63,10 +49,10 @@
                             <rect key="frame" x="0.0" y="42" width="353" height="40"/>
                             <subviews>
                                 <view contentMode="scaleToFill" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="dEc-L7-ewq">
-                                    <rect key="frame" x="0.0" y="0.0" width="313" height="40"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="273" height="40"/>
                                     <subviews>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="  Search vaccines" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="vU3-1s-EcR">
-                                            <rect key="frame" x="0.0" y="0.0" width="313" height="40"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="273" height="40"/>
                                             <color key="backgroundColor" systemColor="systemGray5Color"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <textInputTraits key="textInputTraits"/>
@@ -89,17 +75,33 @@
                                     </userDefinedRuntimeAttributes>
                                 </view>
                                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cb5-Kg-sjM">
-                                    <rect key="frame" x="321" y="4" width="32" height="32"/>
+                                    <rect key="frame" x="281" y="4" width="32" height="32"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="32" id="A4H-C3-UNd"/>
                                         <constraint firstAttribute="width" constant="32" id="CII-mX-5vM"/>
                                     </constraints>
                                     <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="line.3.horizontal.decrease.circle" catalog="system">
+                                    <buttonConfiguration key="configuration" style="plain" image="calendar.circle" catalog="system">
+                                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" weight="bold"/>
                                         <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </buttonConfiguration>
                                     <connections>
-                                        <action selector="filterSortTapped:" destination="-1" eventType="touchUpInside" id="r3z-uk-MUD"/>
+                                        <action selector="calendarTapped:" destination="-1" eventType="touchUpInside" id="wMo-or-Qde"/>
+                                    </connections>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ePk-hP-1la">
+                                    <rect key="frame" x="321" y="4" width="32" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="32" id="ERG-6d-iIb"/>
+                                        <constraint firstAttribute="width" constant="32" id="sy0-4H-5Gb"/>
+                                    </constraints>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" image="ellipsis.circle" catalog="system">
+                                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" weight="bold"/>
+                                        <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </buttonConfiguration>
+                                    <connections>
+                                        <action selector="filterSortTapped:" destination="-1" eventType="touchUpInside" id="oAq-hj-HR4"/>
                                     </connections>
                                 </button>
                             </subviews>
@@ -130,7 +132,7 @@
     </objects>
     <resources>
         <image name="calendar.circle" catalog="system" width="128" height="123"/>
-        <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="123"/>
+        <image name="ellipsis.circle" catalog="system" width="128" height="123"/>
         <systemColor name="systemGray5Color">
             <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
