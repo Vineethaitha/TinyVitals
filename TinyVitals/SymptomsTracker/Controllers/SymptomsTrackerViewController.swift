@@ -120,7 +120,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         floatingAddButton.configuration = nil
         floatingAddButton.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
-        floatingAddButton.layer.cornerRadius = 25
+        floatingAddButton.layer.cornerRadius = 30
         floatingAddButton.setImage(UIImage(systemName: "stethoscope"),for: .normal)
         floatingAddButton.tintColor = .white
 

@@ -502,7 +502,7 @@ final class CalendarDotDecorationView: UIView {
 
         for _ in 0..<visibleDots {
             let dot = UIView(frame: CGRect(x: x, y: 2, width: dotSize, height: dotSize))
-            dot.backgroundColor = .systemPurple
+            dot.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             dot.layer.cornerRadius = dotSize / 2
             dot.alpha = 0
             addSubview(dot)
@@ -514,7 +514,7 @@ final class CalendarDotDecorationView: UIView {
             let moreDot = UILabel(frame: CGRect(x: x - 1, y: 0, width: 6, height: 8))
             moreDot.text = "·"
             moreDot.font = .systemFont(ofSize: 12, weight: .bold)
-            moreDot.textColor = .systemPurple
+            moreDot.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             moreDot.alpha = 0
             addSubview(moreDot)
         }

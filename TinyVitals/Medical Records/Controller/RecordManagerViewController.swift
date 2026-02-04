@@ -79,9 +79,9 @@ class RecordManagerViewController: UIViewController {
         
         setupSortMenu()
         
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//            tap.cancelsTouchesInView = false
-//            view.addGestureRecognizer(tap)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
+            tap.cancelsTouchesInView = false
+            view.addGestureRecognizer(tap)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -103,9 +103,9 @@ class RecordManagerViewController: UIViewController {
 
 
     
-//    @objc func dismissKeyboard() {
-//        view.endEditing(true)
-//    }
+    @objc func handleDismissKeyboard() {
+        view.endEditing(true)
+    }
 
     func setupSortMenu() {
 
@@ -260,7 +260,7 @@ class RecordManagerViewController: UIViewController {
         vc.activeChild = activeChild
 
         let nav = UINavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .fullScreen
+        nav.modalPresentationStyle = .pageSheet
         present(nav, animated: true)
     }
     
