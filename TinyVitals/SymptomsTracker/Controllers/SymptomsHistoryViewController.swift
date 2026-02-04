@@ -137,7 +137,7 @@ extension SymptomsHistoryViewController: UICalendarViewDelegate {
 
         else { return nil }
 
-        return .default(color: .systemPink, size: .small)
+        return .default(color: UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1), size: .small)
     }
 
 

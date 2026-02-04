@@ -61,7 +61,13 @@ final class LogSymptomsViewController: UIViewController {
         notesTextView.text = notesPlaceholder
         notesTextView.textColor = .secondaryLabel
 
-
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc private func handleDismissKeyboard() {
+        view.endEditing(true)
     }
 
     // MARK: - Setup
