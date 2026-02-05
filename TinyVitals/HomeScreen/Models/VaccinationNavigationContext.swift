@@ -11,6 +11,6 @@ import UIKit
 final class VaccinationNavigationContext {
     static let shared = VaccinationNavigationContext()
     private init() {}
-
+    
     var pendingAgeGroup: String?
 }
