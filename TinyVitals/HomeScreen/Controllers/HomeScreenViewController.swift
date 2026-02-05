@@ -56,6 +56,10 @@ class HomeScreenViewController: UIViewController {
             animationName: "pink baby"
         )
     ]
+
+    private let articleLinks = [
+        "https://www.healthychildren.org"
+    ]
     
     private var autoScrollTimer: Timer?
     private var currentPage = 0
@@ -310,121 +314,6 @@ class HomeScreenViewController: UIViewController {
         upcomingVaccinationContainer.addGestureRecognizer(tap)
     }
     
-//    private func setupUpcomingVaccination() {
-//        guard let child = activeChild else {
-//            upcomingVaccinationContainer.isHidden = true
-//            return
-//        }
-//
-//        let vaccines = VaccinationStore.shared.vaccines(
-//            for: child.id.uuidString
-//        )
-//
-//        let calendar = Calendar.current
-//        let today = calendar.startOfDay(for: Date())
-//
-//        let upcoming = vaccines
-//            .filter { $0.status == .upcoming }
-//            .filter { calendar.startOfDay(for: $0.date) >= today }
-//
-//        guard !upcoming.isEmpty else {
-//            upcomingVaccinationContainer.isHidden = true
-//            return
-//        }
-//
-//        let nextDate = upcoming
-//            .map { calendar.startOfDay(for: $0.date) }
-//            .min()!
-//
-//        let sameDayVaccines = upcoming.filter {
-//            calendar.isDate($0.date, inSameDayAs: nextDate)
-//        }
-//
-//        let formatter = DateFormatter()
-//        formatter.dateStyle = .medium
-//
-//        let daysDiff =
-//            calendar.dateComponents([.day], from: today, to: nextDate).day ?? 0
-//
-//        upcomingTitleLabel.text = "Upcoming Vaccination"
-//
-//        upcomingDateLabel.text =
-//            daysDiff == 0
-//            ? "Today"
-//            : "\(formatter.string(from: nextDate)) (in \(daysDiff) days)"
-//
-//        upcomingVaccinesLabel.text =
-//            sameDayVaccines
-//                .map { "• \($0.name)" }
-//                .joined(separator: "\n")
-//
-//        upcomingVaccinationContainer.isHidden = false
-//    }
-//    private func setupUpcomingVaccination() {
-//        guard let child = activeChild else {
-//            upcomingVaccinationContainer.isHidden = true
-//            return
-//        }
-//
-//        let vaccines = VaccinationStore.shared.vaccines(
-//            for: child.id.uuidString
-//        )
-//
-//        let calendar = Calendar.current
-//        let today = calendar.startOfDay(for: Date())
-//
-//        let upcoming = vaccines
-//            .filter { $0.status == .upcoming }
-//            .filter { calendar.startOfDay(for: $0.date) >= today }
-//
-//        guard !upcoming.isEmpty else {
-//            upcomingVaccinationContainer.isHidden = true
-//            return
-//        }
-//
-//        // Nearest upcoming date
-//        let nextDate = upcoming
-//            .map { calendar.startOfDay(for: $0.date) }
-//            .min()!
-//
-//        // Vaccines scheduled on that date
-//        let sameDayVaccines = upcoming.filter {
-//            calendar.isDate($0.date, inSameDayAs: nextDate)
-//        }
-//
-//        guard let firstVaccine = sameDayVaccines.first else {
-//            upcomingVaccinationContainer.isHidden = true
-//            return
-//        }
-//
-//        // Date formatting
-//        let formatter = DateFormatter()
-//        formatter.dateStyle = .medium
-//
-//        let daysDiff =
-//            calendar.dateComponents([.day], from: today, to: nextDate).day ?? 0
-//
-//        // UI
-//        upcomingTitleLabel.text = "Upcoming Vaccination"
-//
-//        upcomingDateLabel.text =
-//            daysDiff == 0
-//            ? "Today"
-//            : "\(formatter.string(from: nextDate)) (in \(daysDiff) days)"
-//
-//        // Preview + CTA
-//        let previewLine = "• \(firstVaccine.name)"
-//        let ctaLine = "View all vaccines for \(firstVaccine.ageGroup) →"
-//
-//        upcomingVaccinesLabel.text = [
-//            previewLine,
-//            "",
-//            ctaLine
-//        ].joined(separator: "\n")
-//
-//        upcomingVaccinationContainer.isHidden = false
-//    }
-    
     private func setupUpcomingVaccination() {
         guard let child = activeChild else {
             upcomingVaccinationContainer.isHidden = true
@@ -466,15 +355,13 @@ class HomeScreenViewController: UIViewController {
         let daysDiff =
             calendar.dateComponents([.day], from: today, to: nextDate).day ?? 0
 
-//        upcomingTitleLabel.text = "Upcoming Vaccination"
-
         upcomingDateLabel.text =
             daysDiff == 0
-            ? "Today"
-            : "\(formatter.string(from: nextDate)) (in \(daysDiff) days)"
+            ? "Next set of vaccines are due Today"
+            : "Next set of vaccines are due on \(formatter.string(from: nextDate)) (in \(daysDiff) days)"
 
         upcomingVaccinesLabel.text =
-            "Click to view all vaccines for \(firstVaccine.ageGroup)"
+            "Vaccine Group: \(firstVaccine.ageGroup)"
 
         upcomingVaccinationContainer.isHidden = false
     }
@@ -492,7 +379,14 @@ class HomeScreenViewController: UIViewController {
 }
 
 extension HomeScreenViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let urlString = articleLinks.randomElement(),
+              let url = URL(string: urlString) else { return }
 
+        UIApplication.shared.open(url)
+    }
+    
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
         articles.count
