@@ -12,7 +12,56 @@ final class VaccinationService {
     
     static let shared = VaccinationService()
     private init() {}
-    
+    // MARK: - Age Group Calculator
+
+    private func ageGroupForDate(dob: Date, due: Date) -> String {
+
+        let c = Calendar.current
+        let days = c.dateComponents([.day], from: dob, to: due).day ?? 0
+
+        switch days {
+
+        case 0...7:
+            return "At Birth"
+
+        case 35...49:
+            return "6 Weeks"
+
+        case 63...77:
+            return "10 Weeks"
+
+        case 91...105:
+            return "14 Weeks"
+
+        case 150...210:
+            return "6 Months"
+
+        case 240...300:
+            return "9 Months"
+
+        case 330...390:
+            return "12 Months"
+
+        case 420...480:
+            return "15 Months"
+
+        case 510...570:
+            return "18 Months"
+
+        case 700...900:
+            return "2 Years"
+
+        case 1700...2200:
+            return "5–6 Years"
+
+        case 3500...4500:
+            return "10–12 Years"
+
+        default:
+            return "Other"
+        }
+    }
+
     private let client = SupabaseAuthService.shared.client
 
     // MARK: - Generate vaccine schedule for child
@@ -53,7 +102,7 @@ final class VaccinationService {
 
     // MARK: - Fetch vaccines for UI
 
-    func fetchVaccines(childId: UUID) async throws -> [VaccineItem] {
+    func fetchVaccines(childId: UUID, dob: Date) async throws -> [VaccineItem] {
 
         let rows: [ChildVaccinationDTO] = try await client
             .from("child_vaccinations")
@@ -65,16 +114,20 @@ final class VaccinationService {
             .execute()
             .value
 
-        return rows.map {
-            VaccineItem(
-                id: $0.id.uuidString,
-                name: $0.vaccines_master.name,
-                description: $0.vaccines_master.description ?? "",
-                ageGroup: "",
-                status: VaccineStatus(rawValue: $0.status) ?? .upcoming,
-                date: $0.taken_on ?? $0.due_date,
-                notes: $0.notes,
-                photoURL: $0.photo_path
+        return rows.map { row in
+
+            let finalDate = row.taken_on ?? row.due_date
+            let ageGroup = ageGroupForDate(dob: dob, due: finalDate)
+
+            return VaccineItem(
+                id: row.id.uuidString,
+                name: row.vaccines_master.name,
+                description: row.vaccines_master.description ?? "",
+                ageGroup: ageGroup,
+                status: VaccineStatus(rawValue: row.status) ?? .upcoming,
+                date: finalDate,
+                notes: row.notes,
+                photoURL: row.photo_path
             )
         }
     }

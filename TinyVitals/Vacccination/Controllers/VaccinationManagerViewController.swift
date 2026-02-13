@@ -92,57 +92,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
     var searchQuery: String = ""
 
-    // MARK: - Lifecycle
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//
-//        vaccinesTableView.sectionHeaderTopPadding = 8
-//
-//        let headerAppearance = UITableViewHeaderFooterView.appearance()
-//        headerAppearance.tintColor = .clear
-//
-//        setupCollectionView()
-//        setupTableView()
-//        updateHeaderVisibility()
-//
-//        // ❗ REQUIRED
-//        guard let child = activeChild else {
-//            assertionFailure("❌ VaccinationManagerViewController opened without activeChild")
-//            return
-//        }
-//
-//        // Child DOB
-//        childDOB = child.dob
-//
-//        // ✅ Ensure vaccines exist ONLY ONCE per child
-//        VaccinationStore.shared.ensureVaccinesExist(
-//            for: child
-//        ) { dob in
-//            self.buildVaccines(from: dob)
-//        }
-//
-//        // ✅ Load from store
-//        allVaccines = VaccinationStore.shared.vaccines(for: child.id.uuidString)
-//
-//        // Initial UI load
-//        filteredVaccines = allVaccines
-//        vaccinesTableView.reloadData()
-//
-//        searchTextField.delegate = self
-//        searchTextField.addTarget(
-//            self,
-//            action: #selector(searchTextChanged),
-//            for: .editingChanged
-//        )
-//
-//        updateProgressUI()
-//        setupSearchClearButton()
-//        requestNotificationPermission()
-//        scheduleAllReminders()
-//
-//        vaccinesTableView.showsVerticalScrollIndicator = false
-//        vaccinesTableView.showsHorizontalScrollIndicator = false
-//    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -915,7 +865,11 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         Task {
             do {
                 let vaccines = try await VaccinationService.shared
-                    .fetchVaccines(childId: child.id)
+                    .fetchVaccines(
+                        childId: child.id,
+                        dob: child.dob
+                    )
+
 
                 self.allVaccines = vaccines
                 self.filteredVaccines = vaccines
@@ -936,4 +890,30 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         reloadForChild()
     }
     
+    private func ageGroupForDate(dob: Date, due: Date) -> String {
+
+        let c = Calendar.current
+        let comp = c.dateComponents([.month, .day], from: dob, to: due)
+
+        let months = comp.month ?? 0
+        let days = comp.day ?? 0
+        let totalDays = months * 30 + days
+
+        switch totalDays {
+        case 0...7: return "At Birth"
+        case 35...49: return "6 Weeks"
+        case 63...77: return "10 Weeks"
+        case 91...105: return "14 Weeks"
+        case 150...210: return "6 Months"
+        case 240...300: return "9 Months"
+        case 330...390: return "12 Months"
+        case 420...480: return "15 Months"
+        case 510...570: return "18 Months"
+        case 700...900: return "2 Years"
+        case 1700...2200: return "5–6 Years"
+        case 3500...4500: return "10–12 Years"
+        default: return "Other"
+        }
+    }
+
 }

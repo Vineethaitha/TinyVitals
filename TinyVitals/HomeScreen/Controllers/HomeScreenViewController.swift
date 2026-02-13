@@ -235,7 +235,7 @@ class HomeScreenViewController: UIViewController {
         Task {
             do {
                 let vaccines = try await VaccinationService.shared
-                    .fetchVaccines(childId: child.id)
+                    .fetchVaccines(childId: child.id, dob: child.dob)
 
                 let completed = vaccines.filter { $0.status == .completed }.count
                 let upcoming = vaccines.filter { $0.status == .upcoming }.count
