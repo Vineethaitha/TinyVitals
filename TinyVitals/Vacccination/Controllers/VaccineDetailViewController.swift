@@ -394,7 +394,22 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
             UserDefaults.standard.set(encoded, forKey: detailStorageKey)
         }
 
-        onSaveStatus?(selectedStatus)
+//        onSaveStatus?(selectedStatus)
+        Task {
+            do {
+                try await VaccinationService.shared.updateVaccinationStatus(
+                    recordId: UUID(uuidString: vaccine.id)!,
+                    status: selectedStatus
+                )
+
+                onSaveStatus?(selectedStatus)
+
+                dismiss(animated: true)
+            } catch {
+                print("❌ status update failed:", error)
+            }
+        }
+
         dismiss(animated: true)
     }
 

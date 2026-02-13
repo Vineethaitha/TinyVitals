@@ -147,37 +147,34 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             do {
                 let userUUID = UUID(uuidString: userId)!
                 
-                // 1️⃣ Create child (THIS WORKS)
-                try await ChildService.shared.addChild(
+                // ✅ create child AND get created row
+                let newChildDTO = try await ChildService.shared.addChild(
                     userId: userUUID,
                     name: name,
                     dob: dob,
                     gender: gender
                 )
                 
-                // 2️⃣ Fetch children
+                // ✅ generate vaccines immediately
+                if let childId = newChildDTO.id {
+                    try await VaccinationService.shared.generateVaccinesForChild(
+                        childId: childId,
+                        dob: dob
+                    )
+                }
+                
+                // ✅ refresh children list
                 let childDTOs = try await ChildService.shared.fetchChildren(userId: userUUID)
                 let profiles = childDTOs.map { ChildProfile(dto: $0) }
                 
                 AppState.shared.setChildren(profiles)
                 
-                if let newChild = profiles.last {
+                if let newChild = profiles.first(where: { $0.id == newChildDTO.id }) {
                     AppState.shared.setActiveChild(newChild)
                 }
                 
-                // ✅ DISMISS FIRST — UI MUST WIN
                 DispatchQueue.main.async {
                     self.dismiss(animated: true)
-                }
-                
-                // 3️⃣ Fire-and-forget vaccine generation
-                if let newChildDTO = childDTOs.last, let childId = newChildDTO.id {
-                    Task.detached {
-                        try? await VaccinationService.shared.generateVaccinesForChild(
-                            childId: childId,
-                            dob: dob
-                        )
-                    }
                 }
                 
             } catch {

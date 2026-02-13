@@ -524,20 +524,14 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         vc.onSaveStatus = { [weak self] newStatus in
             guard let self = self,
-                  let index = vc.vaccineIndex,
-                  let childId = self.activeChild?.id.uuidString
+                  let index = vc.vaccineIndex
             else { return }
 
             self.allVaccines[index].status = newStatus
-
-            VaccinationStore.shared.setVaccines(
-                self.allVaccines,
-                for: childId
-            )
-
             self.applyFilter()
             self.updateProgressUI()
         }
+
 
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
@@ -914,35 +908,32 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         childDOB = child.dob
 
-        let vaccines = VaccinationStore.shared.ensureVaccinesExist(
-            for: child
-        ) { dob in
-            self.buildVaccines(from: dob)
+        selectedFilterIndex = 0
+        selectedStatusFilter = .all
+        searchQuery = ""
+
+        Task {
+            do {
+                let vaccines = try await VaccinationService.shared
+                    .fetchVaccines(childId: child.id)
+
+                self.allVaccines = vaccines
+                self.filteredVaccines = vaccines
+
+                self.applyFilter()
+                self.updateProgressUI()
+                self.scheduleAllReminders()
+
+                print("✅ Loaded vaccines from backend:", vaccines.count)
+
+            } catch {
+                print("❌ fetch vaccines failed:", error)
+            }
         }
-
-        self.allVaccines = vaccines
-        self.selectedFilterIndex = 0
-        self.selectedStatusFilter = .all
-        self.searchQuery = ""
-
-        self.applyFilter()
-        self.updateProgressUI()
-        self.scheduleAllReminders()
-        print("Loaded vaccines:", allVaccines.count)
-
     }
-
-
 
     func onActiveChildChanged() {
         reloadForChild()
     }
-
-
-
-
-
-
-
     
 }

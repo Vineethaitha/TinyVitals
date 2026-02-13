@@ -34,7 +34,7 @@ final class ChildService {
         name: String,
         dob: Date,
         gender: String?
-    ) async throws {
+    ) async throws -> ChildDTO {
 
         let child = ChildDTO(
             id: nil,
@@ -44,11 +44,20 @@ final class ChildService {
             gender: gender
         )
 
-        try await client
+        let inserted: [ChildDTO] = try await client
             .from("children")
             .insert(child)
+            .select()   // 🔥 important — return row
             .execute()
+            .value
+
+        guard let created = inserted.first else {
+            throw NSError(domain: "child.insert", code: 0)
+        }
+
+        return created
     }
+
     
     func deleteChild(childId: UUID) async throws {
         try await client

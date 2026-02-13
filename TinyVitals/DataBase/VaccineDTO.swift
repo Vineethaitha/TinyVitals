@@ -10,5 +10,6 @@ import Foundation
 struct VaccineDTO: Decodable {
     let id: UUID
     let name: String
+    let description: String?
     let due_after_days: Int
 }

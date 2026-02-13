@@ -232,38 +232,48 @@ class HomeScreenViewController: UIViewController {
     func setupVaccinationProgress() {
         guard let child = activeChild else { return }
 
-        let vaccines = VaccinationStore.shared.vaccines(
-            for: child.id.uuidString
-        )
+        Task {
+            do {
+                let vaccines = try await VaccinationService.shared
+                    .fetchVaccines(childId: child.id)
 
-        let completed = vaccines.filter { $0.status == .completed }.count
-        let upcoming = vaccines.filter { $0.status == .upcoming }.count
-        let skipped = vaccines.filter { $0.status == .skipped }.count
-        let rescheduled = vaccines.filter { $0.status == .rescheduled }.count
+                let completed = vaccines.filter { $0.status == .completed }.count
+                let upcoming = vaccines.filter { $0.status == .upcoming }.count
+                let skipped = vaccines.filter { $0.status == .skipped }.count
+                let rescheduled = vaccines.filter { $0.status == .rescheduled }.count
 
-        let header: VaccinationHeaderView
+                await MainActor.run {
 
-        if let existing = vaccinationProgressContainer.subviews.first as? VaccinationHeaderView {
-            header = existing
-        } else {
-            guard let h = Bundle.main.loadNibNamed(
-                "VaccinationHeaderView",
-                owner: nil,
-                options: nil
-            )?.first as? VaccinationHeaderView else { return }
+                    let header: VaccinationHeaderView
 
-            h.frame = vaccinationProgressContainer.bounds
-            h.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            vaccinationProgressContainer.addSubview(h)
-            header = h
+                    if let existing = self.vaccinationProgressContainer
+                        .subviews.first as? VaccinationHeaderView {
+                        header = existing
+                    } else {
+                        guard let h = Bundle.main.loadNibNamed(
+                            "VaccinationHeaderView",
+                            owner: nil,
+                            options: nil
+                        )?.first as? VaccinationHeaderView else { return }
+
+                        h.frame = self.vaccinationProgressContainer.bounds
+                        h.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                        self.vaccinationProgressContainer.addSubview(h)
+                        header = h
+                    }
+
+                    header.configure(
+                        completed: completed,
+                        upcoming: upcoming,
+                        skipped: skipped,
+                        rescheduled: rescheduled
+                    )
+                }
+
+            } catch {
+                print("❌ vaccination progress load failed:", error)
+            }
         }
-
-        header.configure(
-            completed: completed,
-            upcoming: upcoming,
-            skipped: skipped,
-            rescheduled: rescheduled
-        )
     }
 
 
