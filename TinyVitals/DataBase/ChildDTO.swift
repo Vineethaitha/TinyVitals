@@ -13,4 +13,9 @@ struct ChildDTO: Codable {
     let name: String
     let dob: Date
     let gender: String?
+
+    let blood_group: String?
+    let weight: Double?
+    let height: Double?
+    let photo_filename: String?
 }

@@ -13,9 +13,9 @@ extension ChildProfile {
         self.name = dto.name
         self.dob = dto.dob
         self.gender = dto.gender ?? ""
-        self.bloodGroup = ""          // fill later if added to DB
-        self.weight = nil
-        self.height = nil
-        self.photoFilename = nil
+        self.bloodGroup = dto.blood_group ?? ""
+        self.weight = dto.weight
+        self.height = dto.height
+        self.photoFilename = dto.photo_filename
     }
 }

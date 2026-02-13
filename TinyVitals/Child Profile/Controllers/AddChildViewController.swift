@@ -146,14 +146,25 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         Task {
             do {
                 let userUUID = UUID(uuidString: userId)!
-                
-                // ✅ create child AND get created row
+
+                // ✅ save photo first
+                let photo = didPickAvatarImage
+                    ? saveImageToDisk(avatarImageView.image!)
+                    : nil
+
+                // ✅ then call API
                 let newChildDTO = try await ChildService.shared.addChild(
                     userId: userUUID,
                     name: name,
                     dob: dob,
-                    gender: gender
+                    gender: gender,
+                    bloodGroup: bloodGroup,
+                    weight: Double(weightTextField.text ?? ""),
+                    height: Double(heightTextField.text ?? ""),
+                    photoFilename: photo
                 )
+
+
                 
                 // ✅ generate vaccines immediately
                 if let childId = newChildDTO.id {
@@ -378,6 +389,11 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
         updateDelegate?.didUpdateChild(updatedChild)
         navigationController?.popViewController(animated: true)
+        
+        Task {
+            try await ChildService.shared.updateChild(updatedChild)
+        }
+
     }
 
     

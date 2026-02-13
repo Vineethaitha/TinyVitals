@@ -33,7 +33,11 @@ final class ChildService {
         userId: UUID,
         name: String,
         dob: Date,
-        gender: String?
+        gender: String?,
+        bloodGroup: String?,
+        weight: Double?,
+        height: Double?,
+        photoFilename: String?
     ) async throws -> ChildDTO {
 
         let child = ChildDTO(
@@ -41,13 +45,17 @@ final class ChildService {
             user_id: userId,
             name: name,
             dob: dob,
-            gender: gender
+            gender: gender,
+            blood_group: bloodGroup,
+            weight: weight,
+            height: height,
+            photo_filename: photoFilename
         )
 
         let inserted: [ChildDTO] = try await client
             .from("children")
             .insert(child)
-            .select()   // 🔥 important — return row
+            .select()
             .execute()
             .value
 
@@ -67,6 +75,33 @@ final class ChildService {
             .execute()
     }
 
+
+    func updateChild(_ child: ChildProfile) async throws {
+
+        struct UpdateRow: Encodable {
+            let name: String
+            let gender: String
+            let blood_group: String
+            let weight: Double?
+            let height: Double?
+            let photo_filename: String?
+        }
+
+        let row = UpdateRow(
+            name: child.name,
+            gender: child.gender,
+            blood_group: child.bloodGroup,
+            weight: child.weight,
+            height: child.height,
+            photo_filename: child.photoFilename
+        )
+
+        try await client
+            .from("children")
+            .update(row)
+            .eq("id", value: child.id)
+            .execute()
+    }
 
 }
 
