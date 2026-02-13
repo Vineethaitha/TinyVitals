@@ -18,4 +18,5 @@ struct ChildVaccinationDTO: Decodable {
     let notes: String?
     let photo_path: String?
     let vaccines_master: VaccineDTO
+    
 }

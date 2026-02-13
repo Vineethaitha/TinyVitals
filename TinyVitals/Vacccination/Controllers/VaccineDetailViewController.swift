@@ -369,49 +369,61 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     @IBAction func saveTapped(_ sender: UIButton) {
 
         let calendar = Calendar.current
-        let finalDate = calendar.date(
-            bySettingHour: calendar.component(.hour, from: timePicker.date),
-            minute: calendar.component(.minute, from: timePicker.date),
-            second: 0,
-            of: datePicker.date
-        ) ?? datePicker.date
 
-        let notesText =
-            notesTextView.text == notesPlaceholder
-            ? nil
-            : notesTextView.text
+            let finalDate = calendar.date(
+                bySettingHour: calendar.component(.hour, from: timePicker.date),
+                minute: calendar.component(.minute, from: timePicker.date),
+                second: 0,
+                of: datePicker.date
+            ) ?? datePicker.date
 
-        let imageData = vaccineImageView.image?
-            .jpegData(compressionQuality: 0.8)
+            let notesText =
+                notesTextView.text == notesPlaceholder
+                ? nil
+                : notesTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let detail = VaccineDetailStorage(
-            date: finalDate,
-            notes: notesText,
-            imageData: imageData
-        )
+            guard let recordUUID = UUID(uuidString: vaccine.id) else {
+                print("❌ invalid record id")
+                return
+            }
 
-        if let encoded = try? JSONEncoder().encode(detail) {
-            UserDefaults.standard.set(encoded, forKey: detailStorageKey)
-        }
+            Task {
+                do {
+                    var photoURL: String? = nil
 
-//        onSaveStatus?(selectedStatus)
-        Task {
-            do {
-                try await VaccinationService.shared.updateVaccinationStatus(
-                    recordId: UUID(uuidString: vaccine.id)!,
-                    status: selectedStatus
-                )
+                    // ✅ upload photo if exists
+                    if let image = vaccineImageView.image,
+                       let data = image.jpegData(compressionQuality: 0.8) {
 
-                onSaveStatus?(selectedStatus)
+                        photoURL = try await VaccinationService.shared
+                            .uploadVaccinePhoto(
+                                imageData: data,
+                                recordId: recordUUID
+                            )
+                    }
 
-                dismiss(animated: true)
-            } catch {
-                print("❌ status update failed:", error)
+                    // ✅ full DB update
+                    try await VaccinationService.shared
+                        .updateVaccinationFull(
+                            recordId: recordUUID,
+                            status: selectedStatus,
+                            takenOn: selectedStatus == .completed ? finalDate : nil,
+                            notes: notesText,
+                            photoPath: photoURL
+                        )
+
+                    // ✅ update parent screen
+                    onSaveStatus?(selectedStatus)
+
+                    DispatchQueue.main.async {
+                        self.dismiss(animated: true)
+                    }
+
+                } catch {
+                    print("❌ vaccine save failed:", error)
+                }
             }
         }
-
-        dismiss(animated: true)
-    }
 
 
     private func loadSavedDetails() {

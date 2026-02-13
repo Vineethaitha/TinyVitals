@@ -70,9 +70,11 @@ final class VaccinationService {
                 id: $0.id.uuidString,
                 name: $0.vaccines_master.name,
                 description: $0.vaccines_master.description ?? "",
-                ageGroup: "", // optional — you can map later
+                ageGroup: "",
                 status: VaccineStatus(rawValue: $0.status) ?? .upcoming,
-                date: $0.due_date
+                date: $0.taken_on ?? $0.due_date,
+                notes: $0.notes,
+                photoURL: $0.photo_path
             )
         }
     }
@@ -96,4 +98,59 @@ final class VaccinationService {
             .eq("id", value: recordId)
             .execute()
     }
+    
+    func updateVaccinationFull(
+        recordId: UUID,
+        status: VaccineStatus,
+        takenOn: Date?,
+        notes: String?,
+        photoPath: String?
+    ) async throws {
+
+        struct Payload: Encodable {
+            let status: String
+            let taken: Bool
+            let taken_on: Date?
+            let notes: String?
+            let photo_path: String?
+        }
+
+        let payload = Payload(
+            status: status.rawValue,
+            taken: status == .completed,
+            taken_on: takenOn,
+            notes: notes,
+            photo_path: photoPath
+        )
+
+        try await client
+            .from("child_vaccinations")
+            .update(payload)
+            .eq("id", value: recordId)
+            .execute()
+    }
+
+    func uploadVaccinePhoto(
+        imageData: Data,
+        recordId: UUID
+    ) async throws -> String {
+
+        let path = "\(recordId).jpg"
+
+        try await client.storage
+            .from("vaccine-images")
+            .upload(
+                path: path,
+                file: imageData,
+                options: FileOptions(contentType: "image/jpeg")
+            )
+
+        let url = try client.storage
+            .from("vaccine-images")
+            .getPublicURL(path: path)
+
+        return url.absoluteString
+    }
+
+
 }
