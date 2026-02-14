@@ -36,10 +36,8 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     
     @IBOutlet weak var threeDotsButton: UIButton!
     
-    var recentFolders: [RecordFolder] = []
-
+//    var recentFolders: [RecordFolder] = []
     var filteredFolders: [RecordFolder] = []
-    var filteredRecentFolders: [RecordFolder] = []
     var isSearching = false
     
     enum FolderSortOption {
@@ -52,8 +50,14 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
     var selectedSortOption: FolderSortOption = .nameAZ
     
+    private let loader = UIActivityIndicatorView(style: .large)
+    private let loaderContainer = UIView()
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        setupLoader()
 
         addButton.configuration = nil
         addButton.layer.cornerRadius = addButton.frame.height / 2
@@ -67,11 +71,11 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         let nib = UINib(nibName: "RecordCardCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: "RecordCardCell")
 
-        collectionView.register(
-            UICollectionReusableView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "Header"
-        )
+//        collectionView.register(
+//            UICollectionReusableView.self,
+//            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+//            withReuseIdentifier: "Header"
+//        )
 
         searchBarView.delegate = self
         setupSortMenu()
@@ -241,15 +245,15 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         let folder = getFolder(for: indexPath)
 
         // Add to recents (avoid duplicates)
-        if let index = recentFolders.firstIndex(where: { $0.name == folder.name }) {
-            recentFolders.remove(at: index)
-        }
-        recentFolders.insert(folder, at: 0)
-
-        // Limit to last 5
-        if recentFolders.count > 5 {
-            recentFolders.removeLast()
-        }
+//        if let index = recentFolders.firstIndex(where: { $0.name == folder.name }) {
+//            recentFolders.remove(at: index)
+//        }
+//        recentFolders.insert(folder, at: 0)
+//
+//        // Limit to last 5
+//        if recentFolders.count > 5 {
+//            recentFolders.removeLast()
+//        }
 
         collectionView.reloadData()
 
@@ -558,9 +562,9 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         isSearching = false
         searchBarView.text = nil
 
-        recentFolders.removeAll()
+//        recentFolders.removeAll()
         filteredFolders.removeAll()
-        filteredRecentFolders.removeAll()
+//        filteredRecentFolders.removeAll()
 
 //        store.ensureDefaultFolders(for: childId)
 
@@ -571,9 +575,9 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         guard isViewLoaded else { return } 
         guard let child = activeChild else { return }
 
-        recentFolders.removeAll()
+//        recentFolders.removeAll()
         filteredFolders.removeAll()
-        filteredRecentFolders.removeAll()
+//        filteredRecentFolders.removeAll()
         isSearching = false
         searchBarView.text = nil
 
@@ -597,7 +601,9 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
     private func loadDataIfPossible() {
         guard let child = activeChild else { return }
-
+        
+        showLoader()
+        
         Task {
             do {
                 try await RecordFolderService.shared
@@ -609,9 +615,47 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             } catch {
                 print("❌ Failed to load child data:", error)
             }
+            
+            await MainActor.run {
+                self.hideLoader()
+            }
         }
     }
 
+    private func setupLoader() {
+        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
+        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
+        loaderContainer.isHidden = true
+
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+
+        loaderContainer.addSubview(loader)
+        view.addSubview(loaderContainer)
+
+        NSLayoutConstraint.activate([
+            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
+        ])
+    }
+
+
+    private func showLoader() {
+        loaderContainer.isHidden = false
+        loader.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+
+    private func hideLoader() {
+        loader.stopAnimating()
+        loaderContainer.isHidden = true
+        view.isUserInteractionEnabled = true
+    }
 
 //    func createDefaultFoldersIfNeeded(childId: UUID) async throws {
 //
@@ -642,7 +686,7 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
 
     // MARK: - Sections
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2  // Section 0 = Recents, Section 1 = All
+        return 1  // Section 0 = Recents, Section 1 = All
     }
 
 //    func collectionView(_ collectionView: UICollectionView,
@@ -650,40 +694,66 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
 //
 //        return (section == 0) ? recentFolders.count : folders.count
 //    }
+//    func collectionView(_ collectionView: UICollectionView,
+//                        numberOfItemsInSection section: Int) -> Int {
+//
+//        if isSearching {
+//            return (section == 0)
+//                ? filteredRecentFolders.count
+//                : filteredFolders.count
+//        }
+//
+//        guard let childId = activeChild?.id else { return 0 }
+//
+//        return (section == 0)
+//            ? recentFolders.count
+//            : store.folders(for: childId).count
+//    }
+    
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
 
-        if isSearching {
-            return (section == 0)
-                ? filteredRecentFolders.count
-                : filteredFolders.count
-        }
-
         guard let childId = activeChild?.id else { return 0 }
 
-        return (section == 0)
-            ? recentFolders.count
-            : store.folders(for: childId).count
+        if isSearching {
+            return filteredFolders.count
+        }
+
+        return store.folders(for: childId).count
     }
 
 
 
+
+//    func getFolder(for indexPath: IndexPath) -> RecordFolder {
+//
+//        if isSearching {
+//            return indexPath.section == 0
+//                ? filteredRecentFolders[indexPath.item]
+//                : filteredFolders[indexPath.item]
+//        }
+//
+//        guard let childId = activeChild?.id else {
+//            fatalError("activeChild missing in RecordManagerViewController")
+//        }
+//
+//        return indexPath.section == 0
+//            ? recentFolders[indexPath.item]
+//            : store.folders(for: childId)[indexPath.item]
+//    }
     func getFolder(for indexPath: IndexPath) -> RecordFolder {
 
         if isSearching {
-            return indexPath.section == 0
-                ? filteredRecentFolders[indexPath.item]
-                : filteredFolders[indexPath.item]
+            return filteredFolders[indexPath.item]
         }
 
         guard let childId = activeChild?.id else {
             fatalError("activeChild missing in RecordManagerViewController")
         }
 
-        return indexPath.section == 0
-            ? recentFolders[indexPath.item]
-            : store.folders(for: childId)[indexPath.item]
+        return store.folders(for: childId)[indexPath.item]
     }
+
 
 
     // MARK: - Cell
@@ -722,46 +792,46 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
 
 
     // MARK: - Header View
-    func collectionView(_ collectionView: UICollectionView,
-                        viewForSupplementaryElementOfKind kind: String,
-                        at indexPath: IndexPath) -> UICollectionReusableView {
+//    func collectionView(_ collectionView: UICollectionView,
+//                        viewForSupplementaryElementOfKind kind: String,
+//                        at indexPath: IndexPath) -> UICollectionReusableView {
+//
+//        let header = collectionView.dequeueReusableSupplementaryView(
+//            ofKind: UICollectionView.elementKindSectionHeader,
+//            withReuseIdentifier: "Header",
+//            for: indexPath
+//        )
+//
+//        // Clear old labels
+//        header.subviews.forEach { $0.removeFromSuperview() }
+//
+//        // Add title
+//        let title = UILabel(frame: CGRect(
+//            x: 16,
+//            y: 0,
+//            width: collectionView.frame.width - 32,
+//            height: 40
+//        ))
+//        title.font = .boldSystemFont(ofSize: 20)
+//        title.text = (indexPath.section == 0) ? "Recents" : "All"
+//
+//        header.addSubview(title)
+//        return header
+//    }
 
-        let header = collectionView.dequeueReusableSupplementaryView(
-            ofKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "Header",
-            for: indexPath
-        )
-
-        // Clear old labels
-        header.subviews.forEach { $0.removeFromSuperview() }
-
-        // Add title
-        let title = UILabel(frame: CGRect(
-            x: 16,
-            y: 0,
-            width: collectionView.frame.width - 32,
-            height: 40
-        ))
-        title.font = .boldSystemFont(ofSize: 20)
-        title.text = (indexPath.section == 0) ? "Recents" : "All"
-
-        header.addSubview(title)
-        return header
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        referenceSizeForHeaderInSection section: Int) -> CGSize {
-
-        if isSearching {
-            // hide recents while searching
-            if section == 0 { return .zero }
-        } else {
-            if section == 0 && recentFolders.isEmpty { return .zero }
-        }
-
-        return CGSize(width: collectionView.frame.width, height: 40)
-    }
+//    func collectionView(_ collectionView: UICollectionView,
+//                        layout collectionViewLayout: UICollectionViewLayout,
+//                        referenceSizeForHeaderInSection section: Int) -> CGSize {
+//
+//        if isSearching {
+//            // hide recents while searching
+//            if section == 0 { return .zero }
+//        } else {
+//            if section == 0 && recentFolders.isEmpty { return .zero }
+//        }
+//
+//        return CGSize(width: collectionView.frame.width, height: 40)
+//    }
 
 
     // MARK: - Cell Size
@@ -792,19 +862,12 @@ extension RecordManagerViewController: UISearchBarDelegate {
 
         let allFolders = store.folders(for: childId)
 
-        // Filter ALL folders
         filteredFolders = allFolders.filter {
-            $0.name.lowercased().contains(text)
-        }
-
-        // Filter RECENTS
-        filteredRecentFolders = recentFolders.filter {
             $0.name.lowercased().contains(text)
         }
 
         collectionView.reloadData()
     }
-
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""

@@ -50,7 +50,7 @@ final class RecordSummaryViewController: UIViewController {
         static let headerFont = UIFont.systemFont(ofSize: 18, weight: .semibold)
         static let bodyFont = UIFont.systemFont(ofSize: 15)
 
-        static let headerColor = UIColor.systemPurple
+        static let headerColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         static let bodyColor = UIColor.label
 
         static let sectionSpacing: CGFloat = 14

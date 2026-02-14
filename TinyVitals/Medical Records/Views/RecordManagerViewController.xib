@@ -32,7 +32,7 @@
                     </connections>
                 </searchBar>
                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="fio-EH-zf1">
-                    <rect key="frame" x="20" y="182" width="353" height="602"/>
+                    <rect key="frame" x="20" y="197" width="353" height="587"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="s0H-cT-3gb">
                         <size key="itemSize" width="128" height="128"/>
@@ -106,7 +106,7 @@
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="97l-QU-vsU" secondAttribute="trailing" constant="10" id="Z1I-iS-WMJ"/>
                 <constraint firstItem="97l-QU-vsU" firstAttribute="leading" secondItem="mWQ-t2-9gG" secondAttribute="trailing" constant="-10" id="eWE-o7-yGj"/>
                 <constraint firstItem="KZk-AC-fma" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="hRr-Lz-2aC"/>
-                <constraint firstItem="fio-EH-zf1" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" id="kW5-GO-hgd"/>
+                <constraint firstItem="fio-EH-zf1" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" constant="15" id="kW5-GO-hgd"/>
                 <constraint firstItem="mWQ-t2-9gG" firstAttribute="leading" secondItem="KZk-AC-fma" secondAttribute="trailing" constant="-10" id="qUq-pi-cgF"/>
                 <constraint firstItem="mWQ-t2-9gG" firstAttribute="top" secondItem="KZk-AC-fma" secondAttribute="bottom" constant="-48" id="wab-gs-Pxn"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="fio-EH-zf1" secondAttribute="bottom" id="xJc-tR-0Os"/>

@@ -94,11 +94,11 @@ final class VaccinationProgressRingView: UIView {
             $0.shadowRadius = 2
             $0.shadowOffset = CGSize(width: 0, height: 1)
         }
-
-        layer.addSublayer(trackLayer)
+        
         layer.addSublayer(upcomingLayer)
         layer.addSublayer(skippedLayer)
         layer.addSublayer(rescheduledLayer)
+//        layer.addSublayer(trackLayer)
         layer.addSublayer(completedLayer)
     }
 
