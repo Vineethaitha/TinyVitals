@@ -251,18 +251,21 @@ final class LogSymptomsViewController: UIViewController {
 
         vc.onApply = { selected in
             self.selectedSymptoms = selected
-
             self.symptomsPreviewLabel.text =
                 selected.map { $0.title }.joined(separator: ", ")
-
             self.symptomsPreviewLabel.textColor = .label
         }
 
-
-
         vc.modalPresentationStyle = .pageSheet
+
+        if let sheet = vc.sheetPresentationController {
+            sheet.prefersGrabberVisible = true
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+        }
+
         present(vc, animated: true)
     }
+
 
 
     // MARK: - Helpers

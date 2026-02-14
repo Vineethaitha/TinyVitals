@@ -60,10 +60,10 @@
                             <rect key="frame" x="0.0" y="110" width="393" height="60"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zOC-rC-q6f" userLabel="historyButton">
-                                    <rect key="frame" x="262" y="13" width="50.666666666666686" height="34.333333333333336"/>
+                                    <rect key="frame" x="263" y="13" width="49.666666666666686" height="34.333333333333336"/>
                                     <color key="tintColor" red="0.92941176470588238" green="0.4392156862745098" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                     <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="calendar" catalog="system"/>
+                                    <buttonConfiguration key="configuration" style="plain" image="calendar.circle" catalog="system"/>
                                     <connections>
                                         <action selector="historyTapped:" destination="-1" eventType="touchUpInside" id="sQ0-CH-I6x"/>
                                     </connections>
@@ -183,7 +183,7 @@
         </view>
     </objects>
     <resources>
-        <image name="calendar" catalog="system" width="128" height="107"/>
+        <image name="calendar.circle" catalog="system" width="128" height="123"/>
         <image name="square.and.arrow.up.circle" catalog="system" width="128" height="123"/>
         <image name="stethoscope" catalog="system" width="128" height="101"/>
         <systemColor name="systemGray6Color">
