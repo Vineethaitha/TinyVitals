@@ -8,12 +8,15 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ParentProfileViewController" customModule="ChildProfile" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ParentProfileViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
                 <outlet property="aboutView" destination="Mib-6Y-yq3" id="ASC-mE-wCa"/>
                 <outlet property="helpView" destination="EfA-Ee-MdX" id="BSs-NQ-eHn"/>
+                <outlet property="logoutView" destination="7tI-Io-6QW" id="EMk-7l-t8p"/>
                 <outlet property="privacyView" destination="xWI-0B-coa" id="jfv-Pg-sAN"/>
                 <outlet property="termsView" destination="Fo7-UE-laN" id="zOf-rI-aHK"/>
+                <outlet property="userEmail" destination="8Cp-aN-VKK" id="H68-1S-03s"/>
+                <outlet property="userName" destination="wRk-YH-Efj" id="K4Z-0V-Kib"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -72,14 +75,14 @@
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                             </userDefinedRuntimeAttributes>
                                         </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vineeth Aitha" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wRk-YH-Efj">
-                                            <rect key="frame" x="148.33333333333334" y="130" width="96.333333333333343" height="18"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="user name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wRk-YH-Efj">
+                                            <rect key="frame" x="159" y="130" width="75" height="18"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="vineethaitha1234@gmail.com" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Cp-aN-VKK">
-                                            <rect key="frame" x="91.000000000000014" y="149.66666666666669" width="211.33333333333337" height="18"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="dummy@gmail.com" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Cp-aN-VKK">
+                                            <rect key="frame" x="126.33333333333333" y="149.66666666666669" width="140.66666666666669" height="18"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>

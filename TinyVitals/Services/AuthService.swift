@@ -32,5 +32,5 @@ protocol AuthService {
         completion: @escaping (Result<String, Error>) -> Void
     )
 
-    func logout()
+    func logout() async
 }

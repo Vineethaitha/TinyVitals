@@ -74,6 +74,7 @@ final class SupabaseAuthService: AuthService {
 
 
     // MARK: - Reset Password
+    
     func resetPassword(
         email: String,
         completion: @escaping (Result<Void, Error>) -> Void
@@ -107,9 +108,8 @@ final class SupabaseAuthService: AuthService {
         }
     }
 
-    func logout() {
-        Task {
-            try? await client.auth.signOut()
-        }
+    func logout() async {
+        try? await client.auth.signOut()
     }
+
 }

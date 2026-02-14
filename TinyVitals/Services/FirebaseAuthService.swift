@@ -116,7 +116,7 @@ final class FirebaseAuthService: AuthService {
         }
     }
 
-    func logout() {
+    func logout() async {
         try? Auth.auth().signOut()
     }
 }
