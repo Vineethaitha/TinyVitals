@@ -70,8 +70,8 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A4Y-jj-4Xq">
                                     <rect key="frame" x="0.0" y="50" width="393" height="50"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Symptomps" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJ5-qJ-gVU">
-                                            <rect key="frame" x="20" y="14.666666666666684" width="96" height="20.333333333333329"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Symptoms" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJ5-qJ-gVU">
+                                            <rect key="frame" x="20" y="14.666666666666684" width="85.666666666666671" height="20.333333333333329"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -102,12 +102,12 @@
                                     <rect key="frame" x="0.0" y="100" width="393" height="50"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zMB-a4-T3U">
-                                            <rect key="frame" x="20" y="13.333333333333313" width="239" height="23.333333333333329"/>
+                                            <rect key="frame" x="20" y="15" width="203.33333333333334" height="20"/>
                                             <attributedString key="attributedText">
                                                 <fragment content="No symptoms selected yet">
                                                     <attributes>
                                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                        <font key="NSFont" size="20" name="SFProRounded-Bold"/>
+                                                        <font key="NSFont" size="17" name="SFProRounded-Bold"/>
                                                     </attributes>
                                                 </fragment>
                                             </attributedString>
@@ -241,26 +241,45 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h16-80-TcV">
                                     <rect key="frame" x="0.0" y="270" width="393" height="120"/>
                                     <subviews>
-                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="   Add Notes" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="zRQ-cj-8Q0">
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SKl-Od-53R">
                                             <rect key="frame" x="20" y="10" width="353" height="110"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="   Add Notes" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="zRQ-cj-8Q0">
+                                                    <rect key="frame" x="10" y="0.0" width="333" height="110"/>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="20"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
+                                                </textView>
+                                            </subviews>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                            <constraints>
+                                                <constraint firstItem="zRQ-cj-8Q0" firstAttribute="leading" secondItem="SKl-Od-53R" secondAttribute="leading" constant="10" id="671-aO-6R2"/>
+                                                <constraint firstAttribute="bottom" secondItem="zRQ-cj-8Q0" secondAttribute="bottom" id="ELD-o9-6tc"/>
+                                                <constraint firstItem="zRQ-cj-8Q0" firstAttribute="top" secondItem="SKl-Od-53R" secondAttribute="top" id="XMy-lx-9KF"/>
+                                                <constraint firstAttribute="trailing" secondItem="zRQ-cj-8Q0" secondAttribute="trailing" constant="10" id="hxY-n8-FX4"/>
+                                            </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="20"/>
+                                                    <integer key="value" value="16"/>
                                                 </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.clipsToBounds" value="YES"/>
                                             </userDefinedRuntimeAttributes>
-                                        </textView>
+                                        </view>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstAttribute="bottom" secondItem="zRQ-cj-8Q0" secondAttribute="bottom" id="3Vk-Ot-0d6"/>
-                                        <constraint firstItem="zRQ-cj-8Q0" firstAttribute="leading" secondItem="h16-80-TcV" secondAttribute="leading" constant="20" id="IaC-pZ-PAe"/>
-                                        <constraint firstItem="zRQ-cj-8Q0" firstAttribute="top" secondItem="h16-80-TcV" secondAttribute="top" constant="10" id="tAM-Bx-DPR"/>
+                                        <constraint firstItem="SKl-Od-53R" firstAttribute="leading" secondItem="h16-80-TcV" secondAttribute="leading" constant="20" id="1RT-Uh-xoC"/>
+                                        <constraint firstItem="SKl-Od-53R" firstAttribute="top" secondItem="h16-80-TcV" secondAttribute="top" constant="10" id="GL9-8X-BQg"/>
+                                        <constraint firstAttribute="trailing" secondItem="SKl-Od-53R" secondAttribute="trailing" constant="20" id="dhV-2p-jg3"/>
+                                        <constraint firstAttribute="bottom" secondItem="SKl-Od-53R" secondAttribute="bottom" id="nlz-P9-ZVC"/>
                                         <constraint firstAttribute="height" constant="120" id="vDK-qa-F6t"/>
-                                        <constraint firstAttribute="trailing" secondItem="zRQ-cj-8Q0" secondAttribute="trailing" constant="20" id="zA6-8J-xJt"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8G1-Vy-iy4">

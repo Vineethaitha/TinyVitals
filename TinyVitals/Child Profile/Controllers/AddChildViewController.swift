@@ -122,18 +122,45 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
     @IBAction func addChildTapped(_ sender: UIButton) {
         
-        guard
-            let name = nameTextField.text, !name.isEmpty,
-            let gender = genderTextField.text, !gender.isEmpty,
-            let bloodGroup = bloodGroupTextField.text, !bloodGroup.isEmpty,
-            let userId = AppState.shared.userId
-        else {
+//        guard
+//            let name = nameTextField.text, !name.isEmpty,
+//            let gender = genderTextField.text, !gender.isEmpty,
+//            let bloodGroup = bloodGroupTextField.text, !bloodGroup.isEmpty,
+//            let userId = AppState.shared.userId
+//        else {
+//            return
+//        }
+//        
+//        let yRow = agePicker.selectedRow(inComponent: 0)
+//        let mRow = agePicker.selectedRow(inComponent: 1)
+//        guard yRow > 0 || mRow > 0 else { return }
+        guard let name = nameTextField.text, !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+            showAlert(message: "Please enter the child's full name.")
+            return
+        }
+        
+        guard let gender = genderTextField.text, !gender.trimmingCharacters(in: .whitespaces).isEmpty else {
+            showAlert(message: "Please select the child's gender.")
+            return
+        }
+        
+        guard let bloodGroup = bloodGroupTextField.text, !bloodGroup.trimmingCharacters(in: .whitespaces).isEmpty else {
+            showAlert(message: "Please enter the blood group.")
+            return
+        }
+        
+        guard let userId = AppState.shared.userId else {
+            showAlert(message: "Something went wrong. Please try again.")
             return
         }
         
         let yRow = agePicker.selectedRow(inComponent: 0)
         let mRow = agePicker.selectedRow(inComponent: 1)
-        guard yRow > 0 || mRow > 0 else { return }
+        
+        guard yRow > 0 || mRow > 0 else {
+            showAlert(message: "Please select the child's age.")
+            return
+        }
         
         let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
         let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
@@ -193,6 +220,19 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             }
         }
     }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(
+            title: "Incomplete Details",
+            message: message,
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        
+        present(alert, animated: true)
+    }
+
     
     private func updateAgeText() {
         let yString = years[agePicker.selectedRow(inComponent: 0)]

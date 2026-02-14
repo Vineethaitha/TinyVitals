@@ -20,14 +20,14 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <rect key="frame" x="0.0" y="0.0" width="393" height="1500"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="utL-Yd-4kU">
-                    <rect key="frame" x="0.0" y="118" width="393" height="666"/>
+                    <rect key="frame" x="0.0" y="118" width="393" height="1314"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="uGu-4w-nlf">
-                            <rect key="frame" x="0.0" y="30" width="393" height="901"/>
+                            <rect key="frame" x="0.0" y="30" width="393" height="791"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zMF-D0-aAI">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="50"/>
@@ -99,10 +99,10 @@
                                     </constraints>
                                 </view>
                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="Nf2-V6-sQr" userLabel="allSymptomsCollectionView">
-                                    <rect key="frame" x="0.0" y="201" width="393" height="700"/>
+                                    <rect key="frame" x="0.0" y="201" width="393" height="590"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="700" id="cOo-of-h9y"/>
+                                        <constraint firstAttribute="height" constant="590" id="cOo-of-h9y"/>
                                     </constraints>
                                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="A8y-db-ygj">
                                         <size key="itemSize" width="128" height="128"/>
@@ -126,7 +126,7 @@
                     <viewLayoutGuide key="frameLayoutGuide" id="hrt-8z-S8c"/>
                 </scrollView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ypX-gj-y20">
-                    <rect key="frame" x="20" y="724" width="353" height="50"/>
+                    <rect key="frame" x="20" y="1372" width="353" height="50"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="658-FS-ckE"/>
                     </constraints>
@@ -151,6 +151,7 @@
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="ypX-gj-y20" secondAttribute="bottom" constant="10" id="oEz-H6-xD6"/>
                 <constraint firstItem="utL-Yd-4kU" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="wY6-hm-Dr5"/>
             </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="138.1679389312977" y="153.52112676056339"/>
         </view>
     </objects>
