@@ -115,7 +115,7 @@ class MainTabBarController: UITabBarController {
     }
 
     
-    private func propagateActiveChild(_ child: ChildProfile) {
+    func propagateActiveChild(_ child: ChildProfile) {
         viewControllers?.forEach { vc in
             guard let nav = vc as? UINavigationController,
                   let topVC = nav.topViewController

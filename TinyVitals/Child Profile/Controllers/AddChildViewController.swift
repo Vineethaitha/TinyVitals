@@ -48,8 +48,15 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     
     private var didPickAvatarImage = false
     
+    private let loaderContainer = UIView()
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupLoader()
+
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -170,6 +177,9 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         components.month = -selectedMonths
         
         let dob = Calendar.current.date(byAdding: components, to: Date()) ?? Date()
+        
+        showLoader()
+        
         Task {
             do {
                 let userUUID = UUID(uuidString: userId)!
@@ -211,13 +221,34 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                     AppState.shared.setActiveChild(newChild)
                 }
                 
+//                DispatchQueue.main.async {
+//                    self.dismiss(animated: true)
+//                }
                 DispatchQueue.main.async {
-                    self.dismiss(animated: true)
+                    self.hideLoader()
+                    self.dismiss(animated: true) {
+                        if let tabBar = UIApplication.shared
+                            .connectedScenes
+                            .compactMap({ ($0 as? UIWindowScene)?.windows.first })
+                            .first?
+                            .rootViewController as? MainTabBarController {
+
+                            if let active = AppState.shared.activeChild {
+                                tabBar.propagateActiveChild(active)
+                                tabBar.refreshNavBarForVisibleVC()
+                            }
+                        }
+                    }
                 }
+
                 
             } catch {
+                DispatchQueue.main.async {
+                    self.hideLoader()
+                }
                 print("❌ Child creation failed:", error)
             }
+
         }
     }
     
@@ -525,6 +556,31 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     
     @objc private func closeTapped() {
         dismiss(animated: true)
+    }
+
+    private func setupLoader() {
+        loaderContainer.frame = view.bounds
+        loaderContainer.backgroundColor = UIColor.black.withAlphaComponent(0.25)
+        loaderContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        loaderContainer.isHidden = true
+
+        activityIndicator.center = loaderContainer.center
+        activityIndicator.hidesWhenStopped = true
+
+        loaderContainer.addSubview(activityIndicator)
+        view.addSubview(loaderContainer)
+    }
+
+    private func showLoader() {
+        loaderContainer.isHidden = false
+        activityIndicator.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+
+    private func hideLoader() {
+        loaderContainer.isHidden = true
+        activityIndicator.stopAnimating()
+        view.isUserInteractionEnabled = true
     }
 
 
