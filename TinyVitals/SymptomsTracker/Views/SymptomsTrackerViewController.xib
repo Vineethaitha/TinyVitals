@@ -61,7 +61,7 @@
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zOC-rC-q6f" userLabel="historyButton">
                                     <rect key="frame" x="263" y="13" width="49.666666666666686" height="34.333333333333336"/>
-                                    <color key="tintColor" red="0.92941176470588238" green="0.4392156862745098" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <state key="normal" title="Button"/>
                                     <buttonConfiguration key="configuration" style="plain" image="calendar.circle" catalog="system"/>
                                     <connections>
@@ -70,7 +70,7 @@
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iki-uQ-hxD">
                                     <rect key="frame" x="322.66666666666669" y="13" width="50.333333333333314" height="34.333333333333336"/>
-                                    <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <state key="normal" title="Button"/>
                                     <buttonConfiguration key="configuration" style="plain">
                                         <imageReference key="image" image="square.and.arrow.up.circle" catalog="system" symbolScale="large"/>

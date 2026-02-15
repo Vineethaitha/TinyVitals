@@ -116,8 +116,12 @@ final class VaccinationService {
 
         return rows.map { row in
 
-            let finalDate = row.taken_on ?? row.due_date
-            let ageGroup = ageGroupForDate(dob: dob, due: finalDate)
+//            let finalDate = row.taken_on ?? row.due_date
+//            let ageGroup = ageGroupForDate(dob: dob, due: finalDate)
+            
+            let ageGroup = ageGroupForDate(dob: dob, due: row.due_date)
+            let displayDate = row.taken_on ?? row.due_date
+
 
             return VaccineItem(
                 id: row.id.uuidString,
@@ -125,7 +129,7 @@ final class VaccinationService {
                 description: row.vaccines_master.description ?? "",
                 ageGroup: ageGroup,
                 status: VaccineStatus(rawValue: row.status) ?? .upcoming,
-                date: finalDate,
+                date: displayDate,
                 notes: row.notes,
                 photoURL: row.photo_path
             )

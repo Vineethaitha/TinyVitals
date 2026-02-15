@@ -74,7 +74,7 @@
                     <state key="normal" title="Button"/>
                     <buttonConfiguration key="configuration" style="plain">
                         <imageReference key="image" image="calendar.circle" catalog="system" symbolScale="large"/>
-                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large" weight="bold"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large"/>
                     </buttonConfiguration>
                     <connections>
                         <action selector="calendarButtonTapped:" destination="-1" eventType="touchUpInside" id="jmu-r1-WhD"/>
@@ -90,7 +90,7 @@
                     <state key="normal" title="Button"/>
                     <buttonConfiguration key="configuration" style="plain">
                         <imageReference key="image" image="ellipsis.circle" catalog="system" symbolScale="large" variableValue="1"/>
-                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large" weight="bold"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large"/>
                     </buttonConfiguration>
                 </button>
             </subviews>
