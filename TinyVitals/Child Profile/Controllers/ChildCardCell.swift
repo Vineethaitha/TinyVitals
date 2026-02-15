@@ -134,8 +134,16 @@ class ChildCardCell: UICollectionViewCell {
            let image = loadImageFromDisk(filename) {
             avatarImageView.image = image
         } else {
-            avatarImageView.image = UIImage(systemName: "person.fill")
+            if child.gender.lowercased() == "male" {
+                avatarImageView.image = UIImage(named: "BabyBoy")
+            } else if child.gender.lowercased() == "female" {
+                avatarImageView.image = UIImage(named: "BabyGirl")
+            } else {
+                avatarImageView.image = UIImage(systemName: "person.fill")
+            }
         }
+
+
 
         avatarImageView.tintColor = nil
     }
