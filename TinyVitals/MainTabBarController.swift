@@ -168,9 +168,9 @@ class MainTabBarController: UITabBarController {
 
         // ❌ Let AddChildVC manage itself
         if topVC is AddChildViewController {
-            topVC.navigationItem.leftBarButtonItem = nil
-            topVC.navigationItem.rightBarButtonItem = nil
-            topVC.navigationItem.titleView = nil
+//            topVC.navigationItem.leftBarButtonItem = nil
+//            topVC.navigationItem.rightBarButtonItem = nil
+//            topVC.navigationItem.titleView = nil
             return
         }
 

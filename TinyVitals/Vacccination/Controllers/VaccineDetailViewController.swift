@@ -309,10 +309,67 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
         vaccineImageView.image = nil
         photoCardView.isHidden = true
+        
+        vaccineImageView.isUserInteractionEnabled = true
+        vaccineImageView.addGestureRecognizer(
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(previewImageTapped)
+            )
+        )
 
         loadSavedPhoto()
         updateAddPhotoButtonTitle(hasImage: vaccineImageView.image != nil)
     }
+    
+    @objc private func dismissPreview() {
+        dismiss(animated: true)
+    }
+    
+    @objc private func previewImageTapped() {
+
+        guard let image = vaccineImageView.image else { return }
+
+        let previewVC = UIViewController()
+        previewVC.view.backgroundColor = .black
+        previewVC.modalPresentationStyle = .fullScreen
+
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+
+        previewVC.view.addSubview(imageView)
+
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: previewVC.view.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: previewVC.view.trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: previewVC.view.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: previewVC.view.bottomAnchor)
+        ])
+
+        let closeButton = UIButton(type: .system)
+        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        closeButton.tintColor = .white
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+
+        closeButton.addTarget(
+            self,
+            action: #selector(dismissPreview),
+            for: .touchUpInside
+        )
+
+        previewVC.view.addSubview(closeButton)
+
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: previewVC.view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            closeButton.trailingAnchor.constraint(equalTo: previewVC.view.trailingAnchor, constant: -20),
+            closeButton.widthAnchor.constraint(equalToConstant: 30),
+            closeButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
+
+        present(previewVC, animated: true)
+    }
+
 
 
     func imagePickerController(
