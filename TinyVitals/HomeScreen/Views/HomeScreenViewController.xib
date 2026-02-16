@@ -31,7 +31,7 @@
                     <rect key="frame" x="0.0" y="118" width="393" height="1314"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="jd8-6d-p1b">
-                            <rect key="frame" x="0.0" y="0.0" width="393" height="1250"/>
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="750"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WZ5-eA-tt5">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="190"/>
@@ -276,7 +276,7 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SOb-sv-HWK">
-                                    <rect key="frame" x="0.0" y="450" width="393" height="800"/>
+                                    <rect key="frame" x="0.0" y="450" width="393" height="300"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y1e-Lw-neK">
                                             <rect key="frame" x="20" y="30" width="353" height="80"/>
@@ -424,7 +424,7 @@
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemGray6Color"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="800" id="D8h-HZ-lU2"/>
+                                        <constraint firstAttribute="height" constant="300" id="D8h-HZ-lU2"/>
                                         <constraint firstAttribute="trailing" secondItem="PBK-Tw-gLs" secondAttribute="trailing" constant="20" id="Erh-LY-7vg"/>
                                         <constraint firstItem="889-eY-7Mg" firstAttribute="top" secondItem="SOb-sv-HWK" secondAttribute="top" id="H5V-Mf-gEU"/>
                                         <constraint firstAttribute="trailing" secondItem="y1e-Lw-neK" secondAttribute="trailing" constant="20" id="KSG-kX-Mfr"/>

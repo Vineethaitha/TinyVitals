@@ -100,9 +100,13 @@ class HomeScreenViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        refreshForActiveChild()
+
+        //Always pull latest from AppState
+        activeChild = AppState.shared.activeChild
+
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }
+
 
 
     
