@@ -33,6 +33,12 @@ class HomeScreenViewController: UIViewController {
 
     @IBOutlet weak var vaccinationProgressContainer: UIView!
     
+    @IBOutlet weak var dueDaysLabel: UILabel!
+    @IBOutlet weak var vaccineGroupLabel: UILabel!
+    @IBOutlet weak var upcomingVaccineCardView: UIView!
+
+    
+    
     private let weightSparkline = SparklineView()
     private let heightSparkline = SparklineView()
 
@@ -58,6 +64,8 @@ class HomeScreenViewController: UIViewController {
     private var autoScrollTimer: Timer?
     private var currentPage = 0
 
+
+    private var nextVaccineGroup: String?
 
 
     override func viewDidLoad() {
@@ -91,6 +99,14 @@ class HomeScreenViewController: UIViewController {
         
         setupSparklines()
         
+        let upcomingTap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(openUpcomingVaccines)
+        )
+
+        dueDaysLabel.superview?.addGestureRecognizer(upcomingTap)
+        dueDaysLabel.superview?.isUserInteractionEnabled = true
+
 //        if activeChild != nil {
 //            refreshForActiveChild()
 //        }
@@ -233,6 +249,52 @@ class HomeScreenViewController: UIViewController {
     }
 
     
+//    func setupVaccinationProgress() {
+//        guard let child = activeChild else { return }
+//
+//        Task {
+//            do {
+//                let vaccines = try await VaccinationService.shared
+//                    .fetchVaccines(childId: child.id, dob: child.dob)
+//
+//                let completed = vaccines.filter { $0.status == .completed }.count
+//                let upcoming = vaccines.filter { $0.status == .upcoming }.count
+//                let skipped = vaccines.filter { $0.status == .skipped }.count
+//                let rescheduled = vaccines.filter { $0.status == .rescheduled }.count
+//
+//                await MainActor.run {
+//
+//                    let header: VaccinationHeaderView
+//
+//                    if let existing = self.vaccinationProgressContainer
+//                        .subviews.first as? VaccinationHeaderView {
+//                        header = existing
+//                    } else {
+//                        guard let h = Bundle.main.loadNibNamed(
+//                            "VaccinationHeaderView",
+//                            owner: nil,
+//                            options: nil
+//                        )?.first as? VaccinationHeaderView else { return }
+//
+//                        h.frame = self.vaccinationProgressContainer.bounds
+//                        h.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//                        self.vaccinationProgressContainer.addSubview(h)
+//                        header = h
+//                    }
+//
+//                    header.configure(
+//                        completed: completed,
+//                        upcoming: upcoming,
+//                        skipped: skipped,
+//                        rescheduled: rescheduled
+//                    )
+//                }
+//
+//            } catch {
+//                print("❌ vaccination progress load failed:", error)
+//            }
+//        }
+//    }
     func setupVaccinationProgress() {
         guard let child = activeChild else { return }
 
@@ -246,8 +308,45 @@ class HomeScreenViewController: UIViewController {
                 let skipped = vaccines.filter { $0.status == .skipped }.count
                 let rescheduled = vaccines.filter { $0.status == .rescheduled }.count
 
+                let upcomingVaccines = vaccines
+                    .filter { $0.status == .upcoming && $0.date >= Date() }
+                    .sorted { $0.date < $1.date }
+
+                let nextVaccine = upcomingVaccines.first
+
                 await MainActor.run {
 
+                    // NEXT VACCINE LOGIC
+                    if let vaccine = nextVaccine {
+                        
+                        self.nextVaccineGroup = vaccine.ageGroup
+
+                        let daysLeft = Calendar.current.dateComponents(
+                            [.day],
+                            from: Date(),
+                            to: vaccine.date
+                        ).day ?? 0
+
+                        if daysLeft <= 0 {
+                            self.dueDaysLabel.text = "Due Today"
+                            self.dueDaysLabel.textColor = .systemRed
+                        } else {
+                            self.dueDaysLabel.text = "\(daysLeft) days left"
+                            self.dueDaysLabel.textColor =
+                                daysLeft <= 3 ? .systemOrange : UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+                        }
+
+                        self.vaccineGroupLabel.text =
+                            "Vaccine Group: \(vaccine.ageGroup)"
+
+                    } else {
+                        self.nextVaccineGroup = nil
+                        self.dueDaysLabel.text = "All vaccines completed 🎉"
+                        self.dueDaysLabel.textColor = .systemGreen
+                        self.vaccineGroupLabel.text = ""
+                    }
+
+                    // EXISTING HEADER CODE (UNCHANGED)
                     let header: VaccinationHeaderView
 
                     if let existing = self.vaccinationProgressContainer
@@ -283,6 +382,7 @@ class HomeScreenViewController: UIViewController {
 
 
 
+
     
     private func openVaccinesTab() {
         tabBarController?.selectedIndex = 3
@@ -311,6 +411,69 @@ class HomeScreenViewController: UIViewController {
 
 
 
+    private func setupNextUpcomingVaccine(from vaccines: [VaccineItem]) {
+
+        let upcoming = vaccines
+            .filter { $0.status == .upcoming }
+            .sorted { $0.date < $1.date }
+
+        guard let next = upcoming.first else {
+            vaccineGroupLabel.text = "All vaccinations up to date 🎉"
+            dueDaysLabel.text = ""
+            return
+        }
+
+        let today = Calendar.current.startOfDay(for: Date())
+        let dueDate = Calendar.current.startOfDay(for: next.date)
+
+        let components = Calendar.current.dateComponents(
+            [.day],
+            from: today,
+            to: dueDate
+        )
+
+        let daysLeft = components.day ?? 0
+
+        vaccineGroupLabel.text = "\(next.name) • \(next.ageGroup)"
+
+        if daysLeft > 0 {
+            dueDaysLabel.text = "Due in \(daysLeft) day\(daysLeft == 1 ? "" : "s")"
+            dueDaysLabel.textColor = UIColor.systemPink
+        } else if daysLeft == 0 {
+            dueDaysLabel.text = "Due Today"
+            dueDaysLabel.textColor = UIColor.systemOrange
+        } else {
+            let overdue = abs(daysLeft)
+            dueDaysLabel.text = "Overdue by \(overdue) day\(overdue == 1 ? "" : "s")"
+            dueDaysLabel.textColor = UIColor.systemRed
+        }
+    }
+
+
+    @objc private func openUpcomingVaccines() {
+        
+        UIView.animate(withDuration: 0.1, animations: {
+            self.upcomingVaccineCardView.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
+        }) { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.upcomingVaccineCardView.transform = .identity
+            }
+        }
+
+        guard let group = nextVaccineGroup else { return }
+
+        tabBarController?.selectedIndex = 3
+
+        if let tabBar = tabBarController as? MainTabBarController,
+           let nav = tabBar.viewControllers?[3] as? UINavigationController,
+           let vaccineVC = nav.topViewController as? VaccinationManagerViewController {
+
+            //  THIS LINE IS MISSING
+            vaccineVC.activeChild = AppState.shared.activeChild
+
+            vaccineVC.preselectAgeGroup(group)
+        }
+    }
 
     /*
     // MARK: - Navigation

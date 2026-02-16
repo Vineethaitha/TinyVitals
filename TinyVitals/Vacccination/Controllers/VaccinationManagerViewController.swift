@@ -93,6 +93,8 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     var searchQuery: String = ""
 
 
+    private var pendingPreselectGroup: String?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -877,6 +879,12 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 self.applyFilter()
                 self.updateProgressUI()
                 self.scheduleAllReminders()
+                
+                // If home requested a preselection before data was ready
+                if let group = self.pendingPreselectGroup {
+                    self.applyPreselection(group)
+                    self.pendingPreselectGroup = nil
+                }
 
                 print("✅ Loaded vaccines from backend:", vaccines.count)
 
@@ -915,5 +923,46 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         default: return "Other"
         }
     }
+    
+    func preselectAgeGroup(_ group: String) {
+
+        loadViewIfNeeded()
+
+        // If vaccines not loaded yet → store and return
+        guard !allVaccines.isEmpty else {
+            pendingPreselectGroup = group
+            return
+        }
+
+        applyPreselection(group)
+    }
+
+    private func applyPreselection(_ group: String) {
+
+        guard let index = filterOptions.firstIndex(of: group) else {
+            selectedFilterIndex = 0
+            return
+        }
+
+        selectedFilterIndex = index
+        selectedStatusFilter = .all
+        searchQuery = ""
+
+        applyFilter()
+        updateHeaderVisibility()
+        filtersCollectionView.reloadData()
+
+        DispatchQueue.main.async {
+            self.filtersCollectionView.scrollToItem(
+                at: IndexPath(item: index, section: 0),
+                at: .centeredHorizontally,
+                animated: true
+            )
+        }
+
+        vaccinesTableView.setContentOffset(.zero, animated: true)
+    }
+
+
 
 }
