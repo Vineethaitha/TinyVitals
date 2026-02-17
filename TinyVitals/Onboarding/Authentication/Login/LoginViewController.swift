@@ -94,6 +94,7 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func loginButtonTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         guard let email = emailTextField.text,
                   let password = passwordTextField.text,
                   !email.isEmpty,
@@ -155,7 +156,7 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func googleSignUpTapped(_ sender: UIButton) {
-        
+        Haptics.impact(.light)
         showLoader()
 
             authService.signInWithGoogle(presentingVC: self) { [weak self] result in
@@ -204,6 +205,7 @@ class LoginViewController: UIViewController {
 
     
     private func showAlert(title: String, message: String) {
+        Haptics.impact(.light)
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alert, animated: true)

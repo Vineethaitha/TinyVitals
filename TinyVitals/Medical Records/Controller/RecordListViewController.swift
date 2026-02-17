@@ -167,7 +167,7 @@ class RecordListViewController: UIViewController {
 
     
     @IBAction func addFileButtonTapped(_ sender: UIButton) {
-
+        Haptics.impact(.light)
         let vc = AddRecordViewController(
             nibName: "AddRecordViewController",
             bundle: nil
@@ -291,7 +291,7 @@ class RecordListViewController: UIViewController {
     }
     
     @objc func deleteSelectedRecords() {
-
+        Haptics.impact(.light)
         guard !selectedRecords.isEmpty else { return }
         guard let childId = activeChild?.id else { return }
 
@@ -397,6 +397,7 @@ class RecordListViewController: UIViewController {
     }
 
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        Haptics.impact(.light)
         guard gesture.state == .began else { return }
 
         let point = gesture.location(in: tableView)
@@ -421,6 +422,7 @@ class RecordListViewController: UIViewController {
             message: "Choose an option",
             preferredStyle: .actionSheet
         )
+        Haptics.impact(.light)
         
         alert.addAction(UIAlertAction(title: "Select", style: .default) { _ in
             self.enterSelectionMode()
@@ -502,7 +504,7 @@ class RecordListViewController: UIViewController {
 
     
     func deleteRecord(at indexPath: IndexPath) {
-
+        Haptics.impact(.light)
         let record = isSearching
             ? filteredFiles[indexPath.row]
             : currentFiles[indexPath.row]

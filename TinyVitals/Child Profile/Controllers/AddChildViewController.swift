@@ -56,7 +56,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         super.viewDidLoad()
         
         setupLoader()
-
+        Haptics.impact(.light)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
         tap.cancelsTouchesInView = false

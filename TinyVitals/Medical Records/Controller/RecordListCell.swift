@@ -25,6 +25,7 @@ class RecordListCell: UITableViewCell {
     }
     
     @IBAction func aiButtonTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         onSummaryTap?()
     }
     

@@ -192,7 +192,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
 
     @IBAction func addSymptomsTapped(_ sender: UIButton) {
-
+        Haptics.impact(.light)
         let vc = LogSymptomsViewController(
             nibName: "LogSymptomsViewController",
             bundle: nil

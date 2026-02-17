@@ -44,6 +44,7 @@ class ChildSelectionViewController: UIViewController {
         super.viewDidLoad()
 
 //        title = "Select Child"
+        Haptics.impact(.light)
 
         collectionView.dataSource = self
         collectionView.delegate = self

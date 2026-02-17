@@ -67,6 +67,9 @@ class ParentProfileViewController: UIViewController {
 
 
     @objc private func infoTapped(_ sender: UITapGestureRecognizer) {
+        
+        Haptics.impact(.light)
+        
         guard let tag = sender.view?.tag else { return }
 
         if tag == 5 {
@@ -137,7 +140,9 @@ class ParentProfileViewController: UIViewController {
     }
 
     private func performLogout() {
-
+        
+        Haptics.impact(.light)
+        
         showLoader()
 
         Task {

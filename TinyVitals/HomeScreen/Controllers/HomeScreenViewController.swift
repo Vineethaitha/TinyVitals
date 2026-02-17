@@ -201,6 +201,7 @@ class HomeScreenViewController: UIViewController {
     }
 
     private func presentGraph(initialMetric: GrowthMetric) {
+        Haptics.impact(.light)
         let vc = GrowthGraphViewController(
             nibName: "GrowthGraphViewController",
             bundle: nil
@@ -377,6 +378,7 @@ class HomeScreenViewController: UIViewController {
 
     
     private func openVaccinesTab() {
+        Haptics.impact(.light)
         tabBarController?.selectedIndex = 3
     }
 
@@ -443,7 +445,7 @@ class HomeScreenViewController: UIViewController {
 
 
     @objc private func openUpcomingVaccines() {
-        
+        Haptics.impact(.light)
         UIView.animate(withDuration: 0.1, animations: {
             self.upcomingVaccineCardView.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
         }) { _ in

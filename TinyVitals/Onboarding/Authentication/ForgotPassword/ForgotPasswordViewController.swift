@@ -30,7 +30,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Action
 
     @IBAction func sendResetLinkTapped(_ sender: UIButton) {
-        
+        Haptics.impact(.light)
         guard let email = emailTextField.text, !email.isEmpty else {
             self.showAlert(title: "Error", message: "Please enter your email address.")
             return
@@ -78,6 +78,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Helper Methods (showAlerts)
     
     private func showAlertAndDismiss(title: String, message: String, completion: (() -> Void)? = nil) {
+        Haptics.impact(.light)
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default) { _ in
             completion?()
@@ -87,6 +88,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func showAlert(title: String, message: String) {
+        Haptics.impact(.light)
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alert, animated: true)

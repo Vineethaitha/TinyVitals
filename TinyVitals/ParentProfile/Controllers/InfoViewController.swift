@@ -26,6 +26,7 @@ final class InfoViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+//        Haptics.impact(.light)
         setupUI()
         configureContent()
     }

@@ -110,6 +110,7 @@ class MainTabBarController: UITabBarController {
     }
     
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        Haptics.impact(.light)
         guard let child = activeChild else { return }
         propagateActiveChild(child)
     }

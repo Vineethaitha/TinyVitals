@@ -98,6 +98,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func createAccountButtonTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         guard let email = emailTextField.text,
               let password = passwordTextField.text,
               let confirmPassword = confirmPasswordTextField.text,
@@ -162,6 +163,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
 
     
     private func showAlert(title: String, message: String) {
+        Haptics.impact(.light)
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alert, animated: true)

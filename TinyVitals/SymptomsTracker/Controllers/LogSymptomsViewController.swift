@@ -141,6 +141,7 @@ final class LogSymptomsViewController: UIViewController {
 //    }
 
     @IBAction func heightTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .height
         vc.selectedInitialValue = currentHeight
@@ -149,7 +150,7 @@ final class LogSymptomsViewController: UIViewController {
     }
 
     @IBAction func weightTapped(_ sender: UIButton) {
-        
+        Haptics.impact(.light)
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .weight
         vc.selectedInitialValue = currentWeight
@@ -164,6 +165,7 @@ final class LogSymptomsViewController: UIViewController {
 //        ) {
 //            self.temperatureButton.setTitle("98.6°F", for: .normal)
 //        }
+        Haptics.impact(.light)
         let vc = AddMeasureViewController(
             nibName: "AddMeasureViewController",
             bundle: nil
@@ -175,6 +177,7 @@ final class LogSymptomsViewController: UIViewController {
     }
     
     @IBAction func addSeverityTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .severity
         vc.selectedInitialValue = currentSeverity
@@ -183,6 +186,7 @@ final class LogSymptomsViewController: UIViewController {
     }
 
     @IBAction func addPhotoTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         let picker = UIImagePickerController()
            picker.sourceType = .photoLibrary
            picker.delegate = self
@@ -191,9 +195,10 @@ final class LogSymptomsViewController: UIViewController {
     }
 
     @IBAction func saveTapped(_ sender: UIButton) {
-
-            guard let child = activeChild else { return }
-            guard !selectedSymptoms.isEmpty else { return }
+        
+        Haptics.impact(.light)
+        guard let child = activeChild else { return }
+        guard !selectedSymptoms.isEmpty else { return }
 
         Task {
             do {
@@ -274,6 +279,7 @@ final class LogSymptomsViewController: UIViewController {
         message: String,
         completion: @escaping () -> Void
     ) {
+        Haptics.impact(.light)
         let alert = UIAlertController(
             title: title,
             message: message,

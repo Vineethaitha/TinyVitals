@@ -317,6 +317,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
     
     func showCreateFolderAlert() {
+        Haptics.impact(.light)
         let alert = UIAlertController(
             title: "New Folder",
             message: "Enter a name for your folder",
@@ -460,6 +461,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
 
     func showRenameAlert(for indexPath: IndexPath) {
+        Haptics.impact(.light)
 
         guard let childId = activeChild?.id else { return }
 
@@ -514,6 +516,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
     
     func deleteFolder(at indexPath: IndexPath) {
+        Haptics.impact(.light)
 
         guard let child = activeChild else { return }
 

@@ -214,6 +214,7 @@ final class SymptomsSelectionViewController: UIViewController {
 
     // MARK: - Actions
     @IBAction func applyTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         onApply?(selectedSymptomsArray)
         dismiss(animated: true)
     }
@@ -256,7 +257,7 @@ extension SymptomsSelectionViewController: UICollectionViewDataSource {
 extension SymptomsSelectionViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
+        Haptics.impact(.light)
         let item: SymptomItem
 
         if collectionView == selectedCollectionView {

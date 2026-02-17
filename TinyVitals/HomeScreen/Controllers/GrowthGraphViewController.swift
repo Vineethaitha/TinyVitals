@@ -28,6 +28,7 @@ class GrowthGraphViewController: UIViewController {
     }
     
     @IBAction func segmentChanged(_ sender: UISegmentedControl) {
+        Haptics.impact(.light)
         sender.selectedSegmentIndex == 0
             ? showWeight()
             : showHeight()

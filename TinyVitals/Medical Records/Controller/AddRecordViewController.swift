@@ -82,7 +82,7 @@ class AddRecordViewController: UIViewController,
 
     // MARK: - Save
     @IBAction func addButtonTapped(_ sender: UIButton) {
-
+        Haptics.impact(.light)
         guard let activeChild else { return }
 
         guard let title = titleTextField.text, !title.isEmpty else {
@@ -182,6 +182,7 @@ class AddRecordViewController: UIViewController,
 
     // MARK: - Folder
     @objc func selectFolderTapped() {
+        Haptics.impact(.light)
         let alert = UIAlertController(title: "Select Folder", message: nil, preferredStyle: .actionSheet)
         availableFolders.forEach { folder in
             alert.addAction(UIAlertAction(title: folder, style: .default) { _ in
@@ -195,6 +196,7 @@ class AddRecordViewController: UIViewController,
 
     // MARK: - File picking
     @objc func selectFileTapped() {
+        Haptics.impact(.light)
         let alert = UIAlertController(title: "Choose File", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Photo Library", style: .default) { _ in self.pickImage() })
         alert.addAction(UIAlertAction(title: "Browse Files", style: .default) { _ in self.pickDocument() })
@@ -245,6 +247,7 @@ class AddRecordViewController: UIViewController,
     }
 
     func showValidationAlert(message: String) {
+        Haptics.impact(.light)
         let alert = UIAlertController(title: "Missing Info", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)

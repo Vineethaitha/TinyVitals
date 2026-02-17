@@ -179,6 +179,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     
     // MARK: - Actions
     @IBAction func addPhotoTapped(_ sender: UIButton) {
+        Haptics.impact(.light)
         let picker = UIImagePickerController()
         picker.sourceType = .photoLibrary
         picker.allowsEditing = true
@@ -210,6 +211,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
 
     @objc func takenTapped() {
+        Haptics.impact(.light)
         selectedStatus = .completed
         UIView.animate(withDuration: 0.2) {
                 self.updateStatusUI()
@@ -217,6 +219,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     }
 
     @objc func skippedTapped() {
+        Haptics.impact(.light)
         selectedStatus = .skipped
         
         UIView.animate(withDuration: 0.2) {
@@ -225,6 +228,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     }
 
     @objc func rescheduledTapped() {
+        Haptics.impact(.light)
         selectedStatus = .rescheduled
         
         UIView.animate(withDuration: 0.2) {
@@ -424,7 +428,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
 
     
     @IBAction func saveTapped(_ sender: UIButton) {
-
+        Haptics.impact(.light)
         let calendar = Calendar.current
 
             let finalDate = calendar.date(
