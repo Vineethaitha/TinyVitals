@@ -33,9 +33,15 @@ final class VaccinationCalendarViewController : UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: self,
+            action: #selector(closeTapped)
+        )
 
-        view.backgroundColor = .systemBackground
-        title = "Calendar"
+//        view.backgroundColor = .systemBackground
+//        title = "Calendar"
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -50,6 +56,10 @@ final class VaccinationCalendarViewController : UIViewController {
         emptyStateView.isHidden = true
         tableView.isHidden = false
 
+    }
+    
+    @objc private func closeTapped() {
+        dismiss(animated: true)
     }
 
     private func setupCalendar() {

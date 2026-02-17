@@ -689,16 +689,21 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     }
 
     @IBAction func calendarTapped(_ sender: UIButton) {
+
         let vc = VaccinationCalendarViewController(
             nibName: "VaccinationCalendarViewController",
             bundle: nil
         )
 
         vc.allVaccines = allVaccines
+        vc.title = "Vaccination Calendar"
 
-        vc.modalPresentationStyle = .pageSheet
-        present(vc, animated: true)
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .pageSheet
+
+        present(nav, animated: true)
     }
+
 
 
     

@@ -288,7 +288,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PZi-jY-m3d">
-                                            <rect key="frame" x="20" y="25.333333333333371" width="353" height="69.666666666666671"/>
+                                            <rect key="frame" x="20" y="30.333333333333371" width="353" height="64.666666666666671"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEs-vR-tDE">
                                                     <rect key="frame" x="20" y="10" width="40" height="18"/>
@@ -331,7 +331,7 @@
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstItem="PZi-jY-m3d" firstAttribute="top" secondItem="vEm-bF-Xym" secondAttribute="bottom" constant="5" id="16o-EJ-ji2"/>
+                                        <constraint firstItem="PZi-jY-m3d" firstAttribute="top" secondItem="vEm-bF-Xym" secondAttribute="bottom" constant="10" id="16o-EJ-ji2"/>
                                         <constraint firstItem="vEm-bF-Xym" firstAttribute="leading" secondItem="BrW-zE-ylW" secondAttribute="leading" constant="20" id="3NK-cv-UfG"/>
                                         <constraint firstAttribute="trailing" secondItem="PZi-jY-m3d" secondAttribute="trailing" constant="20" id="VH3-a6-to2"/>
                                         <constraint firstAttribute="height" constant="105" id="frS-rm-7Sr"/>

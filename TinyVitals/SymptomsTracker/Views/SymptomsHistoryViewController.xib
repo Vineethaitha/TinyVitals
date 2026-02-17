@@ -21,27 +21,27 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w1o-fr-s3u">
-                    <rect key="frame" x="16" y="118" width="361" height="440"/>
+                    <rect key="frame" x="20" y="118" width="353" height="400"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="440" id="PYX-yN-QVN"/>
+                        <constraint firstAttribute="height" constant="400" id="PYX-yN-QVN"/>
                     </constraints>
                 </view>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="RfW-gA-M78">
-                    <rect key="frame" x="0.0" y="578" width="393" height="206"/>
+                    <rect key="frame" x="20" y="518" width="353" height="266"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </tableView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemGray6Color"/>
             <constraints>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="RfW-gA-M78" secondAttribute="trailing" id="2Io-v9-UGy"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="RfW-gA-M78" secondAttribute="trailing" constant="20" id="2Io-v9-UGy"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="RfW-gA-M78" secondAttribute="bottom" id="F9j-TZ-cS1"/>
-                <constraint firstItem="w1o-fr-s3u" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="Nez-46-nm8"/>
-                <constraint firstItem="RfW-gA-M78" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="dHV-9c-ShC"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="w1o-fr-s3u" secondAttribute="trailing" constant="16" id="dIL-Hu-siJ"/>
+                <constraint firstItem="w1o-fr-s3u" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="Nez-46-nm8"/>
+                <constraint firstItem="RfW-gA-M78" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="dHV-9c-ShC"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="w1o-fr-s3u" secondAttribute="trailing" constant="20" id="dIL-Hu-siJ"/>
                 <constraint firstItem="w1o-fr-s3u" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="jDU-Vi-cCW"/>
-                <constraint firstItem="RfW-gA-M78" firstAttribute="top" secondItem="w1o-fr-s3u" secondAttribute="bottom" constant="20" id="p5w-SU-us1"/>
+                <constraint firstItem="RfW-gA-M78" firstAttribute="top" secondItem="w1o-fr-s3u" secondAttribute="bottom" id="p5w-SU-us1"/>
             </constraints>
             <point key="canvasLocation" x="69" y="118"/>
         </view>
