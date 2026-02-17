@@ -87,13 +87,14 @@ class RecordListViewController: UIViewController {
         return f
     }()
 
+    private let loader = UIActivityIndicatorView(style: .large)
+    private let loaderContainer = UIView()
 
-
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupLoader()
+
         guard let activeChild else {
             assertionFailure("RecordListViewController opened without activeChild")
             return
@@ -236,19 +237,68 @@ class RecordListViewController: UIViewController {
         present(activityVC, animated: true)
     }
     
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//
+//        let record = isSearching
+//            ? filteredFiles[indexPath.row]
+//            : currentFiles[indexPath.row]
+//
+//        Task {
+//            do {
+//                // 1️⃣ Get signed URL from Supabase
+//                let signedURL = try await MedicalRecordService.shared
+//                    .getSignedFileURL(path: record.filePath)
+//
+//                // 2️⃣ Download actual file
+//                let localURL: URL
+//
+//                if record.fileType == "image" {
+//                    let image = try await MedicalRecordService.shared
+//                        .downloadImage(from: signedURL)
+//
+//                    guard let url = saveTempImage(image) else { return }
+//                    localURL = url
+//                } else {
+//                    localURL = try await MedicalRecordService.shared
+//                        .downloadFile(from: signedURL, fileType: record.fileType)
+//                }
+//
+//                // 3️⃣ Open QuickLook with REAL file
+//                DispatchQueue.main.async {
+//                    self.previewURL = localURL
+//
+//                    let previewVC = QLPreviewController()
+//                    previewVC.dataSource = self
+//                    self.navigationController?.pushViewController(previewVC, animated: true)
+//                }
+//
+//            } catch {
+//                print("❌ Preview failed:", error)
+//            }
+//        }
+//    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
+        if tableView.isEditing {
+            let record = isSearching
+                ? filteredFiles[indexPath.row]
+                : currentFiles[indexPath.row]
+
+            selectedRecords.insert(record.id)
+            updateActionButtonsState()
+            return
+        }
+
+        // NORMAL PREVIEW MODE
         let record = isSearching
             ? filteredFiles[indexPath.row]
             : currentFiles[indexPath.row]
 
         Task {
             do {
-                // 1️⃣ Get signed URL from Supabase
                 let signedURL = try await MedicalRecordService.shared
                     .getSignedFileURL(path: record.filePath)
 
-                // 2️⃣ Download actual file
                 let localURL: URL
 
                 if record.fileType == "image" {
@@ -262,10 +312,8 @@ class RecordListViewController: UIViewController {
                         .downloadFile(from: signedURL, fileType: record.fileType)
                 }
 
-                // 3️⃣ Open QuickLook with REAL file
                 DispatchQueue.main.async {
                     self.previewURL = localURL
-
                     let previewVC = QLPreviewController()
                     previewVC.dataSource = self
                     self.navigationController?.pushViewController(previewVC, animated: true)
@@ -276,6 +324,7 @@ class RecordListViewController: UIViewController {
             }
         }
     }
+
     
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -355,7 +404,36 @@ class RecordListViewController: UIViewController {
         navigationItem.rightBarButtonItem?.isEnabled = !selectedRecords.isEmpty
     }
     
+//    @objc func shareSelectedRecords() {
+//
+//        guard let childId = activeChild?.id else { return }
+//
+//        let records = store.filesByChild[childId]?.filter {
+//            selectedRecords.contains($0.id)
+//        } ?? []
+//
+//        var items: [Any] = []
+//
+//        for record in records {
+//            if let pdf = record.pdfURL {
+//                items.append(pdf)
+//            } else if let image = record.thumbnail {
+//                items.append(image)
+//            }
+//        }
+//
+//        guard !items.isEmpty else { return }
+//
+//        let vc = UIActivityViewController(
+//            activityItems: items,
+//            applicationActivities: nil
+//        )
+//
+//        vc.popoverPresentationController?.sourceView = view
+//        present(vc, animated: true)
+//    }
     @objc func shareSelectedRecords() {
+        
 
         guard let childId = activeChild?.id else { return }
 
@@ -363,26 +441,54 @@ class RecordListViewController: UIViewController {
             selectedRecords.contains($0.id)
         } ?? []
 
-        var items: [Any] = []
+        guard !records.isEmpty else { return }
 
-        for record in records {
-            if let pdf = record.pdfURL {
-                items.append(pdf)
-            } else if let image = record.thumbnail {
-                items.append(image)
+        Haptics.impact(.light)
+        showLoader()
+
+        Task {
+            var items: [Any] = []
+
+            for record in records {
+                do {
+                    let signedURL = try await MedicalRecordService.shared
+                        .getSignedFileURL(path: record.filePath)
+
+                    if record.fileType == "image" {
+                        let image = try await MedicalRecordService.shared
+                            .downloadImage(from: signedURL)
+
+                        items.append(image)
+
+                    } else {
+                        let fileURL = try await MedicalRecordService.shared
+                            .downloadFile(from: signedURL, fileType: record.fileType)
+
+                        items.append(fileURL)
+                    }
+
+                } catch {
+                    print(" Share download failed:", error)
+                }
+            }
+
+            guard !items.isEmpty else { return }
+
+            await MainActor.run {
+                
+                self.hideLoader()
+                
+                let vc = UIActivityViewController(
+                    activityItems: items,
+                    applicationActivities: nil
+                )
+
+                vc.popoverPresentationController?.sourceView = self.view
+                self.present(vc, animated: true)
             }
         }
-
-        guard !items.isEmpty else { return }
-
-        let vc = UIActivityViewController(
-            activityItems: items,
-            applicationActivities: nil
-        )
-
-        vc.popoverPresentationController?.sourceView = view
-        present(vc, animated: true)
     }
+
 
 
 
@@ -781,6 +887,41 @@ class RecordListViewController: UIViewController {
             }
         }
     }
+    
+    private func setupLoader() {
+        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
+        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
+        loaderContainer.isHidden = true
+
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+
+        loaderContainer.addSubview(loader)
+        view.addSubview(loaderContainer)
+
+        NSLayoutConstraint.activate([
+            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
+        ])
+    }
+
+    private func showLoader() {
+        loaderContainer.isHidden = false
+        loader.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+
+    private func hideLoader() {
+        loader.stopAnimating()
+        loaderContainer.isHidden = true
+        view.isUserInteractionEnabled = true
+    }
+
 
 
     /*
