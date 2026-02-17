@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Sigmar-Regular.ttf">
+            <string>Sigmar-Regular</string>
+        </array>
+    </customFonts>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="splashScreenViewController" customModule="sample_work" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="splashScreenViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -17,8 +22,28 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tiny" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oUj-Qq-0pE">
+                    <rect key="frame" x="77.666666666666657" y="388.33333333333331" width="109.66666666666666" height="75.666666666666686"/>
+                    <fontDescription key="fontDescription" name="Sigmar-Regular" family="Sigmar" pointSize="46"/>
+                    <color key="textColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vitals" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ute-YC-FYn">
+                    <rect key="frame" x="190" y="388" width="141" height="76"/>
+                    <fontDescription key="fontDescription" name="Sigmar-Regular" family="Sigmar" pointSize="46"/>
+                    <color key="textColor" red="0.42352941179999998" green="0.67843137249999996" blue="0.8862745098" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="Ute-YC-FYn" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" constant="64" id="Qkf-Iw-1eo"/>
+                <constraint firstItem="Ute-YC-FYn" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="ayU-g6-y0r"/>
+                <constraint firstItem="oUj-Qq-0pE" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="d2h-ql-7Gz"/>
+                <constraint firstItem="oUj-Qq-0pE" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" constant="-64" id="rhn-e8-0gN"/>
+            </constraints>
             <point key="canvasLocation" x="86" y="21"/>
         </view>
     </objects>
