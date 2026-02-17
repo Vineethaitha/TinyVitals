@@ -28,8 +28,6 @@ class HomeScreenViewController: UIViewController {
     @IBOutlet weak var weightValueLabel: UILabel!
     @IBOutlet weak var heightValueLabel: UILabel!
     
-    @IBOutlet weak var weightSparklineContainer: UIView!
-    @IBOutlet weak var heightSparklineContainer: UIView!
 
     @IBOutlet weak var vaccinationProgressContainer: UIView!
     
@@ -38,10 +36,6 @@ class HomeScreenViewController: UIViewController {
     @IBOutlet weak var upcomingVaccineCardView: UIView!
 
     
-    
-    private let weightSparkline = SparklineView()
-    private let heightSparkline = SparklineView()
-
 
     let articles: [Article] = [
         Article(
@@ -96,8 +90,6 @@ class HomeScreenViewController: UIViewController {
         pageControl.currentPage = 0
         startAutoScroll()
 
-        
-        setupSparklines()
         
         let upcomingTap = UITapGestureRecognizer(
             target: self,
@@ -225,28 +217,28 @@ class HomeScreenViewController: UIViewController {
         present(vc, animated: true)
     }
 
-    private func setupSparklines() {
-        
-        weightSparklineContainer.subviews.forEach { $0.removeFromSuperview() }
-        heightSparklineContainer.subviews.forEach { $0.removeFromSuperview() }
-        // Weight sparkline
-        weightSparkline.frame = weightSparklineContainer.bounds
-        weightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        weightSparkline.lineColor = UIColor(
-            red: 237/255, green: 112/255, blue: 153/255, alpha: 1
-        )
-        weightSparkline.values = [7.0, 7.4, 7.4, 7.5, 7.6]
-        weightSparklineContainer.addSubview(weightSparkline)
-
-        // Height sparkline
-        heightSparkline.frame = heightSparklineContainer.bounds
-        heightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        heightSparkline.lineColor = UIColor(
-            red: 237/255, green: 112/255, blue: 153/255, alpha: 1
-        )
-        heightSparkline.values = [72.0, 73.1, 74.4, 75.0, 75.7]
-        heightSparklineContainer.addSubview(heightSparkline)
-    }
+//    private func setupSparklines() {
+//        
+//        weightSparklineContainer.subviews.forEach { $0.removeFromSuperview() }
+//        heightSparklineContainer.subviews.forEach { $0.removeFromSuperview() }
+//        // Weight sparkline
+//        weightSparkline.frame = weightSparklineContainer.bounds
+//        weightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//        weightSparkline.lineColor = UIColor(
+//            red: 237/255, green: 112/255, blue: 153/255, alpha: 1
+//        )
+//        weightSparkline.values = [7.0, 7.4, 7.4, 7.5, 7.6]
+//        weightSparklineContainer.addSubview(weightSparkline)
+//
+//        // Height sparkline
+//        heightSparkline.frame = heightSparklineContainer.bounds
+//        heightSparkline.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//        heightSparkline.lineColor = UIColor(
+//            red: 237/255, green: 112/255, blue: 153/255, alpha: 1
+//        )
+//        heightSparkline.values = [72.0, 73.1, 74.4, 75.0, 75.7]
+//        heightSparklineContainer.addSubview(heightSparkline)
+//    }
 
     
 //    func setupVaccinationProgress() {
