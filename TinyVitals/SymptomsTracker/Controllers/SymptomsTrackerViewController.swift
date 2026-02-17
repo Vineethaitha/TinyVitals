@@ -217,27 +217,33 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
-        
-        
-            
+
         Task {
             do {
-                showLoader()
-                
+                await MainActor.run { self.showLoader() }
+
                 let dtos = try await SymptomService.shared
                     .fetchSymptoms(childId: child.id)
 
-                currentEntries = dtos
-                    .filter {
-                        Calendar.current.isDate($0.logged_at, inSameDayAs: date)
-                    }
-                    .map {
-                        SymptomEntry(dto: $0)
-                    }
+                let childId = child.id.uuidString
 
-                DispatchQueue.main.async {
+                // 🔥 CLEAR OLD CACHE
+                SymptomsDataStore.shared.clearEntries(for: childId)
+
+                // 🔥 REBUILD CACHE FROM SUPABASE
+                for dto in dtos {
+                    let entry = SymptomEntry(dto: dto)
+                    SymptomsDataStore.shared.addEntry(entry, for: childId)
+                }
+
+                // 🔥 NOW GET ENTRIES FROM STORE
+                currentEntries = SymptomsDataStore.shared
+                    .entries(for: date, childId: childId)
+
+                await MainActor.run {
+
                     self.hideLoader()
-                    
+
                     if currentEntries.isEmpty {
 
                         self.emptyImageView.isHidden = false
@@ -249,6 +255,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                         self.summaryLabel.text =
                             "Your child doesn’t have any symptoms on this day"
 
+                        
                     } else {
 
                         self.emptyImageView.isHidden = true
@@ -262,18 +269,21 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                     }
 
                     self.timelineTableView.reloadData()
+
+                    // 🔥 THIS MAKES DOTS APPEAR
+                    self.calendarCollectionView.reloadData()
                 }
 
             } catch {
-                
                 print("❌ Failed to load symptoms:", error)
-                
-                DispatchQueue.main.async {
+
+                await MainActor.run {
                     self.hideLoader()
                 }
             }
         }
     }
+
 
 
     

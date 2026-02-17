@@ -77,23 +77,23 @@ final class SympCalenderDayCell: UICollectionViewCell {
         
         if isToday && isSelected {
             // 🔥 Today AND Selected
-            contentView.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
-            dayLabel.textColor = .systemPink
-            dateLabel.textColor = .systemPink
+            contentView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.4)
+            dayLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+            dateLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             dateLabel.font = .systemFont(ofSize: 16, weight: .bold)
             
         } else if isToday {
             // 🔴 Today only
-            contentView.backgroundColor = UIColor.systemPink.withAlphaComponent(0.25)
-            dayLabel.textColor = .systemPink
-            dateLabel.textColor = .systemPink
+            contentView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.25)
+            dayLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+            dateLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             dateLabel.font = .systemFont(ofSize: 16, weight: .bold)
             
         } else if isSelected {
             // 🌸 Selected (not today)
-            contentView.backgroundColor = UIColor.systemPink.withAlphaComponent(0.15)
-            dayLabel.textColor = .systemPink
-            dateLabel.textColor = .systemPink
+            contentView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.15)
+            dayLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+            dateLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
             dateLabel.font = .systemFont(ofSize: 16, weight: .semibold)
             
         } else {

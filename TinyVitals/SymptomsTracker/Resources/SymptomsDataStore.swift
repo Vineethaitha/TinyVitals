@@ -56,5 +56,10 @@ final class SymptomsDataStore {
     func allDates(for childId: String) -> [Date] {
         entriesByChild[childId]?.keys.sorted() ?? []
     }
+    
+    func clearEntries(for childId: String) {
+        entriesByChild[childId] = [:]
+    }
+
 
 }
