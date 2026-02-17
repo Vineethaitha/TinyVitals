@@ -55,6 +55,10 @@ final class VaccinationCalendarViewController : UIViewController {
         setupEmptyStateAnimation()
         emptyStateView.isHidden = true
         tableView.isHidden = false
+        
+        let nib = UINib(nibName: "VaccineCell", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: "VaccineCell")
+
 
     }
     
@@ -233,18 +237,33 @@ extension  VaccinationCalendarViewController : UITableViewDataSource {
             return count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCell(
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//            let cell = tableView.dequeueReusableCell(
+//            withIdentifier: "VaccineCell",
+//            for: indexPath
+//        )
+//
+//        let vaccine = selectedVaccines[indexPath.row]
+//        cell.textLabel?.text = vaccine.name
+//        cell.selectionStyle = .none
+//
+//        return cell
+//    }
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        let cell = tableView.dequeueReusableCell(
             withIdentifier: "VaccineCell",
             for: indexPath
-        )
+        ) as! VaccineCell
 
         let vaccine = selectedVaccines[indexPath.row]
-        cell.textLabel?.text = vaccine.name
-        cell.selectionStyle = .none
+
+        cell.configure(with: vaccine, highlight: nil)
 
         return cell
     }
+
     
     private func scrollToFirstUpcomingVaccine() {
         guard let firstDate = allVaccines
