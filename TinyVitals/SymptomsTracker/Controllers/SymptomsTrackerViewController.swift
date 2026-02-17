@@ -41,11 +41,16 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var exportButton: UIButton!
     
     private var emptyLottieView: LottieAnimationView?
+    
+    private let loaderContainer = UIView()
+    private let loader = UIActivityIndicatorView(style: .large)
+
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupLoader()
+
         setupUI()
 //        showSampleData()
         
@@ -212,9 +217,13 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
-
+        
+        
+            
         Task {
             do {
+                showLoader()
+                
                 let dtos = try await SymptomService.shared
                     .fetchSymptoms(childId: child.id)
 
@@ -227,6 +236,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                     }
 
                 DispatchQueue.main.async {
+                    self.hideLoader()
+                    
                     if currentEntries.isEmpty {
 
                         self.emptyImageView.isHidden = false
@@ -254,7 +265,12 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                 }
 
             } catch {
+                
                 print("❌ Failed to load symptoms:", error)
+                
+                DispatchQueue.main.async {
+                    self.hideLoader()
+                }
             }
         }
     }
@@ -334,6 +350,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
 
     @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        Haptics.impact(.light)
 
         if gesture.state != .began { return }
 
@@ -354,14 +371,41 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
                 guard let self = self else { return }
 
-                SymptomsDataStore.shared.deleteEntry(
-                    entry,
-                    childId: child.id.uuidString
-                )
+                Haptics.notification(.warning)
 
-                self.updateSummary(for: self.selectedDate)
+                Task {
+                    do {
+                        await MainActor.run {
+                            self.showLoader()
+                        }
+                        // 1️⃣ Delete from Supabase
+                        try await SymptomService.shared
+                            .deleteSymptom(id: entry.id)
+
+                        // 2️⃣ Remove locally
+                        SymptomsDataStore.shared.deleteEntry(
+                            entry,
+                            childId: child.id.uuidString
+                        )
+
+                        // 3️⃣ Refresh UI
+                        await MainActor.run {
+                            self.hideLoader()
+                            self.updateSummary(for: self.selectedDate)
+                        }
+
+                    } catch {
+                        print("❌ Delete failed:", error)
+
+                        await MainActor.run {
+                            self.hideLoader()
+                            Haptics.notification(.error)
+                        }
+                    }
+                }
             }
         )
+
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
@@ -370,9 +414,26 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
     
     func reloadForActiveChild() {
-        updateSummary(for: selectedDate)
+
+        guard let _ = activeChild else { return }
+
+        let today = calendar.startOfDay(for: Date())
+        selectedDate = today
+
+        generateDates()
         calendarCollectionView.reloadData()
+
+        if let index = indexOfToday() {
+            calendarCollectionView.selectItem(
+                at: index,
+                animated: false,
+                scrollPosition: .centeredHorizontally
+            )
+        }
+
+        updateSummary(for: today)
     }
+
 
     private func setupEmptyAnimation() {
 
@@ -392,6 +453,41 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
         emptyLottieView = animationView
     }
+    
+    private func setupLoader() {
+        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
+        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
+        loaderContainer.isHidden = true
+
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+
+        loaderContainer.addSubview(loader)
+        view.addSubview(loaderContainer)
+
+        NSLayoutConstraint.activate([
+            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
+        ])
+    }
+
+    private func showLoader() {
+        loaderContainer.isHidden = false
+        loader.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+
+    private func hideLoader() {
+        loader.stopAnimating()
+        loaderContainer.isHidden = true
+        view.isUserInteractionEnabled = true
+    }
+
 
     
     
