@@ -13,6 +13,7 @@
                 <outlet property="graphContainer" destination="CQ9-xH-Xrp" id="veb-gw-MYJ"/>
                 <outlet property="metricSegment" destination="Q28-0l-Boc" id="QwT-YD-TKe"/>
                 <outlet property="titleLabel" destination="ecd-Qw-wPO" id="1GH-I6-HQ3"/>
+                <outlet property="valueLabel" destination="HXI-cu-jy8" id="Hxt-a8-TWH"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -55,20 +56,22 @@
                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <state key="normal" title="Button"/>
                             <buttonConfiguration key="configuration" style="plain" image="pencil" catalog="system"/>
+                            <connections>
+                                <action selector="editTapped:" destination="-1" eventType="touchUpInside" id="7OM-q8-FM1"/>
+                            </connections>
                         </button>
-                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="8.1 kg" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bIE-zV-uXE">
-                            <rect key="frame" x="15" y="8" width="323" height="34"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits"/>
-                        </textField>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HXI-cu-jy8">
+                            <rect key="frame" x="10" y="16" width="39" height="18"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <color key="backgroundColor" systemColor="systemGray5Color"/>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="bIE-zV-uXE" secondAttribute="bottom" constant="8" id="1p7-eT-7I4"/>
                         <constraint firstAttribute="height" constant="50" id="FTu-g0-bTo"/>
-                        <constraint firstAttribute="trailing" secondItem="bIE-zV-uXE" secondAttribute="trailing" constant="15" id="fy1-PX-whe"/>
-                        <constraint firstItem="bIE-zV-uXE" firstAttribute="top" secondItem="tAL-BC-Dgi" secondAttribute="top" constant="8" id="hy5-JC-OKc"/>
-                        <constraint firstItem="bIE-zV-uXE" firstAttribute="leading" secondItem="tAL-BC-Dgi" secondAttribute="leading" constant="15" id="iLd-Ms-LVG"/>
+                        <constraint firstItem="HXI-cu-jy8" firstAttribute="leading" secondItem="tAL-BC-Dgi" secondAttribute="leading" constant="10" id="OCp-4V-v3N"/>
+                        <constraint firstItem="HXI-cu-jy8" firstAttribute="centerY" secondItem="tAL-BC-Dgi" secondAttribute="centerY" id="olW-9m-AZN"/>
                         <constraint firstItem="ge2-tg-rMU" firstAttribute="centerY" secondItem="tAL-BC-Dgi" secondAttribute="centerY" id="pnl-i2-jk3"/>
                         <constraint firstAttribute="trailing" secondItem="ge2-tg-rMU" secondAttribute="trailing" id="vMI-pM-5bf"/>
                     </constraints>

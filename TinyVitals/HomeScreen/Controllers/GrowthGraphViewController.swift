@@ -12,27 +12,63 @@ class GrowthGraphViewController: UIViewController {
     @IBOutlet weak var metricSegment: UISegmentedControl!
     @IBOutlet weak var graphContainer: UIView!
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var valueLabel: UILabel!
 
     var initialMetric: GrowthMetric = .weight
 
     private let graph = GrowthTrendGraphView()
+    
+    var activeChild: ChildProfile?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
+
+        
         graph.frame = graphContainer.bounds
         graph.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         graphContainer.addSubview(graph)
 
         configureInitialState()
+        updateDisplayedValue()
     }
+    
+    @IBAction func editTapped(_ sender: UIButton) {
+
+        Haptics.impact(.light)
+
+        let vc = AddMeasureViewController(
+            nibName: "AddMeasureViewController",
+            bundle: nil
+        )
+
+        if metricSegment.selectedSegmentIndex == 0 {
+            vc.measureType = .weight
+            vc.selectedInitialValue = activeChild?.weight ?? 3.0
+        } else {
+            vc.measureType = .height
+            vc.selectedInitialValue = activeChild?.height ?? 1.0
+        }
+
+        vc.delegate = self
+        present(vc, animated: true)
+    }
+
     
     @IBAction func segmentChanged(_ sender: UISegmentedControl) {
         Haptics.impact(.light)
-        sender.selectedSegmentIndex == 0
-            ? showWeight()
-            : showHeight()
+
+        if sender.selectedSegmentIndex == 0 {
+            showWeight()
+        } else {
+            showHeight()
+        }
+
+        updateDisplayedValue()
     }
+
 
 
     private func configureInitialState() {
@@ -74,6 +110,35 @@ class GrowthGraphViewController: UIViewController {
         ]
 
     }
+    
+    private func updateDisplayedValue() {
+
+        guard let child = activeChild else {
+            valueLabel.text = "--"
+            return
+        }
+
+        switch metricSegment.selectedSegmentIndex {
+        case 0: // Weight
+            if let weight = child.weight {
+                valueLabel.text = String(format: "%.1f kg", weight)
+            } else {
+                valueLabel.text = "-- kg"
+            }
+
+        case 1: // Height
+            if let height = child.height {
+                valueLabel.text = String(format: "%.1f ft", height)
+            } else {
+                valueLabel.text = "-- ft"
+            }
+
+        default:
+            break
+        }
+    }
+
+
 
 
 
@@ -87,4 +152,36 @@ class GrowthGraphViewController: UIViewController {
     }
     */
 
+}
+extension GrowthGraphViewController: AddMeasureDelegate {
+
+    func didSaveValue(_ value: Double,
+                      type: AddMeasureViewController.MeasureType) {
+
+        guard var child = activeChild else { return }
+
+        switch type {
+        case .weight:
+            child.weight = value
+        case .height:
+            child.height = value
+        default:
+            return
+        }
+
+        Task {
+            do {
+                try await ChildService.shared.updateChild(child)
+
+                await MainActor.run {
+                    AppState.shared.updateChild(child)
+                    self.activeChild = child
+                    self.updateDisplayedValue()
+                }
+
+            } catch {
+                print("❌ Failed to update child:", error)
+            }
+        }
+    }
 }

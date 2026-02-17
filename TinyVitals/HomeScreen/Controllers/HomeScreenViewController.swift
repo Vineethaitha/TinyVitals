@@ -174,7 +174,7 @@ class HomeScreenViewController: UIViewController {
 
     private func setupSummaryCards() {
         weightValueLabel.text = "-- kg"
-        heightValueLabel.text = "-- cm"
+        heightValueLabel.text = "-- ft"
     }
 
 
@@ -202,12 +202,15 @@ class HomeScreenViewController: UIViewController {
 
     private func presentGraph(initialMetric: GrowthMetric) {
         Haptics.impact(.light)
+
         let vc = GrowthGraphViewController(
             nibName: "GrowthGraphViewController",
             bundle: nil
         )
 
         vc.initialMetric = initialMetric
+        vc.activeChild = activeChild
+
         vc.modalPresentationStyle = .pageSheet
 
         if let sheet = vc.sheetPresentationController {
@@ -216,7 +219,12 @@ class HomeScreenViewController: UIViewController {
         }
 
         present(vc, animated: true)
+
+        // 🔥 THIS IS THE FIX
+        vc.presentationController?.delegate = self
     }
+
+
 
 //    private func setupSparklines() {
 //        
@@ -394,9 +402,9 @@ class HomeScreenViewController: UIViewController {
         }
 
         if let height = child.height {
-            heightValueLabel.text = String(format: "%.1f cm", height)
+            heightValueLabel.text = String(format: "%.1f ft", height)
         } else {
-            heightValueLabel.text = "-- cm"
+            heightValueLabel.text = "-- ft"
         }
 
         // Vaccination progress
@@ -519,5 +527,15 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
         let page = Int(round(scrollView.contentOffset.x / scrollView.frame.width))
         currentPage = page
         pageControl.currentPage = page
+    }
+}
+
+extension HomeScreenViewController: UIAdaptivePresentationControllerDelegate {
+
+    func presentationControllerDidDismiss(
+        _ presentationController: UIPresentationController
+    ) {
+        // Refresh after sheet closes
+        self.activeChild = AppState.shared.activeChild
     }
 }
