@@ -13,6 +13,8 @@
                 <outlet property="articlesCollectionView" destination="Omn-7A-BBT" id="TZA-5l-bor"/>
                 <outlet property="dueDaysLabel" destination="hEs-vR-tDE" id="eUs-FQ-Iir"/>
                 <outlet property="heightCardView" destination="PBK-Tw-gLs" id="5Qj-mB-uIQ"/>
+                <outlet property="heightStatusLabel" destination="sID-OU-t00" id="gYe-HC-EHj"/>
+                <outlet property="heightUpdateLabel" destination="z0N-Bb-cgU" id="fww-Q2-OPF"/>
                 <outlet property="heightValueLabel" destination="zfI-i3-2aT" id="tXO-ts-F4K"/>
                 <outlet property="pageControl" destination="rzz-sZ-Lsb" id="flj-dh-rmE"/>
                 <outlet property="upcomingVaccineCardView" destination="PZi-jY-m3d" id="iha-wJ-WoD"/>
@@ -20,6 +22,8 @@
                 <outlet property="vaccineGroupLabel" destination="ez6-ew-r3Q" id="uGF-BM-GPr"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
                 <outlet property="weightCardView" destination="y1e-Lw-neK" id="Th1-aO-JvF"/>
+                <outlet property="weightStatusLabel" destination="eh0-4v-HOZ" id="2Es-Pu-YHz"/>
+                <outlet property="weightUpdateLabel" destination="puQ-4y-hDh" id="2zg-xs-ZFx"/>
                 <outlet property="weightValueLabel" destination="9Ky-nk-102" id="jqk-Ne-Djr"/>
             </connections>
         </placeholder>
@@ -474,8 +478,8 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Charlie's Growth Trend" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="889-eY-7Mg">
-                                            <rect key="frame" x="20" y="0.0" width="182.66666666666666" height="20.333333333333332"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Growth Trend" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="889-eY-7Mg">
+                                            <rect key="frame" x="19.999999999999993" y="0.0" width="108.33333333333331" height="20.333333333333332"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -528,16 +532,16 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGrayColor">
-            <color red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.2196078431372549" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

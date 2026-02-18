@@ -214,25 +214,60 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                         dob: dob
                     )
 
-                    // 2️⃣ Save initial weight entry
+                    let calendar = Calendar.current
+                    let now = Date()
+
+                    let baselineDate = calendar.startOfDay(for: dob)
+                    let currentDate = calendar.startOfDay(for: now)
+
+                    let ageInMonths = calendar.dateComponents(
+                        [.month],
+                        from: baselineDate,
+                        to: currentDate
+                    ).month ?? 0
+
+                    // WEIGHT
                     if let weightText = self.weightTextField.text,
                        let weight = Double(weightText) {
+
+                        if ageInMonths > 0 {
+                            try await GrowthService.shared.addGrowthEntry(
+                                childId: childId,
+                                metric: .weight,
+                                value: weight,
+                                recordedAt: baselineDate
+                            )
+                        }
+
                         try await GrowthService.shared.addGrowthEntry(
                             childId: childId,
                             metric: .weight,
-                            value: weight
+                            value: weight,
+                            recordedAt: currentDate
                         )
                     }
 
-                    // 3️⃣ Save initial height entry
+                    // HEIGHT
                     if let heightText = self.heightTextField.text,
                        let height = Double(heightText) {
+
+                        if ageInMonths > 0 {
+                            try await GrowthService.shared.addGrowthEntry(
+                                childId: childId,
+                                metric: .height,
+                                value: height,
+                                recordedAt: baselineDate
+                            )
+                        }
+
                         try await GrowthService.shared.addGrowthEntry(
                             childId: childId,
                             metric: .height,
-                            value: height
+                            value: height,
+                            recordedAt: currentDate
                         )
                     }
+
                 }
 
                 
@@ -462,9 +497,50 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         setupNavBar()
     }
     
+//    @objc private func saveEditsTapped() {
+//
+//        guard let child = child else { return }
+//
+//        var updatedPhotoFilename = child.photoFilename
+//
+//        if didPickAvatarImage {
+//            updatedPhotoFilename = saveImageToDisk(avatarImageView.image!)
+//        }
+//
+//        let updatedChild = ChildProfile(
+//            id: child.id,
+//            name: nameTextField.text ?? child.name,
+//            dob: child.dob,
+//            gender: genderTextField.text ?? child.gender,
+//            bloodGroup: bloodGroupTextField.text ?? child.bloodGroup,
+//            weight: Double(weightTextField.text ?? ""),
+//            height: Double(heightTextField.text ?? ""),
+//            photoFilename: updatedPhotoFilename
+//        )
+//
+//        updateDelegate?.didUpdateChild(updatedChild)
+//        navigationController?.popViewController(animated: true)
+//        
+//        Task {
+//            try await ChildService.shared.updateChild(updatedChild)
+//        }
+//
+//    }
     @objc private func saveEditsTapped() {
 
         guard let child = child else { return }
+
+        let yRow = agePicker.selectedRow(inComponent: 0)
+        let mRow = agePicker.selectedRow(inComponent: 1)
+
+        let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
+        let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
+
+        var components = DateComponents()
+        components.year = -selectedYears
+        components.month = -selectedMonths
+
+        let updatedDOB = Calendar.current.date(byAdding: components, to: Date()) ?? child.dob
 
         var updatedPhotoFilename = child.photoFilename
 
@@ -475,7 +551,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         let updatedChild = ChildProfile(
             id: child.id,
             name: nameTextField.text ?? child.name,
-            dob: child.dob,
+            dob: updatedDOB,
             gender: genderTextField.text ?? child.gender,
             bloodGroup: bloodGroupTextField.text ?? child.bloodGroup,
             weight: Double(weightTextField.text ?? ""),
@@ -483,14 +559,29 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             photoFilename: updatedPhotoFilename
         )
 
-        updateDelegate?.didUpdateChild(updatedChild)
-        navigationController?.popViewController(animated: true)
-        
-        Task {
-            try await ChildService.shared.updateChild(updatedChild)
-        }
+        showLoader()
 
+        Task {
+            do {
+                try await ChildService.shared.updateChild(updatedChild)
+
+                await MainActor.run {
+                    AppState.shared.updateChild(updatedChild)
+                    updateDelegate?.didUpdateChild(updatedChild)
+                    hideLoader()
+                    navigationController?.popViewController(animated: true)
+                }
+
+            } catch {
+                await MainActor.run {
+                    hideLoader()
+                }
+                print("❌ Failed to update child:", error)
+            }
+        }
     }
+
+
 
     
     private func setAgeFromDOB(_ dob: Date) {

@@ -34,7 +34,12 @@ class HomeScreenViewController: UIViewController {
     @IBOutlet weak var dueDaysLabel: UILabel!
     @IBOutlet weak var vaccineGroupLabel: UILabel!
     @IBOutlet weak var upcomingVaccineCardView: UIView!
-
+    
+    @IBOutlet weak var weightStatusLabel: UILabel!
+    @IBOutlet weak var heightStatusLabel: UILabel!
+    
+    @IBOutlet weak var weightUpdateLabel: UILabel!
+    @IBOutlet weak var heightUpdateLabel: UILabel!
     
 
     let articles: [Article] = [
@@ -214,9 +219,18 @@ class HomeScreenViewController: UIViewController {
         vc.modalPresentationStyle = .pageSheet
 
         if let sheet = vc.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
+
+            let customDetent = UISheetPresentationController.Detent.custom(
+                identifier: .init("customHeight")
+            ) { context in
+                return 550   // 👈 your custom height in points
+            }
+
+            sheet.detents = [customDetent, .large()]
+            sheet.selectedDetentIdentifier = .init("customHeight")
             sheet.prefersGrabberVisible = true
         }
+
 
         present(vc, animated: true)
 
@@ -409,6 +423,8 @@ class HomeScreenViewController: UIViewController {
 
         // Vaccination progress
         setupVaccinationProgress()
+        // Growth status
+        updateGrowthSummary()
     }
 
 
@@ -476,6 +492,124 @@ class HomeScreenViewController: UIViewController {
             vaccineVC.preselectAgeGroup(group)
         }
     }
+
+    private func updateGrowthSummary() {
+
+        guard let child = activeChild else { return }
+
+        Task {
+            do {
+
+                let weightPoints = try await GrowthService.shared.fetchGrowth(
+                    child: child,
+                    metric: .weight
+                )
+
+                let heightPoints = try await GrowthService.shared.fetchGrowth(
+                    child: child,
+                    metric: .height
+                )
+
+                await MainActor.run {
+
+                    updateCard(
+                        metric: .weight,
+                        points: weightPoints,
+                        child: child
+                    )
+
+                    updateCard(
+                        metric: .height,
+                        points: heightPoints,
+                        child: child
+                    )
+                }
+
+            } catch {
+                print("❌ Failed to load summary growth:", error)
+            }
+        }
+    }
+    
+    private func updateCard(
+        metric: GrowthMetric,
+        points: [GrowthPoint],
+        child: ChildProfile
+    ) {
+
+        guard let latest = points.last else { return }
+
+        let month = latest.month
+        let actual = latest.value
+
+        let graph = GrowthTrendGraphView()
+        graph.childGender = child.gender
+
+        let optimal = metric == .weight
+            ? graph.optimalWeightValue(for: month)
+            : graph.optimalHeightValue(for: month)
+
+        guard let optimalValue = optimal else { return }
+
+        let difference = abs(actual - optimalValue)
+
+        let buffer = metric == .weight ? 2.0 : 1.0
+
+        let isStable = difference <= buffer
+
+        let statusText = isStable ? "Stable" : "Needs Attention!"
+        let statusColor: UIColor = isStable ? UIColor(red: 108/255, green: 173/255, blue: 226/255, alpha: 1) : .systemOrange
+
+        // ---------- STATUS LABEL ----------
+        if metric == .weight {
+            weightStatusLabel.text = statusText
+            weightStatusLabel.textColor = statusColor
+        } else {
+            heightStatusLabel.text = statusText
+            heightStatusLabel.textColor = statusColor
+        }
+
+        // ---------- LAST UPDATED ----------
+        let calendar = Calendar.current
+
+        if let recordedDate = calendar.date(
+            byAdding: .month,
+            value: month,
+            to: child.dob
+        ) {
+
+            let components = calendar.dateComponents(
+                [.day],
+                from: recordedDate,
+                to: Date()
+            )
+
+            let text: String
+
+            if components.day == 0 {
+                text = "Updated today"
+            }
+            else if let days = components.day, days < 30 {
+                text = "Updated \(days) day\(days == 1 ? "" : "s") ago"
+            }
+            else {
+                let months = calendar.dateComponents(
+                    [.month],
+                    from: recordedDate,
+                    to: Date()
+                ).month ?? 0
+
+                text = "Updated \(months) month\(months == 1 ? "" : "s") ago"
+            }
+
+            if metric == .weight {
+                weightUpdateLabel.text = text
+            } else {
+                heightUpdateLabel.text = text
+            }
+        }
+    }
+
 
     /*
     // MARK: - Navigation

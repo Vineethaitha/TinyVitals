@@ -80,6 +80,7 @@ final class ChildService {
 
         struct UpdateRow: Encodable {
             let name: String
+            let dob: Date
             let gender: String
             let blood_group: String
             let weight: Double?
@@ -87,14 +88,18 @@ final class ChildService {
             let photo_filename: String?
         }
 
+
         let row = UpdateRow(
             name: child.name,
+            dob: child.dob,   // 🔥 THIS WAS MISSING
             gender: child.gender,
             blood_group: child.bloodGroup,
             weight: child.weight,
             height: child.height,
             photo_filename: child.photoFilename
         )
+
+
 
         try await client
             .from("children")

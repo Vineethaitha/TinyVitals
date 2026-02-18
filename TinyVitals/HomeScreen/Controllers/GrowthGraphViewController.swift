@@ -14,6 +14,9 @@ class GrowthGraphViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var valueLabel: UILabel!
 
+    @IBOutlet weak var statusLabel: UILabel!
+    
+    @IBOutlet weak var lastUpdatedLabel: UILabel!
     var childAgeInMonths: Int = 0
     var initialMetric: GrowthMetric = .weight
 
@@ -89,21 +92,56 @@ class GrowthGraphViewController: UIViewController {
         }
     }
 
+//    private func showWeight() {
+//
+//        guard let child = activeChild else { return }
+//
+//        titleLabel.text = "Weight Trend"
+//        graph.metric = .weight
+//
+//        Task {
+//            do {
+//                let points = try await GrowthService.shared.fetchGrowth(
+//                    childId: child.id,
+//                    metric: .weight
+//                )
+//
+//
+//
+//                await MainActor.run {
+//
+//                    graph.childAgeInMonths = Calendar.current.dateComponents(
+//                        [.month],
+//                        from: child.dob,
+//                        to: Date()
+//                    ).month ?? 0
+//
+//                    graph.data = points
+//                }
+//
+//
+//            } catch {
+//                print("❌ Failed to load growth data:", error)
+//            }
+//        }
+//    }
     private func showWeight() {
 
         guard let child = activeChild else { return }
 
         titleLabel.text = "Weight Trend"
         graph.metric = .weight
+        graph.childGender = child.gender
 
         Task {
             do {
+                
+                try await GrowthService.shared.ensureBaselineExists(for: child)
+
                 let points = try await GrowthService.shared.fetchGrowth(
-                    childId: child.id,
+                    child: child,
                     metric: .weight
                 )
-
-
 
                 await MainActor.run {
 
@@ -114,8 +152,8 @@ class GrowthGraphViewController: UIViewController {
                     ).month ?? 0
 
                     graph.data = points
+                    updateStatusLabel(using: points)
                 }
-
 
             } catch {
                 print("❌ Failed to load growth data:", error)
@@ -124,21 +162,59 @@ class GrowthGraphViewController: UIViewController {
     }
 
 
+
+//    private func showHeight() {
+//
+//        guard let child = activeChild else { return }
+//
+//        titleLabel.text = "Height Trend"
+//        graph.metric = .height
+//
+//        Task {
+//            do {
+//                let points = try await GrowthService.shared.fetchGrowth(
+//                    childId: child.id,
+//                    metric: .height
+//                )
+//
+//
+//
+//                await MainActor.run {
+//
+//                    graph.childAgeInMonths = Calendar.current.dateComponents(
+//                        [.month],
+//                        from: child.dob,
+//                        to: Date()
+//                    ).month ?? 0
+//
+//                    graph.data = points
+//                }
+//
+//
+//            } catch {
+//                print("❌ Failed to load growth data:", error)
+//            }
+//        }
+//    }
+    
     private func showHeight() {
 
         guard let child = activeChild else { return }
 
         titleLabel.text = "Height Trend"
         graph.metric = .height
+        graph.childGender = child.gender
+        
+        
 
         Task {
             do {
+                try await GrowthService.shared.ensureBaselineExists(for: child)
+                
                 let points = try await GrowthService.shared.fetchGrowth(
-                    childId: child.id,
+                    child: child,
                     metric: .height
                 )
-
-
 
                 await MainActor.run {
 
@@ -149,14 +225,15 @@ class GrowthGraphViewController: UIViewController {
                     ).month ?? 0
 
                     graph.data = points
+                    updateStatusLabel(using: points)
                 }
-
 
             } catch {
                 print("❌ Failed to load growth data:", error)
             }
         }
     }
+
 
     
     private func loadGrowthData() {
@@ -194,6 +271,74 @@ class GrowthGraphViewController: UIViewController {
             break
         }
     }
+    
+    private func updateStatusLabel(using points: [GrowthPoint]) {
+
+        guard let latest = points.last,
+              let child = activeChild else {
+            statusLabel.text = "--"
+            lastUpdatedLabel.text = ""
+            return
+        }
+
+        let month = latest.month
+        let actualValue = latest.value
+
+        let optimal: Double? =
+            metricSegment.selectedSegmentIndex == 0
+            ? graph.optimalWeightValue(for: month)
+            : graph.optimalHeightValue(for: month)
+
+        guard let optimalValue = optimal else { return }
+
+        let difference = actualValue - optimalValue
+        let absDifference = abs(difference)
+
+        let threshold = metricSegment.selectedSegmentIndex == 0 ? 1.0 : 0.3
+
+        // ---------- STATUS ----------
+        if absDifference <= threshold {
+            statusLabel.text = "On track"
+            statusLabel.textColor = .systemBlue
+            valueLabel.textColor = .systemBlue
+        } else if difference > 0 {
+            statusLabel.text = "Above optimal"
+            statusLabel.textColor = .systemOrange
+            valueLabel.textColor = .systemOrange
+        } else {
+            statusLabel.text = "Below optimal"
+            statusLabel.textColor = .systemOrange
+            valueLabel.textColor = .systemOrange
+        }
+
+        // ---------- LAST UPDATED ----------
+        let calendar = Calendar.current
+
+        if let recordedDate = calendar.date(byAdding: .month,
+                                            value: month,
+                                            to: child.dob) {
+
+            let components = calendar.dateComponents(
+                [.day, .month],
+                from: recordedDate,
+                to: Date()
+            )
+
+            if components.day == 0 {
+                lastUpdatedLabel.text = "Last updated today"
+            }
+            else if let days = components.day, days < 30 {
+                lastUpdatedLabel.text = "Last updated \(days) day\(days == 1 ? "" : "s") ago"
+            }
+            else if let months = components.month {
+                lastUpdatedLabel.text = "Last updated \(months) month\(months == 1 ? "" : "s") ago"
+            }
+        }
+    }
+
+
+
+
 
 
 

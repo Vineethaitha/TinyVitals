@@ -11,7 +11,9 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="GrowthGraphViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
                 <outlet property="graphContainer" destination="CQ9-xH-Xrp" id="veb-gw-MYJ"/>
+                <outlet property="lastUpdatedLabel" destination="gZ1-Jn-gxD" id="sww-uq-WfA"/>
                 <outlet property="metricSegment" destination="Q28-0l-Boc" id="QwT-YD-TKe"/>
+                <outlet property="statusLabel" destination="5AQ-3d-w4x" id="it2-YS-9Nk"/>
                 <outlet property="titleLabel" destination="ecd-Qw-wPO" id="1GH-I6-HQ3"/>
                 <outlet property="valueLabel" destination="HXI-cu-jy8" id="Hxt-a8-TWH"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -36,7 +38,7 @@
                     </connections>
                 </segmentedControl>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CQ9-xH-Xrp">
-                    <rect key="frame" x="20" y="229" width="353" height="200"/>
+                    <rect key="frame" x="20" y="258" width="353" height="200"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="200" id="Sa1-R7-xQm"/>
@@ -49,7 +51,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tAL-BC-Dgi">
-                    <rect key="frame" x="20" y="439" width="353" height="50"/>
+                    <rect key="frame" x="20" y="468" width="353" height="50"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ge2-tg-rMU">
                             <rect key="frame" x="307" y="7.6666666666666856" width="46" height="35"/>
@@ -84,16 +86,22 @@
                     </userDefinedRuntimeAttributes>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="svh-GT-453">
-                    <rect key="frame" x="20" y="526" width="353" height="46.666666666666629"/>
+                    <rect key="frame" x="20" y="555" width="353" height="46.666666666666629"/>
                     <string key="text">This chart shows how weight has changed over time. The dotted line represents the optimal range based on age and growth standards.</string>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="13"/>
                     <color key="textColor" systemColor="systemGray2Color"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="last updated today" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gZ1-Jn-gxD">
-                    <rect key="frame" x="20" y="499" width="133.66666666666666" height="18"/>
+                    <rect key="frame" x="20" y="528" width="133.66666666666666" height="18"/>
                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                     <color key="textColor" systemColor="systemGrayColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5AQ-3d-w4x">
+                    <rect key="frame" x="139.33333333333334" y="234" width="114.33333333333334" height="24"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                    <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
@@ -101,21 +109,23 @@
             <color key="backgroundColor" systemColor="systemGray6Color"/>
             <constraints>
                 <constraint firstItem="gZ1-Jn-gxD" firstAttribute="top" secondItem="tAL-BC-Dgi" secondAttribute="bottom" constant="10" id="0YQ-UJ-4rL"/>
+                <constraint firstItem="5AQ-3d-w4x" firstAttribute="top" secondItem="Q28-0l-Boc" secondAttribute="bottom" constant="15" id="0mj-3f-wqZ"/>
                 <constraint firstItem="Q28-0l-Boc" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="2oj-NH-WhO"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="Q28-0l-Boc" secondAttribute="trailing" constant="20" id="8a6-XB-r6W"/>
                 <constraint firstItem="Q28-0l-Boc" firstAttribute="top" secondItem="ecd-Qw-wPO" secondAttribute="bottom" constant="10" id="H1K-i4-8dm"/>
                 <constraint firstItem="tAL-BC-Dgi" firstAttribute="bottom" secondItem="gZ1-Jn-gxD" secondAttribute="top" constant="-10" id="ImN-6L-Rqp"/>
                 <constraint firstItem="ecd-Qw-wPO" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="J8t-5i-gH3"/>
                 <constraint firstItem="svh-GT-453" firstAttribute="top" secondItem="gZ1-Jn-gxD" secondAttribute="bottom" constant="9" id="JSu-SX-SiD"/>
+                <constraint firstItem="CQ9-xH-Xrp" firstAttribute="top" secondItem="5AQ-3d-w4x" secondAttribute="bottom" id="KpT-x3-pZh"/>
                 <constraint firstItem="tAL-BC-Dgi" firstAttribute="top" secondItem="CQ9-xH-Xrp" secondAttribute="bottom" constant="10" id="PN3-c3-ZqC"/>
                 <constraint firstItem="gZ1-Jn-gxD" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="Uiw-Et-9eq"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="CQ9-xH-Xrp" secondAttribute="trailing" constant="20" id="X2I-LE-6eP"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="svh-GT-453" secondAttribute="trailing" constant="20" id="b6M-Pi-3HD"/>
-                <constraint firstItem="CQ9-xH-Xrp" firstAttribute="top" secondItem="Q28-0l-Boc" secondAttribute="bottom" constant="10" id="cEW-RZ-lS2"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="tAL-BC-Dgi" secondAttribute="trailing" constant="20" id="dWb-Rh-Xwg"/>
                 <constraint firstItem="ecd-Qw-wPO" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="30" id="gHN-le-1ZW"/>
                 <constraint firstItem="tAL-BC-Dgi" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="gZj-kq-ocu"/>
                 <constraint firstItem="svh-GT-453" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="hze-ow-mb1"/>
+                <constraint firstItem="5AQ-3d-w4x" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="ktg-oJ-n7W"/>
                 <constraint firstItem="CQ9-xH-Xrp" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="l6w-2D-kfz"/>
             </constraints>
             <point key="canvasLocation" x="140" y="150"/>
@@ -124,16 +134,16 @@
     <resources>
         <image name="pencil" catalog="system" width="128" height="113"/>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray5Color">
-            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGrayColor">
-            <color red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
