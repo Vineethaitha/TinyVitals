@@ -24,6 +24,10 @@ final class GrowthTrendGraphView: UIView {
     var metric: GrowthMetric = .weight {
         didSet { setNeedsDisplay() }
     }
+    
+    var childAgeInMonths: Int = 0 {
+        didSet { setNeedsDisplay() }
+    }
 
     var data: [GrowthPoint] = [] {
         didSet {
@@ -87,8 +91,37 @@ final class GrowthTrendGraphView: UIView {
 
     // MARK: - Drawing
     override func draw(_ rect: CGRect) {
-        guard data.count > 1,
+        guard data.count >= 1,
               let context = UIGraphicsGetCurrentContext() else { return }
+        
+        if data.count == 1 {
+
+            let single = data[0]
+
+            let paddedMin = single.value - 2
+            let paddedMax = single.value + 2
+
+            let yRatio: CGFloat = 0.5
+            let x = bounds.midX
+            let y = rect.height - padding - yRatio * (rect.height - 2 * padding)
+
+            let dot = UIBezierPath(
+                ovalIn: CGRect(x: x - 6, y: y - 6, width: 12, height: 12)
+            )
+            UIColor.systemPink.setFill()
+            dot.fill()
+
+            // Draw baseline
+            let line = UIBezierPath()
+            line.move(to: CGPoint(x: padding, y: y))
+            line.addLine(to: CGPoint(x: rect.width - padding, y: y))
+            UIColor.systemGray4.setStroke()
+            line.setLineDash([4,4], count: 2, phase: 0)
+            line.stroke()
+
+            return
+        }
+
 
         context.clear(rect)
 
@@ -96,15 +129,22 @@ final class GrowthTrendGraphView: UIView {
         let minVal = values.min()!
         let maxVal = values.max()!
 
-        let paddedMin = floor(minVal - 1)
-        let paddedMax = ceil(maxVal + 1)
+        
+        let range = max(2, maxVal - minVal)
+        let paddedMin = minVal - range * 0.5
+        let paddedMax = maxVal + range * 0.5
+
 
         func point(for item: GrowthPoint) -> CGPoint {
-            let xRatio = CGFloat(item.month - data.first!.month) /
-                         CGFloat(data.last!.month - data.first!.month)
+            let monthRange = max(1, data.count - 1)
 
-            let yRatio = CGFloat((item.value - paddedMin) /
-                                (paddedMax - paddedMin))
+            let index = data.firstIndex(where: { $0.month == item.month }) ?? 0
+            let xRatio = CGFloat(index) / CGFloat(monthRange)
+
+
+            let totalRange = max(1, paddedMax - paddedMin)
+            let yRatio = CGFloat((item.value - paddedMin) / totalRange)
+
 
             let x = padding + xRatio * (rect.width - 2 * padding)
             let y = rect.height - padding - yRatio * (rect.height - 2 * padding)
@@ -130,11 +170,15 @@ final class GrowthTrendGraphView: UIView {
         let curve = UIBezierPath()
         curve.move(to: points[0])
         for i in 1..<points.count {
+            let prev = points[i - 1]
+            let current = points[i]
+            
             let mid = CGPoint(
-                x: (points[i - 1].x + points[i].x) / 2,
-                y: (points[i - 1].y + points[i].y) / 2
+                x: (prev.x + current.x) / 2,
+                y: (prev.y + current.y) / 2
             )
-            curve.addQuadCurve(to: mid, controlPoint: points[i - 1])
+            
+            curve.addQuadCurve(to: mid, controlPoint: prev)
         }
         curve.addLine(to: points.last!)
 
@@ -175,9 +219,11 @@ final class GrowthTrendGraphView: UIView {
 
         // OPTIMAL LINE (dynamic per selected month)
         if let selected = selectedPoint {
-            let optimal: Double? = metric == .weight
-                ? optimalWeightByMonth[selected.month]
-                : optimalHeightByMonth[selected.month]
+            let childAgeMonth = childAgeInMonths
+
+            let optimal = metric == .weight
+                ? optimalWeightByMonth[childAgeMonth]
+                : optimalHeightByMonth[childAgeMonth]
 
             if let optimal = optimal {
                 let ratio = (optimal - paddedMin) / (paddedMax - paddedMin)
@@ -253,8 +299,8 @@ final class GrowthTrendGraphView: UIView {
 
             // Avoid optimal label collision
             if let optimal = metric == .weight
-                ? optimalWeightByMonth[selected.month]
-                : optimalHeightByMonth[selected.month] {
+                ? optimalWeightByMonth[childAgeInMonths]
+                : optimalHeightByMonth[childAgeInMonths] {
 
                 let ratio = (optimal - paddedMin) / (paddedMax - paddedMin)
                 let optimalY = rect.height - padding -
@@ -312,7 +358,5 @@ final class GrowthTrendGraphView: UIView {
                 withAttributes: labelAttrs
             )
         }
-
-
     }
 }

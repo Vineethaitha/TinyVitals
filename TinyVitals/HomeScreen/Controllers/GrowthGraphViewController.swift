@@ -14,6 +14,7 @@ class GrowthGraphViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var valueLabel: UILabel!
 
+    var childAgeInMonths: Int = 0
     var initialMetric: GrowthMetric = .weight
 
     private let graph = GrowthTrendGraphView()
@@ -34,6 +35,12 @@ class GrowthGraphViewController: UIViewController {
         configureInitialState()
         updateDisplayedValue()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadGrowthData()
+    }
+
     
     @IBAction func editTapped(_ sender: UIButton) {
 
@@ -83,33 +90,83 @@ class GrowthGraphViewController: UIViewController {
     }
 
     private func showWeight() {
+
+        guard let child = activeChild else { return }
+
         titleLabel.text = "Weight Trend"
         graph.metric = .weight
-        graph.data = [
-            GrowthPoint(month: 0, value: 3.3),
-            GrowthPoint(month: 3, value: 6.1),
-            GrowthPoint(month: 5, value: 7.1),
-            GrowthPoint(month: 7, value: 7.7),
-            GrowthPoint(month: 9, value: 8.1),
-            GrowthPoint(month: 12, value: 8.5)
-        ]
+
+        Task {
+            do {
+                let points = try await GrowthService.shared.fetchGrowth(
+                    childId: child.id,
+                    metric: .weight
+                )
 
 
+
+                await MainActor.run {
+
+                    graph.childAgeInMonths = Calendar.current.dateComponents(
+                        [.month],
+                        from: child.dob,
+                        to: Date()
+                    ).month ?? 0
+
+                    graph.data = points
+                }
+
+
+            } catch {
+                print("❌ Failed to load growth data:", error)
+            }
+        }
     }
+
 
     private func showHeight() {
+
+        guard let child = activeChild else { return }
+
         titleLabel.text = "Height Trend"
         graph.metric = .height
-        graph.data = [
-            GrowthPoint(month: 0, value: 49.8),
-            GrowthPoint(month: 2, value: 57.2),
-            GrowthPoint(month: 4, value: 63.0),
-            GrowthPoint(month: 6, value: 66.8),
-            GrowthPoint(month: 9, value: 70.4),
-            GrowthPoint(month: 12, value: 73.6)
-        ]
 
+        Task {
+            do {
+                let points = try await GrowthService.shared.fetchGrowth(
+                    childId: child.id,
+                    metric: .height
+                )
+
+
+
+                await MainActor.run {
+
+                    graph.childAgeInMonths = Calendar.current.dateComponents(
+                        [.month],
+                        from: child.dob,
+                        to: Date()
+                    ).month ?? 0
+
+                    graph.data = points
+                }
+
+
+            } catch {
+                print("❌ Failed to load growth data:", error)
+            }
+        }
     }
+
+    
+    private func loadGrowthData() {
+        if metricSegment.selectedSegmentIndex == 0 {
+            showWeight()
+        } else {
+            showHeight()
+        }
+    }
+
     
     private func updateDisplayedValue() {
 
@@ -173,9 +230,17 @@ extension GrowthGraphViewController: AddMeasureDelegate {
             do {
                 try await ChildService.shared.updateChild(child)
 
+                try await GrowthService.shared.addGrowthEntry(
+                    childId: child.id,
+                    metric: type == .weight ? .weight : .height,
+                    value: value
+                )
+
+
                 await MainActor.run {
                     AppState.shared.updateChild(child)
                     self.activeChild = child
+                    self.loadGrowthData()
                     self.updateDisplayedValue()
                 }
 

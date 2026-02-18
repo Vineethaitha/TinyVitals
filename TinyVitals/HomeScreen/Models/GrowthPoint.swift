@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import UIKit
 
 struct GrowthPoint {
@@ -18,4 +17,3 @@ enum GrowthMetric {
     case weight
     case height
 }
-

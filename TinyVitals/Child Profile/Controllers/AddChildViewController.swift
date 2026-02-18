@@ -129,6 +129,8 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
     @IBAction func addChildTapped(_ sender: UIButton) {
         
+        
+        
 //        guard
 //            let name = nameTextField.text, !name.isEmpty,
 //            let gender = genderTextField.text, !gender.isEmpty,
@@ -205,11 +207,34 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                 
                 // ✅ generate vaccines immediately
                 if let childId = newChildDTO.id {
+
+                    // 1️⃣ Generate vaccines
                     try await VaccinationService.shared.generateVaccinesForChild(
                         childId: childId,
                         dob: dob
                     )
+
+                    // 2️⃣ Save initial weight entry
+                    if let weightText = self.weightTextField.text,
+                       let weight = Double(weightText) {
+                        try await GrowthService.shared.addGrowthEntry(
+                            childId: childId,
+                            metric: .weight,
+                            value: weight
+                        )
+                    }
+
+                    // 3️⃣ Save initial height entry
+                    if let heightText = self.heightTextField.text,
+                       let height = Double(heightText) {
+                        try await GrowthService.shared.addGrowthEntry(
+                            childId: childId,
+                            metric: .height,
+                            value: height
+                        )
+                    }
                 }
+
                 
                 // ✅ refresh children list
                 let childDTOs = try await ChildService.shared.fetchChildren(userId: userUUID)
