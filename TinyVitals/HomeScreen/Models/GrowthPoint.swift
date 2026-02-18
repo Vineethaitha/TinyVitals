@@ -11,7 +11,9 @@ import UIKit
 struct GrowthPoint {
     let month: Int
     let value: Double
+    let recordedAt: Date
 }
+
 
 enum GrowthMetric {
     case weight

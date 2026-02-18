@@ -313,27 +313,24 @@ class GrowthGraphViewController: UIViewController {
 
         // ---------- LAST UPDATED ----------
         let calendar = Calendar.current
+        let now = Date()
 
-        if let recordedDate = calendar.date(byAdding: .month,
-                                            value: month,
-                                            to: child.dob) {
+        let components = calendar.dateComponents(
+            [.day, .month],
+            from: latest.recordedAt,
+            to: now
+        )
 
-            let components = calendar.dateComponents(
-                [.day, .month],
-                from: recordedDate,
-                to: Date()
-            )
-
-            if components.day == 0 {
-                lastUpdatedLabel.text = "Last updated today"
-            }
-            else if let days = components.day, days < 30 {
-                lastUpdatedLabel.text = "Last updated \(days) day\(days == 1 ? "" : "s") ago"
-            }
-            else if let months = components.month {
-                lastUpdatedLabel.text = "Last updated \(months) month\(months == 1 ? "" : "s") ago"
-            }
+        if let days = components.day, days == 0 {
+            lastUpdatedLabel.text = "Last updated today"
         }
+        else if let days = components.day, days < 30 {
+            lastUpdatedLabel.text = "Last updated \(days) day\(days == 1 ? "" : "s") ago"
+        }
+        else if let months = components.month {
+            lastUpdatedLabel.text = "Last updated \(months) month\(months == 1 ? "" : "s") ago"
+        }
+
     }
 
 

@@ -542,6 +542,7 @@ class HomeScreenViewController: UIViewController {
         let month = latest.month
         let actual = latest.value
 
+        // Use graph reference logic
         let graph = GrowthTrendGraphView()
         graph.childGender = child.gender
 
@@ -551,16 +552,16 @@ class HomeScreenViewController: UIViewController {
 
         guard let optimalValue = optimal else { return }
 
+        // ---------- STATUS CALCULATION ----------
         let difference = abs(actual - optimalValue)
-
         let buffer = metric == .weight ? 2.0 : 1.0
-
         let isStable = difference <= buffer
 
-        let statusText = isStable ? "Stable" : "Needs Attention!"
-        let statusColor: UIColor = isStable ? UIColor(red: 108/255, green: 173/255, blue: 226/255, alpha: 1) : .systemOrange
+        let statusText = isStable ? "Stable" : "Needs Attention"
+        let statusColor: UIColor = isStable
+            ? UIColor(red: 108/255, green: 173/255, blue: 226/255, alpha: 1)
+            : .systemOrange
 
-        // ---------- STATUS LABEL ----------
         if metric == .weight {
             weightStatusLabel.text = statusText
             weightStatusLabel.textColor = statusColor
@@ -570,45 +571,37 @@ class HomeScreenViewController: UIViewController {
         }
 
         // ---------- LAST UPDATED ----------
+        let recordedDate = latest.recordedAt
+
         let calendar = Calendar.current
+        let components = calendar.dateComponents(
+            [.day, .month],
+            from: recordedDate,
+            to: Date()
+        )
 
-        if let recordedDate = calendar.date(
-            byAdding: .month,
-            value: month,
-            to: child.dob
-        ) {
+        let updateText: String
 
-            let components = calendar.dateComponents(
-                [.day],
-                from: recordedDate,
-                to: Date()
-            )
+        if components.day == 0 {
+            updateText = "Updated today"
+        }
+        else if let days = components.day, days < 30 {
+            updateText = "Updated \(days) day\(days == 1 ? "" : "s") ago"
+        }
+        else if let months = components.month {
+            updateText = "Updated \(months) month\(months == 1 ? "" : "s") ago"
+        }
+        else {
+            updateText = "Updated recently"
+        }
 
-            let text: String
-
-            if components.day == 0 {
-                text = "Updated today"
-            }
-            else if let days = components.day, days < 30 {
-                text = "Updated \(days) day\(days == 1 ? "" : "s") ago"
-            }
-            else {
-                let months = calendar.dateComponents(
-                    [.month],
-                    from: recordedDate,
-                    to: Date()
-                ).month ?? 0
-
-                text = "Updated \(months) month\(months == 1 ? "" : "s") ago"
-            }
-
-            if metric == .weight {
-                weightUpdateLabel.text = text
-            } else {
-                heightUpdateLabel.text = text
-            }
+        if metric == .weight {
+            weightUpdateLabel.text = updateText
+        } else {
+            heightUpdateLabel.text = updateText
         }
     }
+
 
 
     /*

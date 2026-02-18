@@ -116,12 +116,17 @@ final class GrowthService {
         let sortedMonths = latestPerMonth.keys.sorted()
         print("Growth points:", sortedMonths)
 
-        return sortedMonths.map { month in
-            GrowthPoint(
+        return sortedMonths.compactMap { month -> GrowthPoint? in
+            
+            guard let entry = latestPerMonth[month] else { return nil }
+            
+            return GrowthPoint(
                 month: month,
-                value: latestPerMonth[month]!.value
+                value: entry.value,
+                recordedAt: entry.recorded_at
             )
         }
+
     }
     
     func ensureBaselineExists(for child: ChildProfile) async throws {
