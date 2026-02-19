@@ -10,30 +10,21 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" ambiguous="YES" id="iN0-l3-epB" customClass="VaccinationHeaderView" customModule="TinyVitals">
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="VaccinationHeaderView" customModule="TinyVitals">
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="V9e-3r-0vq">
-                    <rect key="frame" x="16" y="134" width="361" height="184"/>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="V9e-3r-0vq">
+                    <rect key="frame" x="16" y="134" width="361" height="634"/>
                     <subviews>
-                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3u0-IG-0q7" userLabel="VaccinationProgressRingView" customClass="VaccinationProgressRingView" customModule="TinyVitals">
-                            <rect key="frame" x="105.66666666666669" y="0.0" width="150" height="150"/>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3u0-IG-0q7" userLabel="VaccinationProgressRingView" customClass="VaccinationProgressRingView" customModule="TinyVitals">
+                            <rect key="frame" x="105.66666666666669" y="0.0" width="150" height="634"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="150" id="imf-oO-pJB"/>
                                 <constraint firstAttribute="height" constant="150" id="oRA-6V-plR"/>
                             </constraints>
                         </view>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Progress" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pEE-eL-FWI">
-                            <rect key="frame" x="143" y="162" width="75.333333333333314" height="22"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="22" id="Q2n-Ec-DCN"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                            <color key="textColor" systemColor="secondaryLabelColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </stackView>
@@ -47,16 +38,12 @@
                 <constraint firstItem="V9e-3r-0vq" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="qck-I7-Nf9"/>
             </constraints>
             <connections>
-                <outlet property="progressLabel" destination="pEE-eL-FWI" id="k7Q-NK-zGe"/>
                 <outlet property="progressRingView" destination="3u0-IG-0q7" id="YSf-vA-oc1"/>
             </connections>
             <point key="canvasLocation" x="138.1679389312977" y="153.52112676056339"/>
         </view>
     </objects>
     <resources>
-        <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

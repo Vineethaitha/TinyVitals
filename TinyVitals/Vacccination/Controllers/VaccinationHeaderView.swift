@@ -11,7 +11,6 @@ import UIKit
 final class VaccinationHeaderView: UIView {
 
     @IBOutlet weak var progressRingView: VaccinationProgressRingView!
-    @IBOutlet weak var progressLabel: UILabel!
 
     var onRingTap: (() -> Void)?
 
@@ -37,8 +36,6 @@ final class VaccinationHeaderView: UIView {
         skipped: Int,
         rescheduled: Int
     ) {
-        progressLabel.text = "Progress"
-
         progressRingView.update(
             completed: completed,
             upcoming: upcoming,
