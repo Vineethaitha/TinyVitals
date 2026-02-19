@@ -12,7 +12,7 @@
             <connections>
                 <outlet property="calendarButton" destination="5p3-2x-E9d" id="5hY-7f-GZz"/>
                 <outlet property="filtersCollectionView" destination="yw7-vP-Rlb" id="f8Y-US-XTY"/>
-                <outlet property="searchTextField" destination="vU3-1s-EcR" id="0VD-ne-JI2"/>
+                <outlet property="searchBar" destination="H6U-3N-tWi" id="pUm-3y-ity"/>
                 <outlet property="vaccinesTableView" destination="32G-jk-2kI" id="qqE-Ig-J1d"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="GCz-d2-83D"/>
             </connections>
@@ -62,32 +62,14 @@
                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="q5D-4m-d8B">
                             <rect key="frame" x="0.0" y="42" width="353" height="40"/>
                             <subviews>
-                                <view contentMode="scaleToFill" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="dEc-L7-ewq">
+                                <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="H6U-3N-tWi">
                                     <rect key="frame" x="0.0" y="0.0" width="313" height="40"/>
-                                    <subviews>
-                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="  Search vaccines" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="vU3-1s-EcR">
-                                            <rect key="frame" x="0.0" y="0.0" width="313" height="40"/>
-                                            <color key="backgroundColor" systemColor="systemGray5Color"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                            <textInputTraits key="textInputTraits"/>
-                                        </textField>
-                                    </subviews>
-                                    <color key="backgroundColor" systemColor="systemGray6Color"/>
-                                    <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="vU3-1s-EcR" secondAttribute="trailing" id="1x6-Du-U9D"/>
-                                        <constraint firstAttribute="height" constant="40" id="AfX-CS-BLc"/>
-                                        <constraint firstAttribute="bottom" secondItem="vU3-1s-EcR" secondAttribute="bottom" id="aXm-8o-wtY"/>
-                                        <constraint firstItem="vU3-1s-EcR" firstAttribute="top" secondItem="dEc-L7-ewq" secondAttribute="top" id="iw1-g0-07m"/>
-                                        <constraint firstItem="vU3-1s-EcR" firstAttribute="leading" secondItem="dEc-L7-ewq" secondAttribute="leading" id="t6C-6I-eBb"/>
-                                    </constraints>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                            <integer key="value" value="20"/>
-                                        </userDefinedRuntimeAttribute>
-                                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.clipsToBounds" value="YES"/>
-                                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
-                                    </userDefinedRuntimeAttributes>
-                                </view>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                    <connections>
+                                        <outlet property="delegate" destination="-1" id="tGA-pQ-wNP"/>
+                                    </connections>
+                                </searchBar>
                                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cb5-Kg-sjM">
                                     <rect key="frame" x="321" y="4" width="32" height="32"/>
                                     <constraints>
@@ -131,11 +113,8 @@
     <resources>
         <image name="calendar.circle" catalog="system" width="128" height="123"/>
         <image name="ellipsis.circle" catalog="system" width="128" height="123"/>
-        <systemColor name="systemGray5Color">
-            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

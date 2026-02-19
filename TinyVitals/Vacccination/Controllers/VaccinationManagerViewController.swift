@@ -7,7 +7,7 @@
 
 import UIKit
 
-class VaccinationManagerViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, ActiveChildReceivable  {
+class VaccinationManagerViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, ActiveChildReceivable  {
 
     var activeChild: ChildProfile?
 
@@ -17,8 +17,8 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     // MARK: - Outlets
     @IBOutlet weak var filtersCollectionView: UICollectionView!
     @IBOutlet weak var vaccinesTableView: UITableView!
-    @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var calendarButton: UIButton!
+    @IBOutlet weak var searchBar: UISearchBar!
 
     // MARK: - Filters
     let filterOptions = [
@@ -38,7 +38,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
     ]
 
     var selectedFilterIndex = 0
-    private let clearSearchButton = UIButton(type: .system)
     
     // MARK: - Child DOB
     var childDOB: Date = Date()
@@ -107,14 +106,13 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         setupTableView()
         updateHeaderVisibility()
 
-        searchTextField.delegate = self
-        searchTextField.addTarget(
-            self,
-            action: #selector(searchTextChanged),
-            for: .editingChanged
-        )
+        searchBar.delegate = self
+        searchBar.placeholder = "Search vaccines"
+        searchBar.showsCancelButton = false
+        searchBar.searchBarStyle = .minimal
 
-        setupSearchClearButton()
+
+
         requestNotificationPermission()
 
         vaccinesTableView.showsVerticalScrollIndicator = false
@@ -622,14 +620,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         vaccinesTableView.reloadData()
     }
 
-
-    @objc func searchTextChanged() {
-        searchQuery = searchTextField.text?
-            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-
-        clearSearchButton.isHidden = searchQuery.isEmpty
-        applyFilter()
-    }
     
     @objc private func showDetails() {
 
@@ -655,38 +645,9 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         present(alert, animated: true)
     }
 
+    
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-
-    private func setupSearchClearButton() {
-
-        clearSearchButton.setImage(
-            UIImage(systemName: "xmark.circle.fill"),
-            for: .normal
-        )
-        clearSearchButton.tintColor = .secondaryLabel
-        clearSearchButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        clearSearchButton.isHidden = true
-
-        clearSearchButton.addTarget(
-            self,
-            action: #selector(clearSearchTapped),
-            for: .touchUpInside
-        )
-
-        searchTextField.rightView = clearSearchButton
-        searchTextField.rightViewMode = .always
-    }
-
-    @objc private func clearSearchTapped() {
-        searchTextField.text = ""
-        searchQuery = ""
-        clearSearchButton.isHidden = true
-        applyFilter()
-    }
+    
 
     @IBAction func calendarTapped(_ sender: UIButton) {
 
@@ -967,6 +928,23 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         vaccinesTableView.setContentOffset(.zero, animated: true)
     }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchQuery = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        applyFilter()
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchQuery = ""
+        applyFilter()
+        searchBar.resignFirstResponder()
+    }
+
 
 
 
