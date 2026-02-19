@@ -210,9 +210,84 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
     
     
+//    private func updateSummary(for date: Date) {
+//
+//        guard let child = activeChild else { return }
+//
+//        let formatter = DateFormatter()
+//        formatter.dateStyle = .full
+//        dateLabel.text = formatter.string(from: date)
+//
+//        Task {
+//            do {
+//                await MainActor.run { self.showLoader() }
+//
+//                let dtos = try await SymptomService.shared
+//                    .fetchSymptoms(childId: child.id)
+//
+//                let childId = child.id.uuidString
+//
+//                // 🔥 CLEAR OLD CACHE
+//                SymptomsDataStore.shared.clearEntries(for: childId)
+//
+//                // 🔥 REBUILD CACHE FROM SUPABASE
+//                for dto in dtos {
+//                    let entry = SymptomEntry(dto: dto)
+//                    SymptomsDataStore.shared.addEntry(entry, for: childId)
+//                }
+//
+//                // 🔥 NOW GET ENTRIES FROM STORE
+//                currentEntries = SymptomsDataStore.shared
+//                    .entries(for: date, childId: childId)
+//
+//                await MainActor.run {
+//
+//                    self.hideLoader()
+//
+//                    if currentEntries.isEmpty {
+//
+//                        self.emptyImageView.isHidden = false
+//                        self.emptyTitleLabel.isHidden = false
+//                        self.emptySubtitleLabel.isHidden = false
+//                        self.timelineTableView.isHidden = true
+//
+//                        self.emptyLottieView?.play()
+//                        self.summaryLabel.text =
+//                            "Your child doesn’t have any symptoms on this day"
+//
+//                        
+//                    } else {
+//
+//                        self.emptyImageView.isHidden = true
+//                        self.emptyTitleLabel.isHidden = true
+//                        self.emptySubtitleLabel.isHidden = true
+//                        self.timelineTableView.isHidden = false
+//
+//                        self.emptyLottieView?.stop()
+//                        self.summaryLabel.text =
+//                            "Your child has \(currentEntries.count) symptoms today"
+//                    }
+//
+//                    self.timelineTableView.reloadData()
+//
+//                    // 🔥 THIS MAKES DOTS APPEAR
+//                    self.calendarCollectionView.reloadData()
+//                }
+//
+//            } catch {
+//                print("❌ Failed to load symptoms:", error)
+//
+//                await MainActor.run {
+//                    self.hideLoader()
+//                }
+//            }
+//        }
+//    }
     private func updateSummary(for date: Date) {
 
         guard let child = activeChild else { return }
+
+        selectedDate = date   // ✅ Always sync state
 
         let formatter = DateFormatter()
         formatter.dateStyle = .full
@@ -227,16 +302,16 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
                 let childId = child.id.uuidString
 
-                // 🔥 CLEAR OLD CACHE
+                // Clear old cache
                 SymptomsDataStore.shared.clearEntries(for: childId)
 
-                // 🔥 REBUILD CACHE FROM SUPABASE
+                // Rebuild cache
                 for dto in dtos {
                     let entry = SymptomEntry(dto: dto)
                     SymptomsDataStore.shared.addEntry(entry, for: childId)
                 }
 
-                // 🔥 NOW GET ENTRIES FROM STORE
+                // Get entries for selected date
                 currentEntries = SymptomsDataStore.shared
                     .entries(for: date, childId: childId)
 
@@ -244,6 +319,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
                     self.hideLoader()
 
+                    // MARK: - Empty / Non Empty UI
                     if currentEntries.isEmpty {
 
                         self.emptyImageView.isHidden = false
@@ -255,7 +331,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                         self.summaryLabel.text =
                             "Your child doesn’t have any symptoms on this day"
 
-                        
                     } else {
 
                         self.emptyImageView.isHidden = true
@@ -265,13 +340,27 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
                         self.emptyLottieView?.stop()
                         self.summaryLabel.text =
-                            "Your child has \(currentEntries.count) symptoms today"
+                            "Your child has \(currentEntries.count) symptom\(currentEntries.count == 1 ? "" : "s") today"
                     }
 
                     self.timelineTableView.reloadData()
 
-                    // 🔥 THIS MAKES DOTS APPEAR
+                    // MARK: - 🔥 FIX SELECTION PROPERLY
+
                     self.calendarCollectionView.reloadData()
+
+                    if let index = self.visibleDates.firstIndex(where: {
+                        self.calendar.isDate($0, inSameDayAs: self.selectedDate)
+                    }) {
+
+                        let indexPath = IndexPath(item: index, section: 0)
+
+                        self.calendarCollectionView.selectItem(
+                            at: indexPath,
+                            animated: false,
+                            scrollPosition: []
+                        )
+                    }
                 }
 
             } catch {
@@ -283,6 +372,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
             }
         }
     }
+
 
 
 
@@ -573,23 +663,52 @@ extension SymptomsTrackerViewController: UICollectionViewDelegateFlowLayout {
 
 extension SymptomsTrackerViewController: UICollectionViewDelegate {
 
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        didSelectItemAt indexPath: IndexPath
+//    ) {
+//        selectedDate = visibleDates[indexPath.item]
+//
+//        collectionView.reloadData()
+//
+//        // RE-SELECT after reload
+//        collectionView.selectItem(
+//            at: indexPath,
+//            animated: false,
+//            scrollPosition: []
+//        )
+//
+//        updateSummary(for: selectedDate)
+//    }
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        didSelectItemAt indexPath: IndexPath
+//    ) {
+//        selectedDate = visibleDates[indexPath.item]
+//
+//        updateSummary(for: selectedDate)
+//    }
+    
     func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        selectedDate = visibleDates[indexPath.item]
+        let newDate = visibleDates[indexPath.item]
 
-        collectionView.reloadData()
+        // Deselect previously selected cell
+        if let previousIndex = visibleDates.firstIndex(where: {
+            calendar.isDate($0, inSameDayAs: selectedDate)
+        }) {
+            let previousIndexPath = IndexPath(item: previousIndex, section: 0)
+            collectionView.deselectItem(at: previousIndexPath, animated: false)
+        }
 
-        // RE-SELECT after reload
-        collectionView.selectItem(
-            at: indexPath,
-            animated: false,
-            scrollPosition: []
-        )
+        selectedDate = newDate
 
         updateSummary(for: selectedDate)
     }
+
+
 
 }
 
@@ -624,6 +743,16 @@ extension SymptomsTrackerViewController: ActiveChildReceivable {
 
         generateDates()
         calendarCollectionView.reloadData()
+        if let index = visibleDates.firstIndex(where: {
+            calendar.isDate($0, inSameDayAs: selectedDate)
+        }) {
+            calendarCollectionView.selectItem(
+                at: IndexPath(item: index, section: 0),
+                animated: false,
+                scrollPosition: []
+            )
+        }
+
         updateSummary(for: selectedDate)
     }
 }
