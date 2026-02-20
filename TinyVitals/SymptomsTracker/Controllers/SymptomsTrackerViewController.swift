@@ -292,7 +292,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
-
+        showLoader()
         Task {
             do {
                 await MainActor.run { self.showLoader() }
@@ -345,7 +345,6 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
                     self.timelineTableView.reloadData()
 
-                    // MARK: - 🔥 FIX SELECTION PROPERLY
 
                     self.calendarCollectionView.reloadData()
 
