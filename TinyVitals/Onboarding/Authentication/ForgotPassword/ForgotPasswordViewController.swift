@@ -14,6 +14,9 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var sendLinkButton: UIButton!
     
+    private let loaderContainer = UIView()
+    private let loader = UIActivityIndicatorView(style: .large)
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +28,8 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
 //        self.title = "Password Recovery"
         emailTextField.delegate = self
         emailTextField.keyboardType = .emailAddress
+        setupLoader()
+
     }
     
     // MARK: - Action
@@ -36,13 +41,13 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-//        showLoader()
+        showLoader()
 
         authService.resetPassword(email: email) { [weak self] result in
             guard let self = self else { return }
 
             DispatchQueue.main.async {
-//                self.hideLoader()
+                self.hideLoader()
 
                 switch result {
                 case .success:
@@ -93,4 +98,40 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alert, animated: true)
     }
+    
+    private func setupLoader() {
+        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
+        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
+        loaderContainer.isHidden = true
+
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+
+        loaderContainer.addSubview(loader)
+        view.addSubview(loaderContainer)
+
+        NSLayoutConstraint.activate([
+            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
+        ])
+    }
+    
+    private func showLoader() {
+        loaderContainer.isHidden = false
+        loader.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+
+    private func hideLoader() {
+        loader.stopAnimating()
+        loaderContainer.isHidden = true
+        view.isUserInteractionEnabled = true
+    }
+
+
 }
