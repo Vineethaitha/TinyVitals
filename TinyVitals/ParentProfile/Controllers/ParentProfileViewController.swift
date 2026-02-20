@@ -48,6 +48,11 @@ class ParentProfileViewController: UIViewController {
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
         loadUserInfo()
     }
+    
+    @IBAction func editButtonTapped(_ sender: Any) {
+        
+    }
+    
 
     private func addTap(to view: UIView, type: InfoViewController.InfoType) {
         view.isUserInteractionEnabled = true
