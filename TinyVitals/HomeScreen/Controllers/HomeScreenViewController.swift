@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import SafariServices
+
 
 class HomeScreenViewController: UIViewController {
     
@@ -46,19 +48,23 @@ class HomeScreenViewController: UIViewController {
         Article(
             title: "Healthy Living",
             subtitle: "By HealthyChildren.org",
-            animationName: "Food Choice"
+            animationName: "Food Choice",
+            url: "https://www.healthychildren.org"
         ),
         Article(
             title: "Healthy Habits for Healthy Kids",
             subtitle: "By Mississippi State health department",
-            animationName: "Kids Learning From Home"
+            animationName: "Kids Learning From Home",
+            url: "https://msdh.ms.gov"
         ),
         Article(
             title: "Healthy Sleep Habits",
             subtitle: "By Stanford Children's Health",
-            animationName: "pink baby"
+            animationName: "pink baby",
+            url: "https://www.stanfordchildrens.org"
         )
     ]
+
     
     private var autoScrollTimer: Timer?
     private var currentPage = 0
@@ -655,6 +661,27 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
         currentPage = page
         pageControl.currentPage = page
     }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
+
+        Haptics.impact(.light)
+
+        let article = articles[indexPath.item]
+
+        guard let url = URL(string: article.url) else { return }
+
+        let safariVC = SFSafariViewController(url: url)
+        safariVC.preferredControlTintColor = UIColor(
+            red: 237/255,
+            green: 112/255,
+            blue: 153/255,
+            alpha: 1
+        )
+
+        present(safariVC, animated: true)
+    }
+
 }
 
 extension HomeScreenViewController: UIAdaptivePresentationControllerDelegate {

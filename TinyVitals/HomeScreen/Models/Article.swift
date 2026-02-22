@@ -12,4 +12,6 @@ struct Article {
     let title: String
     let subtitle: String
     let animationName: String
+    let url: String
 }
+
