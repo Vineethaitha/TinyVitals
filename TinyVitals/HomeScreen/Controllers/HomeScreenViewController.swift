@@ -122,6 +122,8 @@ class HomeScreenViewController: UIViewController {
 
         //Always pull latest from AppState
         activeChild = AppState.shared.activeChild
+        
+        refreshForActiveChild()
 
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
     }

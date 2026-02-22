@@ -682,8 +682,8 @@ final class GrowthTrendGraphView: UIView {
 
             // Avoid optimal label collision
             if let optimal = metric == .weight
-                ? optimalWeightValue(for: childAgeInMonths)
-                : optimalHeightValue(for: childAgeInMonths) {
+                ? optimalWeightValue(for: selected.month)
+                : optimalHeightValue(for: selected.month) {
 
                 let ratio = (optimal - paddedMin) / (paddedMax - paddedMin)
                 let optimalY = rect.height - padding -

@@ -383,8 +383,8 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         }
 
         // ✅ AGE FIELD
-        ageTextField.isUserInteractionEnabled = (mode != .view)
-        ageTextField.alpha = (mode != .view) ? 1.0 : 0.6
+        ageTextField.isUserInteractionEnabled = (mode == .add)
+        ageTextField.alpha = (mode == .add) ? 1.0 : 0.6
 
         // ✅ AVATAR FIELD
         avatarImageView.isUserInteractionEnabled = (mode != .view)
@@ -525,17 +525,17 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
         guard let child = child else { return }
 
-        let yRow = agePicker.selectedRow(inComponent: 0)
-        let mRow = agePicker.selectedRow(inComponent: 1)
+//        let yRow = agePicker.selectedRow(inComponent: 0)
+//        let mRow = agePicker.selectedRow(inComponent: 1)
+//
+//        let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
+//        let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
+//
+//        var components = DateComponents()
+//        components.year = -selectedYears
+//        components.month = -selectedMonths
 
-        let selectedYears  = yRow > 0 ? Int(years[yRow]) ?? 0 : 0
-        let selectedMonths = mRow > 0 ? Int(months[mRow]) ?? 0 : 0
-
-        var components = DateComponents()
-        components.year = -selectedYears
-        components.month = -selectedMonths
-
-        let updatedDOB = Calendar.current.date(byAdding: components, to: Date()) ?? child.dob
+        let updatedDOB = child.dob
 
         var updatedPhotoFilename = child.photoFilename
 
@@ -560,14 +560,14 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             do {
                 try await ChildService.shared.updateChild(updatedChild)
                 
-                let today = Calendar.current.startOfDay(for: Date())
+                let recordedAt = Calendar.current.startOfDay(for: Date())
 
                 if let weight = updatedChild.weight {
                     try await GrowthService.shared.addGrowthEntry(
                         childId: updatedChild.id,
                         metric: .weight,
                         value: weight,
-                        recordedAt: today
+                        recordedAt: recordedAt
                     )
                 }
 
@@ -576,7 +576,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                         childId: updatedChild.id,
                         metric: .height,
                         value: height,
-                        recordedAt: today
+                        recordedAt: recordedAt
                     )
                 }
 
