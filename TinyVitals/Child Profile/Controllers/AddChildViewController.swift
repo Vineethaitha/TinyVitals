@@ -217,55 +217,50 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                     let calendar = Calendar.current
                     let now = Date()
 
-                    let baselineDate = calendar.startOfDay(for: dob)
-                    let currentDate = calendar.startOfDay(for: now)
+            
+                    let baselineDate = Calendar.current.startOfDay(for: dob)
+                    let currentDate = Calendar.current.startOfDay(for: Date())
 
-                    let ageInMonths = calendar.dateComponents(
-                        [.month],
-                        from: baselineDate,
-                        to: currentDate
-                    ).month ?? 0
-
-                    // WEIGHT
+                    // ALWAYS insert baseline
                     if let weightText = self.weightTextField.text,
                        let weight = Double(weightText) {
-
-                        if ageInMonths > 0 {
-                            try await GrowthService.shared.addGrowthEntry(
-                                childId: childId,
-                                metric: .weight,
-                                value: weight,
-                                recordedAt: baselineDate
-                            )
-                        }
 
                         try await GrowthService.shared.addGrowthEntry(
                             childId: childId,
                             metric: .weight,
                             value: weight,
-                            recordedAt: currentDate
+                            recordedAt: baselineDate
                         )
-                    }
 
-                    // HEIGHT
-                    if let heightText = self.heightTextField.text,
-                       let height = Double(heightText) {
-
-                        if ageInMonths > 0 {
+                        // Only insert current if not newborn
+                        if baselineDate != currentDate {
                             try await GrowthService.shared.addGrowthEntry(
                                 childId: childId,
-                                metric: .height,
-                                value: height,
-                                recordedAt: baselineDate
+                                metric: .weight,
+                                value: weight,
+                                recordedAt: currentDate
                             )
                         }
+                    }
+
+                    if let heightText = self.heightTextField.text,
+                       let height = Double(heightText) {
 
                         try await GrowthService.shared.addGrowthEntry(
                             childId: childId,
                             metric: .height,
                             value: height,
-                            recordedAt: currentDate
+                            recordedAt: baselineDate
                         )
+
+                        if baselineDate != currentDate {
+                            try await GrowthService.shared.addGrowthEntry(
+                                childId: childId,
+                                metric: .height,
+                                value: height,
+                                recordedAt: currentDate
+                            )
+                        }
                     }
 
                 }
@@ -564,6 +559,26 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         Task {
             do {
                 try await ChildService.shared.updateChild(updatedChild)
+                
+                let today = Calendar.current.startOfDay(for: Date())
+
+                if let weight = updatedChild.weight {
+                    try await GrowthService.shared.addGrowthEntry(
+                        childId: updatedChild.id,
+                        metric: .weight,
+                        value: weight,
+                        recordedAt: today
+                    )
+                }
+
+                if let height = updatedChild.height {
+                    try await GrowthService.shared.addGrowthEntry(
+                        childId: updatedChild.id,
+                        metric: .height,
+                        value: height,
+                        recordedAt: today
+                    )
+                }
 
                 await MainActor.run {
                     AppState.shared.updateChild(updatedChild)

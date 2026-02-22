@@ -23,12 +23,16 @@ class GrowthGraphViewController: UIViewController {
     private let graph = GrowthTrendGraphView()
     
     var activeChild: ChildProfile?
+    
+    private let loaderContainer = UIView()
+    private let loader = UIActivityIndicatorView(style: .large)
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        setupLoader()
+
 
         
         graph.frame = graphContainer.bounds
@@ -91,40 +95,7 @@ class GrowthGraphViewController: UIViewController {
             showHeight()
         }
     }
-
-//    private func showWeight() {
-//
-//        guard let child = activeChild else { return }
-//
-//        titleLabel.text = "Weight Trend"
-//        graph.metric = .weight
-//
-//        Task {
-//            do {
-//                let points = try await GrowthService.shared.fetchGrowth(
-//                    childId: child.id,
-//                    metric: .weight
-//                )
-//
-//
-//
-//                await MainActor.run {
-//
-//                    graph.childAgeInMonths = Calendar.current.dateComponents(
-//                        [.month],
-//                        from: child.dob,
-//                        to: Date()
-//                    ).month ?? 0
-//
-//                    graph.data = points
-//                }
-//
-//
-//            } catch {
-//                print("❌ Failed to load growth data:", error)
-//            }
-//        }
-//    }
+    
     private func showWeight() {
 
         guard let child = activeChild else { return }
@@ -132,11 +103,13 @@ class GrowthGraphViewController: UIViewController {
         titleLabel.text = "Weight Trend"
         graph.metric = .weight
         graph.childGender = child.gender
+        
+        showLoader()
 
         Task {
             do {
                 
-                try await GrowthService.shared.ensureBaselineExists(for: child)
+//                try await GrowthService.shared.ensureBaselineExists(for: child)
 
                 let points = try await GrowthService.shared.fetchGrowth(
                     child: child,
@@ -153,49 +126,17 @@ class GrowthGraphViewController: UIViewController {
 
                     graph.data = points
                     updateStatusLabel(using: points)
+                    hideLoader()
                 }
 
             } catch {
                 print("❌ Failed to load growth data:", error)
+                await MainActor.run {
+                    hideLoader()
+                }
             }
         }
     }
-
-
-
-//    private func showHeight() {
-//
-//        guard let child = activeChild else { return }
-//
-//        titleLabel.text = "Height Trend"
-//        graph.metric = .height
-//
-//        Task {
-//            do {
-//                let points = try await GrowthService.shared.fetchGrowth(
-//                    childId: child.id,
-//                    metric: .height
-//                )
-//
-//
-//
-//                await MainActor.run {
-//
-//                    graph.childAgeInMonths = Calendar.current.dateComponents(
-//                        [.month],
-//                        from: child.dob,
-//                        to: Date()
-//                    ).month ?? 0
-//
-//                    graph.data = points
-//                }
-//
-//
-//            } catch {
-//                print("❌ Failed to load growth data:", error)
-//            }
-//        }
-//    }
     
     private func showHeight() {
 
@@ -205,11 +146,11 @@ class GrowthGraphViewController: UIViewController {
         graph.metric = .height
         graph.childGender = child.gender
         
+        showLoader()
         
-
         Task {
             do {
-                try await GrowthService.shared.ensureBaselineExists(for: child)
+//                try await GrowthService.shared.ensureBaselineExists(for: child)
                 
                 let points = try await GrowthService.shared.fetchGrowth(
                     child: child,
@@ -226,10 +167,14 @@ class GrowthGraphViewController: UIViewController {
 
                     graph.data = points
                     updateStatusLabel(using: points)
+                    hideLoader()
                 }
 
             } catch {
                 print("❌ Failed to load growth data:", error)
+                await MainActor.run {
+                    hideLoader()
+                }
             }
         }
     }
@@ -335,6 +280,40 @@ class GrowthGraphViewController: UIViewController {
 
 
 
+
+    private func setupLoader() {
+        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
+        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
+        loaderContainer.isHidden = true
+
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+
+        loaderContainer.addSubview(loader)
+        view.addSubview(loaderContainer)
+
+        NSLayoutConstraint.activate([
+            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
+        ])
+    }
+
+    private func showLoader() {
+        loaderContainer.isHidden = false
+        loader.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+
+    private func hideLoader() {
+        loader.stopAnimating()
+        loaderContainer.isHidden = true
+        view.isUserInteractionEnabled = true
+    }
 
 
 

@@ -519,15 +519,16 @@ final class GrowthTrendGraphView: UIView {
 
 
         func point(for item: GrowthPoint) -> CGPoint {
-            let monthRange = max(1, data.count - 1)
 
-            let index = data.firstIndex(where: { $0.month == item.month }) ?? 0
-            let xRatio = CGFloat(index) / CGFloat(monthRange)
+            let minMonth = data.first!.month
+            let maxMonth = data.last!.month
 
+            let monthSpan = max(1, maxMonth - minMonth)
+
+            let xRatio = CGFloat(item.month - minMonth) / CGFloat(monthSpan)
 
             let totalRange = max(1, paddedMax - paddedMin)
             let yRatio = CGFloat((item.value - paddedMin) / totalRange)
-
 
             let x = padding + xRatio * (rect.width - 2 * padding)
             let y = rect.height - padding - yRatio * (rect.height - 2 * padding)
