@@ -19,6 +19,7 @@ class ParentProfileViewController: UIViewController {
     @IBOutlet weak var userEmail: UILabel!
     @IBOutlet weak var logoutView: UIView!
 
+    @IBOutlet weak var deleteAccountView: UIView!
     private let activityIndicator = UIActivityIndicatorView(style: .large)
 
     override func viewDidLoad() {
@@ -40,6 +41,12 @@ class ParentProfileViewController: UIViewController {
         logoutView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(infoTapped(_:)))
         )
+        
+//        deleteAccountView.isUserInteractionEnabled = true
+//        deleteAccountView.addGestureRecognizer(
+//            UITapGestureRecognizer(target: self, action: #selector(deleteAccountTapped))
+//        )
+
 
     }
     
@@ -48,11 +55,6 @@ class ParentProfileViewController: UIViewController {
         (tabBarController as? MainTabBarController)?.refreshNavBarForVisibleVC()
         loadUserInfo()
     }
-    
-    @IBAction func editButtonTapped(_ sender: Any) {
-        
-    }
-    
 
     private func addTap(to view: UIView, type: InfoViewController.InfoType) {
         view.isUserInteractionEnabled = true
@@ -195,13 +197,156 @@ class ParentProfileViewController: UIViewController {
         activityIndicator.stopAnimating()
     }
 
+    
+    @IBAction func editNameTapped(_ sender: Any) {
+
+        Haptics.impact(.light)
+
+        let alert = UIAlertController(
+            title: "Edit Name",
+            message: "Update your display name",
+            preferredStyle: .alert
+        )
+
+        alert.addTextField { textField in
+            textField.placeholder = "Enter your name"
+            textField.text = self.userName.text
+            textField.autocapitalizationType = .words
+            textField.clearButtonMode = .whileEditing
+        }
+
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+
+        let save = UIAlertAction(title: "Save", style: .default) { _ in
+
+            guard let newName = alert.textFields?.first?.text,
+                  !newName.trimmingCharacters(in: .whitespaces).isEmpty else {
+                return
+            }
+            self.updateUserName(newName)
+        }
+
+        alert.addAction(cancel)
+        alert.addAction(save)
+
+        present(alert, animated: true)
+    }
+    
+    private func updateUserName(_ newName: String) {
+
+        showLoader()
+
+        Task {
+            do {
+                try await SupabaseAuthService.shared.client.auth.update(
+                    user: .init(
+                        data: ["full_name": .string(newName)]
+                    )
+                )
+
+                await MainActor.run {
+                    self.userName.text = newName
+                    self.hideLoader()
+                }
+
+            } catch {
+
+                await MainActor.run {
+                    self.hideLoader()
+
+                    let errorAlert = UIAlertController(
+                        title: "Update Failed",
+                        message: error.localizedDescription,
+                        preferredStyle: .alert
+                    )
+                    errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(errorAlert, animated: true)
+                }
+            }
+        }
+    }
+    
+//    @objc private func deleteAccountTapped() {
+//
+//        Haptics.notification(.warning)
+//
+//        let alert = UIAlertController(
+//            title: "Delete Account",
+//            message: "This action cannot be undone. All your data will be permanently deleted.",
+//            preferredStyle: .alert
+//        )
+//
+//        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+//
+//        let delete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+//            self.performAccountDeletion()
+//        }
+//
+//        alert.addAction(cancel)
+//        alert.addAction(delete)
+//
+//        present(alert, animated: true)
+//    }
+//
+//    private func performAccountDeletion() {
+//
+//        showLoader()
+//
+//        Task {
+//            do {
+//                try await SupabaseAuthService.shared.client.functions.invoke(
+//                    "delete-user"
+//                )
+//
+//                await SupabaseAuthService.shared.logout()
+//
+//                await MainActor.run {
+//                    self.hideLoader()
+//
+//                    AppState.shared.clear()
+//
+//                    guard
+//                        let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//                        let window = scene.windows.first
+//                    else { return }
+//
+//                    let loginVC = LoginViewController(
+//                        nibName: "LoginViewController",
+//                        bundle: nil
+//                    )
+//
+//                    let nav = UINavigationController(rootViewController: loginVC)
+//
+//                    UIView.transition(
+//                        with: window,
+//                        duration: 0.35,
+//                        options: .transitionCrossDissolve,
+//                        animations: {
+//                            window.rootViewController = nav
+//                            window.makeKeyAndVisible()
+//                        }
+//                    )
+//                }
+//
+//            } catch {
+//
+//                await MainActor.run {
+//                    self.hideLoader()
+//
+//                    let errorAlert = UIAlertController(
+//                        title: "Deletion Failed",
+//                        message: error.localizedDescription,
+//                        preferredStyle: .alert
+//                    )
+//                    errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+//                    self.present(errorAlert, animated: true)
+//                }
+//            }
+//        }
+//    }
 
 
-
-
-
-
-
+    
     /*
     // MARK: - Navigation
 
