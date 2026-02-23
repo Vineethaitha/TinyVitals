@@ -46,7 +46,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B01068A72EF3D4F300F1FA7B /* Exceptions for "TinyVitals" folder in "TinyVitals" target */ = {
+		B0BBBB5A2F4CEAD600297A69 /* Exceptions for "TinyVitals" folder in "TinyVitals" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -59,7 +59,7 @@
 		B01068812EF3D4F200F1FA7B /* TinyVitals */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B01068A72EF3D4F300F1FA7B /* Exceptions for "TinyVitals" folder in "TinyVitals" target */,
+				B0BBBB5A2F4CEAD600297A69 /* Exceptions for "TinyVitals" folder in "TinyVitals" target */,
 			);
 			path = TinyVitals;
 			sourceTree = "<group>";
