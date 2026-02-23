@@ -382,7 +382,6 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             $0?.alpha = editable ? 1.0 : 0.6
         }
 
-        // ✅ AGE FIELD
         ageTextField.isUserInteractionEnabled = (mode == .add)
         ageTextField.alpha = (mode == .add) ? 1.0 : 0.6
 
@@ -636,20 +635,20 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     }
 
     
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-
-        if textField == weightTextField {
-            openAddMeasure(type: .weight)
-            return false
-        }
-
-        if textField == heightTextField {
-            openAddMeasure(type: .height)
-            return false
-        }
-
-        return true
-    }
+//    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+//
+//        if textField == weightTextField {
+//            openAddMeasure(type: .weight)
+//            return false
+//        }
+//
+//        if textField == heightTextField {
+//            openAddMeasure(type: .height)
+//            return false
+//        }
+//
+//        return true
+//    }
     
     private func openAddMeasure(type: AddMeasureViewController.MeasureType) {
 
@@ -853,10 +852,24 @@ private func saveImageToDisk(_ image: UIImage) -> String? {
 
 extension AddChildViewController: UITextFieldDelegate {
 
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        if textField == ageTextField && textField.text?.isEmpty == true {
-            updateAgeText()
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+
+        // ❌ Completely block age editing unless in add mode
+        if textField == ageTextField {
+            return mode == .add
         }
+
+        if textField == weightTextField {
+            openAddMeasure(type: .weight)
+            return false
+        }
+
+        if textField == heightTextField {
+            openAddMeasure(type: .height)
+            return false
+        }
+
+        return true
     }
 }
 
