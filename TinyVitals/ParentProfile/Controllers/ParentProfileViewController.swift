@@ -19,7 +19,6 @@ class ParentProfileViewController: UIViewController {
     @IBOutlet weak var userEmail: UILabel!
     @IBOutlet weak var logoutView: UIView!
 
-    @IBOutlet weak var deleteAccountView: UIView!
     private let activityIndicator = UIActivityIndicatorView(style: .large)
 
     override func viewDidLoad() {
