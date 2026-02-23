@@ -30,9 +30,41 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else { return }
+        
+        print("🔥 CALLBACK URL:", url)
+        
+        guard
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            let queryItems = components.queryItems,
+            let code = queryItems.first(where: { $0.name == "code" })?.value
+        else {
+            print("No auth code found in callback URL")
+            return
+        }
 
         Task {
-            try? await SupabaseAuthService.shared.client.auth.session
+            do {
+                let session = try await SupabaseAuthService
+                    .shared
+                    .client
+                    .auth
+                    .exchangeCodeForSession(authCode: code)
+
+                DispatchQueue.main.async {
+                    AppState.shared.userId = session.user.id.uuidString
+
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let window = windowScene.windows.first {
+
+                        let tabBar = MainTabBarController()
+                        window.rootViewController = tabBar
+                        window.makeKeyAndVisible()
+                    }
+                }
+
+            } catch {
+                print("OAuth exchange failed:", error)
+            }
         }
     }
 
