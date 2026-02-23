@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Supabase
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -25,6 +26,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let splashVC = splashScreenViewController(nibName: "splashScreenViewController", bundle: Bundle.main)
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else { return }
+
+        Task {
+            try? await SupabaseAuthService.shared.client.auth.session
+        }
     }
 
     

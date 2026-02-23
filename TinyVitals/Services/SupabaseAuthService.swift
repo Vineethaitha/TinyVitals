@@ -96,12 +96,13 @@ final class SupabaseAuthService: AuthService {
     ) {
         Task {
             do {
-                    let session = try await client.auth.signInWithOAuth(
+                let redirectURL = URL(string: "tinyvitals://auth-callback")!
+
+                try await client.auth.signInWithOAuth(
                     provider: .google,
-                    redirectTo: URL(string: "https://lclsmfmmyybfsdqdnfmk.supabase.co/auth/v1/callback")
+                    redirectTo: redirectURL
                 )
 
-                completion(.success(session.user.id.uuidString))
             } catch {
                 completion(.failure(error))
             }

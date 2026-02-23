@@ -19,7 +19,7 @@
 			<string>supabase-login</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>https://lclsmfmmyybfsdqdnfmk.supabase.co/auth/v1/callback</string>
+				<string>tinyvitals</string>
 			</array>
 		</dict>
 		<dict/>
