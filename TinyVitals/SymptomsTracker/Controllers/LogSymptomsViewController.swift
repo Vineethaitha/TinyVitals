@@ -70,7 +70,13 @@ final class LogSymptomsViewController: UIViewController {
         notesTextView.delegate = self
         notesTextView.text = notesPlaceholder
         notesTextView.textColor = .secondaryLabel
-
+        
+        if let child = activeChild {
+            currentWeight = child.weight ?? currentWeight
+            currentHeight = child.height ?? currentHeight
+        }
+        
+        updateButtonTitle()
 
     }
 
@@ -144,7 +150,7 @@ final class LogSymptomsViewController: UIViewController {
         Haptics.impact(.light)
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .height
-        vc.selectedInitialValue = currentHeight
+        vc.selectedInitialValue = activeChild?.height ?? currentHeight
         vc.delegate = self
         present(vc, animated: true)
     }
@@ -153,7 +159,7 @@ final class LogSymptomsViewController: UIViewController {
         Haptics.impact(.light)
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .weight
-        vc.selectedInitialValue = currentWeight
+        vc.selectedInitialValue = activeChild?.weight ?? currentWeight
         vc.delegate = self
         present(vc, animated: true)
     }
