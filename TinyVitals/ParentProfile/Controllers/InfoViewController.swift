@@ -110,82 +110,88 @@ final class InfoViewController: UIViewController {
         switch type {
 
         case .about:
-            title = "About Us"
+            title = "About TinyVitals"
             body =
             """
-            TinyVitals is a thoughtfully designed iOS application created to help parents manage, track, and understand their child’s health journey from birth through early childhood.
+            TinyVitals – Smarter Care for Growing Kids
 
-            Parenting involves juggling vaccination cards, growth charts, prescriptions, lab reports, and appointment notes across multiple hospitals and clinics. ChildProfile brings all of this information into one secure, easy-to-use place.
+            TinyVitals is a modern child health tracking app designed to help parents monitor growth, symptoms, and overall well-being in one secure place.
 
-            Our mission is to reduce confusion, prevent missed vaccinations, and empower parents with clear insights into their child’s growth and health trends.
+            Parenting can feel overwhelming. TinyVitals simplifies health tracking by helping you:
 
-            Key Highlights
-            • Centralized medical records for each child
-            • Growth tracking with visual charts
-            • Vaccination management and reminders
-            • Secure storage of reports and prescriptions
-            • Designed for families with multiple children
+            • Track weight and height growth trends
+            • Log symptoms and temperature readings
+            • Monitor severity and notes
+            • Manage multiple child profiles
+            • View growth comparisons against standard benchmarks
 
-            ChildProfile is not a replacement for medical professionals. It is a companion app built to help parents stay organized, informed, and prepared.
+            Our mission is to provide clarity, confidence, and peace of mind for parents through thoughtful design and secure technology.
 
-            Built with care, privacy, and simplicity at heart.
+            TinyVitals is built with privacy, security, and simplicity at its core.
+
+            This app is currently in beta. We appreciate your feedback as we continue improving the experience.
             """
-            headings = ["Key Highlights"]
+            headings = ["TinyVitals – Smarter Care for Growing Kids"]
 
         case .terms:
             title = "Terms & Conditions"
             body =
             """
-            By using ChildProfile, you agree to the following terms and conditions.
+            By using TinyVitals, you agree to the following terms and conditions.
 
             Medical Disclaimer
-            The app does not provide medical diagnosis, treatment, or professional advice. All medical decisions should be made in consultation with qualified healthcare providers.
+            TinyVitals does not provide medical advice, diagnosis, or treatment. The information recorded in the app is for tracking purposes only. Always consult a qualified healthcare professional for medical decisions.
 
-            Data Accuracy
-            You are responsible for ensuring the accuracy of the information you enter, including growth data, vaccination details, and medical records.
+            User Responsibility
+            You are responsible for the accuracy of the data you enter, including growth measurements, symptoms, and medical notes.
 
-            Usage Responsibility
-            You are responsible for maintaining the confidentiality of your device and preventing unauthorized access to sensitive health information.
+            Account & Data Security
+            You are responsible for maintaining the confidentiality of your account and device access.
 
-            Updates & Changes
-            We may update features, policies, or the user interface to improve the app experience. Continued use implies acceptance of these updates.
+            Service Updates
+            We may update features, functionality, or policies to improve the app experience. Continued use of the app implies acceptance of these updates.
 
-            Any misuse of the app may result in restricted access.
+            Misuse of the app may result in restricted access.
             """
             headings = [
                 "Medical Disclaimer",
-                "Data Accuracy",
-                "Usage Responsibility",
-                "Updates & Changes"
+                "User Responsibility",
+                "Account & Data Security",
+                "Service Updates"
             ]
 
         case .privacy:
             title = "Privacy Policy"
             body =
             """
-            Your child’s health data is extremely sensitive, and privacy is at the core of ChildProfile.
+            Your child’s health information is sensitive. TinyVitals is designed with privacy as a top priority.
 
             Data Collection
             We collect only the information you explicitly provide, such as:
             • Child’s name and date of birth
             • Growth measurements
-            • Vaccination details
-            • Uploaded medical records or images
+            • Symptom logs and notes
+            • Uploaded images
+            • Account email for authentication
 
-            Data Storage
-            All data is stored securely on your device. We do not sell, share, or use your data for advertising or analytics purposes.
+            Data Usage
+            Your data is used solely to provide core app functionality.
+
+            Data Storage & Security
+            Data is stored securely using encrypted services. We do not sell, rent, or share your data for advertising or marketing purposes.
 
             Third-Party Services
-            ChildProfile does not integrate with third-party tracking or advertising platforms that collect personal health data.
+            TinyVitals uses secure backend services for authentication and storage but does not integrate third-party advertising or tracking systems.
 
             User Control
-            You have full control over editing, deleting, and managing all stored information at any time.
+            You can edit or delete your data at any time within the app.
 
             Your data always belongs to you.
             """
             headings = [
                 "Data Collection",
-                "Data Storage",
+                "Data Usage",
+                "Data Storage & Security",
                 "Third-Party Services",
                 "User Control"
             ]
@@ -194,25 +200,27 @@ final class InfoViewController: UIViewController {
             title = "Help & Support"
             body =
             """
-            We’re here to help you get the most out of ChildProfile.
+            We’re here to help you get the most out of TinyVitals.
 
             Common Tasks
-            • Adding or editing a child’s profile
-            • Updating growth measurements
-            • Managing vaccination records
-            • Uploading medical documents
+            • Add or edit a child profile
+            • Update growth measurements
+            • Log symptoms and temperature
+            • Upload health-related images
 
             Tips for Best Experience
-            • Update growth data regularly for accurate trends
-            • Add vaccination details immediately after administration
-            • Use profile switching when managing multiple children
+            • Update measurements regularly for accurate trends
+            • Record symptoms as soon as they occur
+            • Review growth charts periodically
 
             Support
-            If you experience issues or have feature suggestions, feel free to reach out.
+            If you experience issues or have feature suggestions, please contact us:
 
-            Email: support@childprofile.app
+            Email: tinyvitals.app@gmail.com
 
-            ChildProfile continues to evolve based on real parent feedback and needs.
+            We typically respond within 24–48 hours.
+
+            TinyVitals continues to evolve based on real parent feedback.
             """
             headings = [
                 "Common Tasks",
