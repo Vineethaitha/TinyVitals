@@ -23,6 +23,15 @@ final class MedicalRecordService {
             .insert(record)
             .execute()
     }
+    
+    // ✏️ UPDATE RECORD
+    func updateRecord(_ record: MedicalRecordDTO) async throws {
+        try await client
+            .from("medical_records")
+            .update(record)
+            .eq("id", value: record.id)
+            .execute()
+    }
 
     // 📥 FETCH RECORDS FOR CHILD
     func fetchRecords(childId: UUID) async throws -> [MedicalRecordDTO] {

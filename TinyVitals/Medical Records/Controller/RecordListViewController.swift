@@ -179,7 +179,24 @@ class RecordListViewController: UIViewController {
         vc.selectedFolderName = folderName
 
         vc.onRecordSaved = { [weak self] in
-            self?.updateUI()
+            guard let self else { return }
+            
+            if let childId = self.activeChild?.id {
+                Task {
+                    do {
+                        let records = try await MedicalRecordService.shared.fetchRecords(childId: childId)
+                        let mapped = records.map { MedicalFile(dto: $0) }
+
+                        await MainActor.run {
+                            RecordsStore.shared.replaceFiles(mapped, for: childId)
+                            self.updateUI()
+                        }
+
+                    } catch {
+                        print("Reload records failed:", error)
+                    }
+                }
+            }
         }
 
         vc.modalPresentationStyle = .pageSheet
@@ -535,9 +552,9 @@ class RecordListViewController: UIViewController {
         })
 
 
-        alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
-            self.openEditRecord(for: indexPath)
-        }))
+//        alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
+//            self.openEditRecord(for: indexPath)
+//        }))
 
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
             self.deleteRecord(at: indexPath)

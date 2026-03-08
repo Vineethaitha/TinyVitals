@@ -38,11 +38,18 @@ class AddRecordViewController: UIViewController,
         super.viewDidLoad()
 
         title = "Add Record"
-
+        
         addButton.configuration = nil
         addButton.layer.cornerRadius = addButton.frame.height / 2
-        addButton.setTitle("Add", for: .normal)
         addButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        addButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        
+        if isEditingRecord {
+            addButton.setTitle("Save", for: .normal)
+        } else {
+            addButton.setTitle("Add", for: .normal)
+        }
+        
 
         uploadArea.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(selectFileTapped))
@@ -57,12 +64,45 @@ class AddRecordViewController: UIViewController,
         )
 
         if isEditingRecord, let record = existingRecord {
+
             titleTextField.text = record.title
             clinicTextField.text = record.hospital
             visitDate.date = record.date
             selectedFolderName = record.folderName
             selectedSectionLabel.text = record.folderName
             dummyImageView.isHidden = true
+            addButton.setTitle("Save", for: .normal)
+
+            Task {
+                do {
+                    let signedURL = try await MedicalRecordService.shared
+                        .getSignedFileURL(path: record.filePath)
+
+                    if record.fileType == "image" {
+
+                        let image = try await MedicalRecordService.shared
+                            .downloadImage(from: signedURL)
+
+                        await MainActor.run {
+                            self.selectedThumbnail = image
+                            self.filePreviewImageView.image = image
+                        }
+
+                    } else {
+
+                        let fileURL = try await MedicalRecordService.shared
+                            .downloadFile(from: signedURL, fileType: record.fileType)
+
+                        await MainActor.run {
+                            self.selectedFileURL = fileURL
+                            self.filePreviewImageView.image = self.generatePDFThumbnail(url: fileURL)
+                        }
+                    }
+
+                } catch {
+                    print("Preview load failed:", error)
+                }
+            }
         }
 
         if selectedSectionLabel.text?.isEmpty ?? true {
@@ -112,31 +152,64 @@ class AddRecordViewController: UIViewController,
                 let childId = activeChild.id.uuidString
 
                 // --- upload logic unchanged ---
-                if let fileURL = selectedFileURL {
-                    let name = UUID().uuidString + "." + fileURL.pathExtension
-                    let path = "\(childId)/pdfs/\(name)"
-                    let data = try Data(contentsOf: fileURL)
+//                if let fileURL = selectedFileURL {
+//                    let name = UUID().uuidString + "." + fileURL.pathExtension
+//                    let path = "\(childId)/pdfs/\(name)"
+//                    let data = try Data(contentsOf: fileURL)
+//
+//                    try await storage
+//                        .from("medical-records")
+//                        .upload(path: path, file: data)
+//
+//                    uploadedPath = path
+//
+//                } else if let image = selectedThumbnail {
+//                    let name = UUID().uuidString + ".jpg"
+//                    let path = "\(childId)/images/\(name)"
+//                    let data = image.jpegData(compressionQuality: 0.8)!
+//
+//                    try await storage
+//                        .from("medical-records")
+//                        .upload(path: path, file: data)
+//
+//                    uploadedPath = path
+//                }
+//
+//                guard let uploadedPath else {
+//                    throw NSError(domain: "UploadFailed", code: 0)
+//                }
+                var finalPath: String
 
-                    try await storage
-                        .from("medical-records")
-                        .upload(path: path, file: data)
+                // If editing and user didn't change file → keep existing path
+                if isEditingRecord && uploadedPath == nil {
+                    finalPath = existingRecord!.filePath
+                } else {
 
-                    uploadedPath = path
+                    if let fileURL = selectedFileURL {
+                        let name = UUID().uuidString + "." + fileURL.pathExtension
+                        let path = "\(childId)/pdfs/\(name)"
+                        let data = try Data(contentsOf: fileURL)
 
-                } else if let image = selectedThumbnail {
-                    let name = UUID().uuidString + ".jpg"
-                    let path = "\(childId)/images/\(name)"
-                    let data = image.jpegData(compressionQuality: 0.8)!
+                        try await storage
+                            .from("medical-records")
+                            .upload(path: path, file: data)
 
-                    try await storage
-                        .from("medical-records")
-                        .upload(path: path, file: data)
+                        finalPath = path
 
-                    uploadedPath = path
-                }
+                    } else if let image = selectedThumbnail {
+                        let name = UUID().uuidString + ".jpg"
+                        let path = "\(childId)/images/\(name)"
+                        let data = image.jpegData(compressionQuality: 0.8)!
 
-                guard let uploadedPath else {
-                    throw NSError(domain: "UploadFailed", code: 0)
+                        try await storage
+                            .from("medical-records")
+                            .upload(path: path, file: data)
+
+                        finalPath = path
+
+                    } else {
+                        throw NSError(domain: "UploadFailed", code: 0)
+                    }
                 }
 
                 let formatter = DateFormatter()
@@ -144,22 +217,35 @@ class AddRecordViewController: UIViewController,
                 formatter.locale = Locale(identifier: "en_US_POSIX")
                 formatter.timeZone = TimeZone(secondsFromGMT: 0)
 
+                let recordID = isEditingRecord ? existingRecord!.id : UUID().uuidString
+
                 let dto = MedicalRecordDTO(
-                    id: UUID(),
+                    id: UUID(uuidString: recordID)!,
                     child_id: activeChild.id,
                     title: title,
                     hospital: clinic,
                     visit_date: formatter.string(from: visitDate.date),
                     folder_name: folder,
-                    file_path: uploadedPath,
+                    file_path: finalPath,
                     file_type: selectedFileURL != nil ? "pdf" : "image",
                     created_at: nil
                 )
 
-                try await MedicalRecordService.shared.addRecord(dto)
+                if isEditingRecord {
+                    try await MedicalRecordService.shared.updateRecord(dto)
+                } else {
+                    try await MedicalRecordService.shared.addRecord(dto)
+                }
 
                 let file = MedicalFile(dto: dto)
-                RecordsStore.shared.filesByChild[activeChild.id, default: []].append(file)
+                
+                if isEditingRecord {
+                    if let index = RecordsStore.shared.filesByChild[activeChild.id]?.firstIndex(where: { $0.id == existingRecord?.id }) {
+                        RecordsStore.shared.filesByChild[activeChild.id]?[index] = file
+                    }
+                } else {
+                    RecordsStore.shared.filesByChild[activeChild.id, default: []].append(file)
+                }
 
                 // ✅ STOP LOADER + DISMISS
                 await MainActor.run {
