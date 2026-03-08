@@ -70,7 +70,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uEi-sL-asx">
                                     <rect key="frame" x="0.0" y="250" width="393" height="50"/>
                                     <subviews>
-                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email or Phone Number" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UoH-1B-roM">
+                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email or Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UoH-1B-roM">
                                             <rect key="frame" x="20" y="8" width="353" height="34"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="34" id="JqD-Hv-Wxa"/>
@@ -107,7 +107,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ueN-Tr-SbH">
                                     <rect key="frame" x="0.0" y="301" width="393" height="50"/>
                                     <subviews>
-                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kRq-qg-S9W">
+                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kRq-qg-S9W">
                                             <rect key="frame" x="20" y="8" width="353" height="34"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="34" id="9tD-rw-0yb"/>
