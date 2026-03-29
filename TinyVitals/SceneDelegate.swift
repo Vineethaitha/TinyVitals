@@ -74,11 +74,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     
                     // Post notification to inform LoginViewController of successful authentication
                     NotificationCenter.default.post(name: NSNotification.Name("GoogleAuthSuccessful"), object: nil)
-
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let window = windowScene.windows.first {
-                        window.rootViewController = MainTabBarController()
-                        window.makeKeyAndVisible()
+                }
+                
+                let userUUID = session.user.id
+                do {
+                    let dtos = try await ChildService.shared.fetchChildren(userId: userUUID)
+                    let profiles = dtos.map { ChildProfile(dto: $0) }
+                    
+                    await MainActor.run {
+                        AppState.shared.setChildren(profiles)
+                        if let first = profiles.first {
+                            AppState.shared.setActiveChild(first)
+                        }
+                        
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let window = windowScene.windows.first {
+                            window.rootViewController = MainTabBarController()
+                            window.makeKeyAndVisible()
+                        }
+                    }
+                } catch {
+                    print("❌ Failed to fetch children during OAuth callback:", error)
+                    await MainActor.run {
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let window = windowScene.windows.first {
+                            window.rootViewController = MainTabBarController()
+                            window.makeKeyAndVisible()
+                        }
                     }
                 }
 
@@ -88,7 +110,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 print("❌ Error description:", error.localizedDescription)
                 print("❌ Full error:", String(describing: error))
                 
-                DispatchQueue.main.async {
+                await MainActor.run {
                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                        let rootVC = windowScene.windows.first?.rootViewController {
                         let alert = UIAlertController(

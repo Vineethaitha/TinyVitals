@@ -134,15 +134,40 @@ class LoginViewController: UIViewController {
             switch result {
             case .success(let userId):
                 AppState.shared.userId = userId
-                self.hideLoader()
-                self.navigateToHome()
+                
+                Task {
+                    do {
+                        let userUUID = UUID(uuidString: userId)!
+                        let dtos = try await ChildService.shared.fetchChildren(userId: userUUID)
+                        let profiles = dtos.map { ChildProfile(dto: $0) }
+                        
+                        AppState.shared.setChildren(profiles)
+                        
+                        if let first = profiles.first {
+                            AppState.shared.setActiveChild(first)
+                        }
+                        
+                        DispatchQueue.main.async {
+                            self.hideLoader()
+                            self.navigateToHome()
+                        }
+                        
+                    } catch {
+                        DispatchQueue.main.async {
+                            self.hideLoader()
+                            self.navigateToHome()
+                        }
+                    }
+                }
                 
             case .failure(let error):
-                self.hideLoader()
-                self.showAlert(
-                    title: "Google Sign-In Failed",
-                    message: error.localizedDescription
-                )
+                DispatchQueue.main.async {
+                    self.hideLoader()
+                    self.showAlert(
+                        title: "Google Sign-In Failed",
+                        message: error.localizedDescription
+                    )
+                }
             }
         }
     }
