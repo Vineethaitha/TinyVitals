@@ -663,8 +663,16 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
             bundle: nil
         )
 
-        vc.allVaccines = allVaccines
+        vc.allVaccines = self.allVaccines
+        vc.activeChild = self.activeChild
         vc.title = "Vaccination Calendar"
+
+        vc.onVaccineUpdated = { [weak self] in
+            guard let self = self else { return }
+            self.allVaccines = vc.allVaccines
+            self.applyFilter()
+            self.updateProgressUI()
+        }
 
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .pageSheet

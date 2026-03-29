@@ -80,6 +80,25 @@ final class SymptomsHistoryViewController: UIViewController, UITableViewDelegate
     @objc private func closeTapped() {
         dismiss(animated: true)
     }
+
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let entry = selectedDayItems[indexPath.row]
+        presentDetail(entry)
+    }
+
+    private func presentDetail(_ entry: SymptomEntry) {
+        let vc = SymptomDetailViewController(
+            nibName: "SymptomDetailViewController",
+            bundle: nil
+        )
+        vc.entry = entry
+        vc.modalPresentationStyle = .pageSheet
+        present(vc, animated: true)
+    }
 }
 
 extension SymptomsHistoryViewController {

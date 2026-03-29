@@ -13,6 +13,9 @@ final class VaccinationCalendarViewController : UIViewController {
     @IBOutlet weak var calendarContainerView: UIView!
     @IBOutlet weak var tableView: UITableView!
     
+    var activeChild: ChildProfile?
+    var onVaccineUpdated: (() -> Void)?
+    
     @IBOutlet weak var emptyStateView: UIView!
     @IBOutlet weak var animationContainerView: UIView!
 
@@ -262,6 +265,48 @@ extension  VaccinationCalendarViewController : UITableViewDataSource {
         cell.configure(with: vaccine, highlight: nil)
 
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        let vaccine = selectedVaccines[indexPath.row]
+
+        let vc = VaccineDetailViewController(
+            nibName: "VaccineDetailViewController",
+            bundle: nil
+        )
+
+        vc.vaccine = vaccine
+        vc.vaccineIndex = allVaccines.firstIndex {
+            $0.name == vaccine.name && $0.date == vaccine.date
+        }
+
+        vc.activeChild = self.activeChild
+
+        vc.onSaveStatus = { [weak self] newStatus in
+            guard let self = self,
+                  let index = vc.vaccineIndex
+            else { return }
+
+            self.allVaccines[index].status = newStatus
+            
+            // update local selection as well
+            if let selIndex = self.selectedVaccines.firstIndex(where: {
+                $0.name == vaccine.name && $0.date == vaccine.date
+            }) {
+                self.selectedVaccines[selIndex].status = newStatus
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.groupVaccinesByDate()
+                }
+            }
+            
+            self.onVaccineUpdated?()
+        }
+
+        let nav = UINavigationController(rootViewController: vc)
+        present(nav, animated: true)
     }
 
     
