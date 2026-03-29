@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Supabase
 
 class LoginViewController: UIViewController {
     
@@ -127,26 +128,37 @@ class LoginViewController: UIViewController {
         Haptics.impact(.light)
         showLoader()
 
-            authService.signInWithGoogle(presentingVC: self) { [weak self] result in
-                guard let self = self else { return }
-
-                DispatchQueue.main.async {
-                    self.hideLoader()
-
-                    switch result {
-                    case .success(let userId):
-                        AppState.shared.userId = userId
-                        self.navigateToHome()
-
-                    case .failure(let error):
-                        self.showAlert(
-                            title: "Google Sign-In Failed",
-                            message: error.localizedDescription
-                        )
-                    }
-                }
+        SupabaseAuthService.shared.signInWithGoogle(presentingVC: self) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let userId):
+                AppState.shared.userId = userId
+                self.hideLoader()
+                self.navigateToHome()
+                
+            case .failure(let error):
+                self.hideLoader()
+                self.showAlert(
+                    title: "Google Sign-In Failed",
+                    message: error.localizedDescription
+                )
             }
         }
+    }
+    
+    @objc private func handleAuthenticationSuccess() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: NSNotification.Name("GoogleAuthSuccessful"),
+            object: nil
+        )
+        
+        DispatchQueue.main.async {
+            self.hideLoader()
+            self.navigateToHome()
+        }
+    }
     
     private func navigateToHome() {
 

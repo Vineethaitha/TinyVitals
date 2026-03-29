@@ -12,58 +12,94 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+    func scene(_ scene: UIScene,
+               willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
 
-//    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-//        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-//        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-//        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-//        guard let _ = (scene as? UIWindowScene) else { return }
-//    }
-    
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+
         window = UIWindow(windowScene: windowScene)
-        let splashVC = splashScreenViewController(nibName: "splashScreenViewController", bundle: Bundle.main)
+
+        let splashVC = splashScreenViewController(
+            nibName: "splashScreenViewController",
+            bundle: Bundle.main
+        )
+
         window?.rootViewController = splashVC
         window?.makeKeyAndVisible()
+
+        // Handle OAuth redirect if app was launched from URL
+        if let urlContext = connectionOptions.urlContexts.first {
+            print("🔥 App opened via URL:", urlContext.url)
+            handleOAuthCallback(urlContext.url)
+        }
     }
-    
+
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else { return }
         
-        print("🔥 CALLBACK URL:", url)
+        print("🔥 URL CALLBACK RECEIVED:", url)
         
-        guard
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            let queryItems = components.queryItems,
-            let code = queryItems.first(where: { $0.name == "code" })?.value
-        else {
-            print("No auth code found in callback URL")
-            return
+        // Handle the OAuth callback
+        handleOAuthCallback(url)
+    }
+    
+    func handleOAuthCallback(_ url: URL) {
+        print("🔥 CALLBACK URL:", url)
+        print("🔥 URL scheme:", url.scheme ?? "nil")
+        print("🔥 URL host:", url.host ?? "nil")
+        print("🔥 URL path:", url.path)
+        print("🔥 URL query:", url.query ?? "nil")
+        print("🔥 URL fragment:", url.fragment ?? "nil")
+        
+        // Log all query parameters
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+           let queryItems = components.queryItems {
+            for item in queryItems {
+                print("🔥 Query param: \(item.name) = \(item.value ?? "nil")")
+            }
         }
 
         Task {
             do {
-                let session = try await SupabaseAuthService
-                    .shared
-                    .client
-                    .auth
-                    .exchangeCodeForSession(authCode: code)
+                print("🔄 Exchanging OAuth callback for session via session(from:)")
+
+                // Use the SDK's session(from:) which handles PKCE code verifier automatically
+                let session = try await SupabaseAuthService.shared.client.auth.session(from: url)
+
+                print("✅ LOGIN SUCCESS:", session.user.id)
 
                 DispatchQueue.main.async {
                     AppState.shared.userId = session.user.id.uuidString
+                    
+                    // Post notification to inform LoginViewController of successful authentication
+                    NotificationCenter.default.post(name: NSNotification.Name("GoogleAuthSuccessful"), object: nil)
 
                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                        let window = windowScene.windows.first {
-
-                        let tabBar = MainTabBarController()
-                        window.rootViewController = tabBar
+                        window.rootViewController = MainTabBarController()
                         window.makeKeyAndVisible()
                     }
                 }
 
             } catch {
-                print("OAuth exchange failed:", error)
+                print("❌ OAuth exchange failed:")
+                print("❌ Error type:", type(of: error))
+                print("❌ Error description:", error.localizedDescription)
+                print("❌ Full error:", String(describing: error))
+                
+                DispatchQueue.main.async {
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let rootVC = windowScene.windows.first?.rootViewController {
+                        let alert = UIAlertController(
+                            title: "Google Sign-In Failed",
+                            message: error.localizedDescription,
+                            preferredStyle: .alert
+                        )
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        rootVC.present(alert, animated: true)
+                    }
+                }
             }
         }
     }

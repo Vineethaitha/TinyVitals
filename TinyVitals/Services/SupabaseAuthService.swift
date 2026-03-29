@@ -16,7 +16,13 @@ final class SupabaseAuthService: AuthService {
 
     let client = SupabaseClient(
         supabaseURL: URL(string: "https://lclsmfmmyybfsdqdnfmk.supabase.co")!,
-        supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjbHNtZm1teXliZnNkcWRuZm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2MjI4NDgsImV4cCI6MjA4NTE5ODg0OH0.5Wmk7IdBq0Qv0lvpsP7bQqAvKoCldK41Whn8fzXUCPY"
+        supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjbHNtZm1teXliZnNkcWRuZm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2MjI4NDgsImV4cCI6MjA4NTE5ODg0OH0.5Wmk7IdBq0Qv0lvpsP7bQqAvKoCldK41Whn8fzXUCPY",
+        options: .init(
+            auth: .init(
+                redirectToURL: URL(string: "tinyvitals://oauth-callback"),
+                flowType: .pkce
+            )
+        )
     )
 
     // MARK: - Email Login
@@ -90,21 +96,69 @@ final class SupabaseAuthService: AuthService {
     }
 
     // MARK: - Google Sign In (Handled later)
+//    func signInWithGoogle(
+//        presentingVC: UIViewController,
+//        completion: @escaping (Result<String, Error>) -> Void
+//    ) {
+//        Task {
+//            do {
+//                let redirectURL = URL(string: "tinyvitals://auth-callback")!
+//
+//                try await client.auth.signInWithOAuth(
+//                    provider: .google,
+//                    redirectTo: redirectURL
+//                )
+//
+//            } catch {
+//                completion(.failure(error))
+//            }
+//        }
+//    }
+//    func signInWithGoogle(presentingVC: UIViewController) {
+//        Task {
+//            do {
+//                let redirectURL = URL(string: "tinyvitals://auth-callback")!
+//
+//                try await client.auth.signInWithOAuth(
+//                    provider: .google,
+//                    redirectTo: redirectURL
+//                )
+//
+//            } catch {
+//                print("Google OAuth error:", error)
+//            }
+//        }
+//    }
     func signInWithGoogle(
         presentingVC: UIViewController,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
         Task {
             do {
-                let redirectURL = URL(string: "tinyvitals://auth-callback")!
+                // Use custom deep link scheme for OAuth callback
+                let redirectURL = URL(string: "tinyvitals://oauth-callback")!
 
+                // With PKCE flow, signInWithOAuth handles everything:
+                // opens browser → user authenticates → exchanges code → establishes session
                 try await client.auth.signInWithOAuth(
                     provider: .google,
-                    redirectTo: redirectURL
+                    redirectTo: redirectURL,
+                    scopes: "email profile"
                 )
+                
+                // After signInWithOAuth returns, the session is already established
+                let session = try await client.auth.session
+                print("✅ Google sign-in successful:", session.user.id)
+                
+                DispatchQueue.main.async {
+                    completion(.success(session.user.id.uuidString))
+                }
 
             } catch {
-                completion(.failure(error))
+                print("❌ Google OAuth error:", error)
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
     }

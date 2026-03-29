@@ -9,23 +9,16 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.1015764016434-9s94irl0sj8hd2sh0c6pd2gl6ridmn8n.apps.googleusercontent.com</string>
+				<string>com.googleusercontent.apps.1015764016434-odcd8h9p9m9qtljri3e0hh75lcgk53d9</string>
 			</array>
 		</dict>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>supabase-login</string>
+			<string>tinyvitals</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>tinyvitals</string>
 			</array>
-		</dict>
-		<dict/>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
 		</dict>
 	</array>
 	<key>UIApplicationSceneManifest</key>
