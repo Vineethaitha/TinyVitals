@@ -74,27 +74,23 @@ final class SympCalenderDayCell: UICollectionViewCell {
     
     // MARK: - Appearance Logic
     private func updateAppearance() {
+        let themePink = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         
-        if isToday && isSelected {
-            // 🔥 Today AND Selected
-            contentView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.4)
-            dayLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
-            dateLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+        if isSelected {
+            // 🔥 Selected (whether today or not)
+            contentView.backgroundColor = themePink
+            dayLabel.textColor = .white
+            dateLabel.textColor = .white
             dateLabel.font = .systemFont(ofSize: 16, weight: .bold)
+            dotLayer.backgroundColor = UIColor.white.cgColor
             
         } else if isToday {
-            // 🔴 Today only
-            contentView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.25)
-            dayLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
-            dateLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+            // 🔴 Today (unselected)
+            contentView.backgroundColor = themePink.withAlphaComponent(0.15)
+            dayLabel.textColor = themePink
+            dateLabel.textColor = themePink
             dateLabel.font = .systemFont(ofSize: 16, weight: .bold)
-            
-        } else if isSelected {
-            // 🌸 Selected (not today)
-            contentView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.15)
-            dayLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
-            dateLabel.textColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
-            dateLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+            dotLayer.backgroundColor = themePink.cgColor
             
         } else {
             // ⚪ Normal
@@ -102,6 +98,7 @@ final class SympCalenderDayCell: UICollectionViewCell {
             dayLabel.textColor = .secondaryLabel
             dateLabel.textColor = .label
             dateLabel.font = .systemFont(ofSize: 16, weight: .medium)
+            dotLayer.backgroundColor = themePink.cgColor
         }
     }
 }
