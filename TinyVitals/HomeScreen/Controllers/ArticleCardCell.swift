@@ -18,6 +18,7 @@ final class ArticleCardCell: UICollectionViewCell {
         animationContainerView.stop()
     }
     
+    
     func configure(title: String, subtitle: String, animationName: String) {
         titleLabel.text = title
         subtitleLabel.text = subtitle
