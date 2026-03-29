@@ -59,9 +59,7 @@ class AddRecordViewController: UIViewController,
             UITapGestureRecognizer(target: self, action: #selector(selectFolderTapped))
         )
 
-        view.addGestureRecognizer(
-            UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
-        )
+        hideKeyboardWhenTappedAround()
 
         if isEditingRecord, let record = existingRecord {
 

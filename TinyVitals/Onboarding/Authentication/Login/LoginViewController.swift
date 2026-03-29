@@ -37,8 +37,7 @@ class LoginViewController: UIViewController {
         
         setupLoader()
 
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
-        view.addGestureRecognizer(tap)
+        hideKeyboardWhenTappedAround()
         
         googleSignUpButton.configuration = nil
         googleSignUpButton.clipsToBounds = true
@@ -235,9 +234,7 @@ class LoginViewController: UIViewController {
         self.activityIndicator.isHidden = true
     }
     
-    @objc func handleDismissKeyboard() {
-        view.endEditing(true)
-    }
+
     /*
     // MARK: - Navigation
 

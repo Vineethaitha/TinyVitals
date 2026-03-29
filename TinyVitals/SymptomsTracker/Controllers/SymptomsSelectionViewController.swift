@@ -43,6 +43,7 @@ final class SymptomsSelectionViewController: UIViewController {
         selectedCollectionHeight.constant = 0
         selectedCollectionView.isHidden = true
 
+        hideKeyboardWhenTappedAround()
     }
 
     // MARK: - Setup

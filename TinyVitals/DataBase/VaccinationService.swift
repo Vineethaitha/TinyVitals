@@ -20,45 +20,41 @@ final class VaccinationService {
         let days = c.dateComponents([.day], from: dob, to: due).day ?? 0
 
         switch days {
-
-        case 0...7:
+        case ..<21:
             return "At Birth"
-
-        case 35...49:
+        case 21...55:
             return "6 Weeks"
-
-        case 63...77:
+        case 56...83:
             return "10 Weeks"
-
-        case 91...105:
+        case 84...139:
             return "14 Weeks"
-
-        case 150...210:
+        case 140...224:
             return "6 Months"
-
-        case 240...300:
+        case 225...314:
             return "9 Months"
-
-        case 330...390:
+        case 315...404:
             return "12 Months"
-
-        case 420...480:
+        case 405...479:
             return "15 Months"
-
-        case 510...570:
+        case 480...629:
             return "18 Months"
-
-        case 700...900:
+        case 630...1399:
             return "2 Years"
-
-        case 1700...2200:
+        case 1400...2999:
             return "5–6 Years"
-
-        case 3500...4500:
+        case 3000...5000:
             return "10–12 Years"
-
         default:
-            return "Other"
+            let components = c.dateComponents([.year, .month, .weekOfMonth], from: dob, to: due)
+            if let y = components.year, y > 0 {
+                return "\(y) Years"
+            } else if let m = components.month, m > 0 {
+                return "\(m) Months"
+            } else if let w = components.weekOfMonth, w > 0 {
+                return "\(w) Weeks"
+            } else {
+                return "Upcoming"
+            }
         }
     }
 

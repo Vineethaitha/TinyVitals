@@ -29,6 +29,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
         emailTextField.delegate = self
         emailTextField.keyboardType = .emailAddress
         setupLoader()
+        hideKeyboardWhenTappedAround()
 
     }
     
@@ -73,12 +74,6 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    // MARK: - Keyboard Management (Dismiss on Tap Outside)
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-
 
     // MARK: - Helper Methods (showAlerts)
     

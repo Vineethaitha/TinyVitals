@@ -22,8 +22,6 @@ final class AddMeasureViewController: UIViewController,
         case severity
     }
 
-
-
     weak var delegate: AddMeasureDelegate?
 
     @IBOutlet weak var titleLabel: UILabel!

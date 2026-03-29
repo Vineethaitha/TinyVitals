@@ -62,6 +62,8 @@ final class LogSymptomsViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupDatePicker()
+        setupDismissKeyboard()
+
         
         photoImageView.isHidden = true
         photoImageView.layer.cornerRadius = 12
@@ -130,6 +132,16 @@ final class LogSymptomsViewController: UIViewController {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
 //        dateValueLabel.text = formatter.string(from: datePicker.date)
+    }
+
+    private func setupDismissKeyboard() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc private func hideKeyboard() {
+        view.endEditing(true)
     }
 
     // MARK: - Actions

@@ -116,6 +116,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         populateData()
         setupStatusTaps()
         configure()
+        hideKeyboardWhenTappedAround()
         setupNotes()
         setupPhotoUI()
         loadSavedDetails()

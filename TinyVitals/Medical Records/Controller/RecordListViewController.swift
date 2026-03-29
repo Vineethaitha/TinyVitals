@@ -134,9 +134,7 @@ class RecordListViewController: UIViewController {
 
         configureSortMenu(for: moreButton)
         
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//           tap.cancelsTouchesInView = false
-//           view.addGestureRecognizer(tap)
+        hideKeyboardWhenTappedAround()
 
     }
     

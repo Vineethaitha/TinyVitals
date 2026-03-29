@@ -40,8 +40,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         createAccount.clipsToBounds = true
         createAccount.setTitle("Create Account", for: .normal)
         createAccount.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
-        view.addGestureRecognizer(tap)
+        hideKeyboardWhenTappedAround()
         
         setupPasswordEyeIcon()
         passwordTextField.delegate = self
@@ -169,9 +168,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         self.present(alert, animated: true)
     }
     
-    @objc func handleDismissKeyboard() {
-        view.endEditing(true)
-    }
+
     
     private func setupLoader() {
         activityIndicator.center = view.center

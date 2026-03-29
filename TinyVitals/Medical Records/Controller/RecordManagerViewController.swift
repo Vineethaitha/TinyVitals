@@ -58,6 +58,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         super.viewDidLoad()
 
         setupLoader()
+        hideKeyboardWhenTappedAround()
 
         addButton.configuration = nil
         addButton.layer.cornerRadius = addButton.frame.height / 2

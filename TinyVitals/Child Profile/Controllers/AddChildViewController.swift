@@ -58,10 +58,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         setupLoader()
         Haptics.impact(.light)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-
+        hideKeyboardWhenTappedAround()
         
         saveButton.configuration = nil
         saveButton.layer.cornerRadius = saveButton.frame.height / 2
@@ -120,9 +117,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     }
 
     
-    @objc private func handleDismissKeyboard() {
-        view.endEditing(true)
-    }
+
 
     
 
