@@ -114,7 +114,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
 
 
-        requestNotificationPermission()
+        NotificationService.shared.requestPermission()
 
         vaccinesTableView.showsVerticalScrollIndicator = false
         vaccinesTableView.showsHorizontalScrollIndicator = false
@@ -695,125 +695,6 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         }
     }
 
-    
-    func requestNotificationPermission() {
-        UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
-    }
-
-
-    func scheduleReminder(for vaccine: VaccineItem) {
-        guard vaccine.status == .upcoming else { return }
-
-        let content = UNMutableNotificationContent()
-        let childName = activeChild?.name ?? "Your Child"
-        content.title = "\(childName)'s Vaccination Reminder"
-
-        content.body = "\(vaccine.name) is scheduled tomorrow"
-        content.sound = .default
-
-        let reminderDate = calendar.date(byAdding: .day, value: -1, to: vaccine.date)!
-        let components = calendar.dateComponents(
-            [.year, .month, .day, .hour],
-            from: reminderDate
-        )
-
-        let trigger = UNCalendarNotificationTrigger(
-            dateMatching: components,
-            repeats: false
-        )
-
-        let id = "vaccine_\(vaccine.name)_\(vaccine.date)"
-        let request = UNNotificationRequest(
-            identifier: id,
-            content: content,
-            trigger: trigger
-        )
-
-        UNUserNotificationCenter.current().add(request)
-    }
-
-    func scheduleAllReminders() {
-
-        guard let child = activeChild else { return }
-
-        // Clear old reminders to avoid duplicates
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-
-        let upcoming = allVaccines.filter { $0.status == .upcoming }
-
-        let grouped = Dictionary(grouping: upcoming) { $0.ageGroup }
-
-        for (_, vaccinesInGroup) in grouped {
-
-            guard let first = vaccinesInGroup.sorted(by: { $0.date < $1.date }).first
-            else { continue }
-
-            scheduleGroupedReminder(
-                ageGroup: first.ageGroup,
-                dueDate: first.date,
-                childName: child.name
-            )
-        }
-    }
-
-    
-    private func scheduleGroupedReminder(
-        ageGroup: String,
-        dueDate: Date,
-        childName: String
-    ) {
-
-        let reminderOffsets: [(daysBefore: Int, message: String)] = [
-            (28, "4 weeks left"),
-            (21, "3 weeks left"),
-            (14, "2 weeks left"),
-            (1, "Vaccination is tomorrow")
-        ]
-
-        for offset in reminderOffsets {
-
-            guard let reminderDate = calendar.date(
-                byAdding: .day,
-                value: -offset.daysBefore,
-                to: dueDate
-            ) else { continue }
-
-            // Don't schedule reminders in the past
-            if reminderDate < Date() { continue }
-
-            let content = UNMutableNotificationContent()
-            content.title = "\(childName)'s Vaccination Reminder"
-
-            if offset.daysBefore == 1 {
-                content.body = "\(ageGroup) vaccinations are due tomorrow."
-            } else {
-                content.body = "\(offset.message) for \(ageGroup) vaccinations."
-            }
-
-            content.sound = .default
-
-            let components = calendar.dateComponents(
-                [.year, .month, .day, .hour],
-                from: reminderDate
-            )
-
-            let trigger = UNCalendarNotificationTrigger(
-                dateMatching: components,
-                repeats: false
-            )
-
-            let identifier = "vaccine_group_\(ageGroup)_\(offset.daysBefore)"
-
-            let request = UNNotificationRequest(
-                identifier: identifier,
-                content: content,
-                trigger: trigger
-            )
-
-            UNUserNotificationCenter.current().add(request)
-        }
-    }
 
 
 
@@ -942,7 +823,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
                 self.applyFilter()
                 self.updateProgressUI()
-                self.scheduleAllReminders()
+                NotificationService.shared.updateVaccinationReminders(childName: child.name, vaccines: vaccines)
                 
                 // If home requested a preselection before data was ready
                 if let group = self.pendingPreselectGroup {

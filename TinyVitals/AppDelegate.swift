@@ -19,6 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print("Firebase App:", FirebaseApp.app() as Any)
         
+        // Ask for notification permission as soon as the app launches
+        NotificationService.shared.requestPermission()
+        
         return true
     }
 

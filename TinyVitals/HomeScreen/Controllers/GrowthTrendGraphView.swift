@@ -18,7 +18,7 @@ final class GrowthTrendGraphView: UIView {
         blue: 217/255,
         alpha: 1
     )
-
+    
 
 
     var metric: GrowthMetric = .weight {

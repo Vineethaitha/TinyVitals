@@ -565,7 +565,7 @@ class HomeScreenViewController: UIViewController {
         let buffer = metric == .weight ? 2.0 : 1.0
         let isStable = difference <= buffer
 
-        let statusText = isStable ? "Stable" : "Needs Attention"
+        let statusText = isStable ? "OnTrack" : "Needs Attention"
         let statusColor: UIColor = isStable
             ? UIColor(red: 108/255, green: 173/255, blue: 226/255, alpha: 1)
             : .systemOrange
