@@ -220,7 +220,7 @@ class GrowthGraphViewController: UIViewController {
     private func updateStatusLabel(using points: [GrowthPoint]) {
 
         guard let latest = points.last,
-              let child = activeChild else {
+              let _ = activeChild else {
             statusLabel.text = "--"
             lastUpdatedLabel.text = ""
             return

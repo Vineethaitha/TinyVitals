@@ -95,14 +95,12 @@ class RecordListViewController: UIViewController {
         super.viewDidLoad()
         setupLoader()
 
-        guard let activeChild else {
+        guard activeChild != nil else {
             assertionFailure("RecordListViewController opened without activeChild")
             return
         }
         
-        if case .normal = mode {
-            assert(activeChild != nil, "❌ RecordListViewController opened in normal mode without activeChild")
-        }
+        // activeChild is already validated by the guard above
 //        mode = .normal(folder: folderName)
         
         addFileButton.configuration = nil

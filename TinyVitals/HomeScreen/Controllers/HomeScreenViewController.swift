@@ -674,7 +674,7 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
         guard let url = URL(string: article.url) else { return }
 
         let safariVC = SFSafariViewController(url: url)
-        safariVC.preferredControlTintColor = UIColor(
+        safariVC.view.tintColor = UIColor(
             red: 237/255,
             green: 112/255,
             blue: 153/255,

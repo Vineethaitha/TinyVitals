@@ -462,8 +462,8 @@ final class GrowthTrendGraphView: UIView {
 
             let single = data[0]
 
-            let paddedMin = single.value - 2
-            let paddedMax = single.value + 2
+            let _ = single.value - 2
+            let _ = single.value + 2
 
             let yRatio: CGFloat = 0.5
             let x = bounds.midX

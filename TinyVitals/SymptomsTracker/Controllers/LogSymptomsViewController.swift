@@ -230,7 +230,7 @@ final class LogSymptomsViewController: UIViewController {
                     try await SupabaseAuthService.shared.client
                         .storage
                         .from("symptom-images")
-                        .upload(path: path, file: data)
+                        .upload(path, data: data)
                     
                     imagePath = path
                 }

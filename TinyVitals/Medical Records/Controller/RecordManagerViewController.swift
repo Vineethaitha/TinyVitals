@@ -561,7 +561,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
     
     func reloadForChild() {
-        guard let childId = activeChild?.id else { return }
+        guard activeChild?.id != nil else { return }
 
         isSearching = false
         searchBarView.text = nil

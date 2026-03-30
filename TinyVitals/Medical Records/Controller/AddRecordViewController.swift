@@ -190,7 +190,7 @@ class AddRecordViewController: UIViewController,
 
                         try await storage
                             .from("medical-records")
-                            .upload(path: path, file: data)
+                            .upload(path, data: data)
 
                         finalPath = path
 
@@ -201,7 +201,7 @@ class AddRecordViewController: UIViewController,
 
                         try await storage
                             .from("medical-records")
-                            .upload(path: path, file: data)
+                            .upload(path, data: data)
 
                         finalPath = path
 

@@ -193,8 +193,8 @@ final class VaccinationService {
         try await client.storage
             .from("vaccine-images")
             .upload(
-                path: path,
-                file: imageData,
+                path,
+                data: imageData,
                 options: FileOptions(contentType: "image/jpeg")
             )
 

@@ -209,8 +209,8 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                         dob: dob
                     )
 
-                    let calendar = Calendar.current
-                    let now = Date()
+                    let _ = Calendar.current
+                    let _ = Date()
 
             
                     let baselineDate = Calendar.current.startOfDay(for: dob)
@@ -423,7 +423,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 //            title = "Edit Child"
             navigationItem.rightBarButtonItem = UIBarButtonItem(
                 title: "Save",
-                style: .done,
+                style: .plain,
                 target: self,
                 action: #selector(saveEditsTapped)
             )
