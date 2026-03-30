@@ -14,6 +14,41 @@ final class RecordSummaryViewController: UIViewController {
     private let localFileURL: URL
 
     private var sections: [MedicalSection] = []
+    private var rawOCRText: String = ""
+
+    // MARK: - Brand Colors (only two)
+    static let brandPink  = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+    static let brandBlue  = UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 1)
+
+    // MARK: - Section icon mapping (colors alternate between the two brand colors)
+
+    private static let sectionIcons: [String: String] = [
+        "Diagnosis":        "stethoscope",
+        "Assessment":       "list.clipboard",
+        "Impression":       "lightbulb",
+        "Chief Complaint":  "exclamationmark.bubble",
+        "Symptoms":         "heart.text.clipboard",
+        "Imaging":          "xray",
+        "Investigation":    "flask",
+        "Vitals":           "waveform.path.ecg.rectangle",
+        "Treatment":        "pills",
+        "Medications":      "pill",
+        "Prescription":     "doc.text",
+        "Plan":             "checklist",
+        "Progress":         "chart.line.uptrend.xyaxis",
+        "Hospital Course":  "building.2",
+        "Discharge":        "arrow.right.doc.on.clipboard",
+        "Overview":         "doc.richtext",
+    ]
+
+    private static func icon(for title: String) -> String {
+        sectionIcons[title] ?? "text.page"
+    }
+
+    /// Alternates between pink and blue based on section index
+    private func brandColor(for sectionIndex: Int) -> UIColor {
+        sectionIndex % 2 == 0 ? Self.brandPink : Self.brandBlue
+    }
 
     // MARK: - UI Elements
 
@@ -38,37 +73,12 @@ final class RecordSummaryViewController: UIViewController {
     private let loadingLabel: UILabel = {
         let l = UILabel()
         l.text = "Analyzing document…"
-        l.font = .systemFont(ofSize: 15, weight: .medium)
+        l.font = .preferredFont(forTextStyle: .subheadline)
         l.textColor = .secondaryLabel
         l.textAlignment = .center
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
     }()
-
-    // MARK: - Section icon + color mapping
-
-    private static let sectionMeta: [String: (icon: String, color: UIColor)] = [
-        "Diagnosis":        ("stethoscope",                  UIColor.systemPink),
-        "Assessment":       ("list.clipboard",               UIColor.systemPink),
-        "Impression":       ("lightbulb",                    UIColor.systemPink),
-        "Chief Complaint":  ("exclamationmark.bubble",       UIColor.systemOrange),
-        "Symptoms":         ("heart.text.clipboard",         UIColor.systemRed),
-        "Imaging":          ("xray",                         UIColor.systemIndigo),
-        "Investigation":    ("flask",                        UIColor.systemIndigo),
-        "Vitals":           ("waveform.path.ecg.rectangle",  UIColor.systemGreen),
-        "Treatment":        ("pills",                        UIColor.systemBlue),
-        "Medications":      ("pill",                         UIColor.systemBlue),
-        "Prescription":     ("doc.text",                     UIColor.systemBlue),
-        "Plan":             ("checklist",                    UIColor.systemTeal),
-        "Progress":         ("chart.line.uptrend.xyaxis",    UIColor.systemCyan),
-        "Hospital Course":  ("building.2",                   UIColor.systemCyan),
-        "Discharge":        ("arrow.right.doc.on.clipboard", UIColor.systemMint),
-        "Overview":         ("doc.richtext",                 UIColor.secondaryLabel),
-    ]
-
-    private static func meta(for title: String) -> (icon: String, color: UIColor) {
-        sectionMeta[title] ?? ("text.page", .secondaryLabel)
-    }
 
     // MARK: - Init
 
@@ -89,14 +99,12 @@ final class RecordSummaryViewController: UIViewController {
         view.backgroundColor = .systemGroupedBackground
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "checkmark.circle.fill"),
+            image: UIImage(systemName: "xmark.circle.fill"),
             style: .plain,
             target: self,
             action: #selector(dismissSelf)
         )
-        navigationItem.rightBarButtonItem?.tintColor = UIColor(
-            red: 237/255, green: 112/255, blue: 153/255, alpha: 1
-        )
+        navigationItem.rightBarButtonItem?.tintColor = .tertiaryLabel
 
         setupTableView()
         setupLoadingState()
@@ -112,8 +120,10 @@ final class RecordSummaryViewController: UIViewController {
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(SummarySectionHeaderView.self, forHeaderFooterViewReuseIdentifier: SummarySectionHeaderView.reuseID)
-        tableView.register(SummaryItemCell.self, forCellReuseIdentifier: SummaryItemCell.reuseID)
+        tableView.register(SummarySectionHeaderView.self,
+                           forHeaderFooterViewReuseIdentifier: SummarySectionHeaderView.reuseID)
+        tableView.register(SummaryItemCell.self,
+                           forCellReuseIdentifier: SummaryItemCell.reuseID)
         tableView.alpha = 0
 
         view.addSubview(tableView)
@@ -124,81 +134,123 @@ final class RecordSummaryViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
-        // Build the header
-        let header = buildTableHeader()
-        tableView.tableHeaderView = header
-
-        // Build the footer (disclaimer)
-        let footer = buildTableFooter()
-        tableView.tableFooterView = footer
+        tableView.tableHeaderView = buildTableHeader()
+        tableView.tableFooterView = buildTableFooter()
     }
+
+    // MARK: - Header (gradient card)
 
     private func buildTableHeader() -> UIView {
-        let container = UIView()
+        let wrapper = UIView()
 
-        let icon = UIImageView(image: UIImage(systemName: "doc.text.magnifyingglass"))
-        icon.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
-        icon.contentMode = .scaleAspectFit
-        icon.translatesAutoresizingMaskIntoConstraints = false
+        let card = UIView()
+        card.translatesAutoresizingMaskIntoConstraints = false
+        card.layer.cornerRadius = 16
+        card.layer.masksToBounds = true
+        wrapper.addSubview(card)
 
-        let label = UILabel()
-        label.text = "AI Summary"
-        label.font = .systemFont(ofSize: 26, weight: .bold)
-        label.textColor = .label
-        label.translatesAutoresizingMaskIntoConstraints = false
+        let gradient = CAGradientLayer()
+        gradient.colors = [Self.brandPink.cgColor, Self.brandBlue.cgColor]
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint   = CGPoint(x: 1, y: 0.5)
+        gradient.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 110)
+        card.layer.insertSublayer(gradient, at: 0)
 
-        let subtitle = UILabel()
-        subtitle.text = record.title
-        subtitle.font = .systemFont(ofSize: 14, weight: .regular)
-        subtitle.textColor = .secondaryLabel
-        subtitle.numberOfLines = 2
-        subtitle.translatesAutoresizingMaskIntoConstraints = false
+        // Sparkle
+        let sparkle = UIImageView(image: UIImage(systemName: "sparkles"))
+        sparkle.tintColor = .white
+        sparkle.contentMode = .scaleAspectFit
+        sparkle.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(sparkle)
 
-        let divider = UIView()
-        divider.backgroundColor = .separator
-        divider.translatesAutoresizingMaskIntoConstraints = false
+        // Title
+        let titleLabel = UILabel()
+        titleLabel.text = "AI Summary"
+        titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
+        titleLabel.textColor = .white
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(titleLabel)
 
-        container.addSubview(icon)
-        container.addSubview(label)
-        container.addSubview(subtitle)
-        container.addSubview(divider)
+        // Subtitle
+        let subtitleLabel = UILabel()
+        subtitleLabel.text = record.title
+        subtitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        subtitleLabel.textColor = .white.withAlphaComponent(0.85)
+        subtitleLabel.numberOfLines = 2
+        subtitleLabel.lineBreakMode = .byTruncatingTail
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(subtitleLabel)
+
+        // Watermark icon
+        let bgIcon = UIImageView(image: UIImage(systemName: "doc.text.magnifyingglass"))
+        bgIcon.tintColor = .white.withAlphaComponent(0.12)
+        bgIcon.contentMode = .scaleAspectFit
+        bgIcon.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(bgIcon)
 
         NSLayoutConstraint.activate([
-            icon.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            icon.topAnchor.constraint(equalTo: container.topAnchor, constant: 24),
-            icon.widthAnchor.constraint(equalToConstant: 32),
-            icon.heightAnchor.constraint(equalToConstant: 32),
+            card.topAnchor.constraint(equalTo: wrapper.topAnchor, constant: 12),
+            card.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor, constant: 20),
+            card.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor, constant: -20),
+            card.heightAnchor.constraint(equalToConstant: 110),
+            card.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -4),
 
-            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
-            label.centerYAnchor.constraint(equalTo: icon.centerYAnchor),
-            label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            sparkle.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 18),
+            sparkle.topAnchor.constraint(equalTo: card.topAnchor, constant: 22),
+            sparkle.widthAnchor.constraint(equalToConstant: 24),
+            sparkle.heightAnchor.constraint(equalToConstant: 24),
 
-            subtitle.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 6),
-            subtitle.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            subtitle.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            titleLabel.leadingAnchor.constraint(equalTo: sparkle.trailingAnchor, constant: 8),
+            titleLabel.centerYAnchor.constraint(equalTo: sparkle.centerYAnchor),
 
-            divider.topAnchor.constraint(equalTo: subtitle.bottomAnchor, constant: 16),
-            divider.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            divider.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
-            divider.heightAnchor.constraint(equalToConstant: 1 / (view.window?.windowScene?.screen.scale ?? UITraitCollection.current.displayScale)),
-            divider.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            subtitleLabel.topAnchor.constraint(equalTo: sparkle.bottomAnchor, constant: 10),
+            subtitleLabel.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 18),
+            subtitleLabel.trailingAnchor.constraint(equalTo: bgIcon.leadingAnchor, constant: -12),
+
+            bgIcon.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -12),
+            bgIcon.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -8),
+            bgIcon.widthAnchor.constraint(equalToConstant: 56),
+            bgIcon.heightAnchor.constraint(equalToConstant: 56),
         ])
 
-        // Size the header properly
-        container.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 100)
-        container.setNeedsLayout()
-        container.layoutIfNeeded()
-        let target = CGSize(width: view.bounds.width, height: UIView.layoutFittingCompressedSize.height)
-        let height = container.systemLayoutSizeFitting(target, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel).height
-        container.frame.size.height = height
-        return container
+        wrapper.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 130)
+        wrapper.setNeedsLayout()
+        wrapper.layoutIfNeeded()
+        let fittingSize = CGSize(width: view.bounds.width,
+                                  height: UIView.layoutFittingCompressedSize.height)
+        wrapper.frame.size.height = wrapper.systemLayoutSizeFitting(
+            fittingSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
+        return wrapper
     }
+
+    // MARK: - Footer (Writing Tools button + Disclaimer)
 
     private func buildTableFooter() -> UIView {
         let container = UIView()
 
+        // "View Full Text" button
+        let fullTextButton = UIButton(type: .system)
+        fullTextButton.translatesAutoresizingMaskIntoConstraints = false
+        var btnConfig = UIButton.Configuration.filled()
+        btnConfig.cornerStyle = .capsule
+        btnConfig.baseBackgroundColor = Self.brandPink
+        btnConfig.baseForegroundColor = .white
+        btnConfig.image = UIImage(systemName: "doc.plaintext")
+        btnConfig.imagePadding = 8
+        btnConfig.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20)
+        var titleAttr = AttributedString("View Full Text")
+        titleAttr.font = .systemFont(ofSize: 15, weight: .semibold)
+        btnConfig.attributedTitle = titleAttr
+        fullTextButton.configuration = btnConfig
+        fullTextButton.addTarget(self, action: #selector(openFullTextSheet), for: .touchUpInside)
+        container.addSubview(fullTextButton)
+
+        // Disclaimer
         let card = UIView()
-        card.backgroundColor = UIColor.secondarySystemGroupedBackground
+        card.backgroundColor = .secondarySystemGroupedBackground
         card.layer.cornerRadius = 12
         card.translatesAutoresizingMaskIntoConstraints = false
 
@@ -207,51 +259,71 @@ final class RecordSummaryViewController: UIViewController {
         icon.contentMode = .scaleAspectFit
         icon.translatesAutoresizingMaskIntoConstraints = false
 
-        let title = UILabel()
-        title.text = "Disclaimer"
-        title.font = .systemFont(ofSize: 13, weight: .semibold)
-        title.textColor = .secondaryLabel
-        title.translatesAutoresizingMaskIntoConstraints = false
+        let disclaimerTitle = UILabel()
+        disclaimerTitle.text = "Disclaimer"
+        disclaimerTitle.font = .preferredFont(forTextStyle: .caption1)
+        disclaimerTitle.textColor = .secondaryLabel
+        disclaimerTitle.translatesAutoresizingMaskIntoConstraints = false
 
-        let body = UILabel()
-        body.text = "This summary is automatically generated using on-device OCR. It is for informational purposes only and is not a substitute for professional medical advice. Always verify with original reports."
-        body.font = .systemFont(ofSize: 12, weight: .regular)
-        body.textColor = .tertiaryLabel
-        body.numberOfLines = 0
-        body.translatesAutoresizingMaskIntoConstraints = false
+        let disclaimerBody = UILabel()
+        disclaimerBody.text = "This summary is generated using on-device OCR. It is not a substitute for professional medical advice. Always verify with original reports."
+        disclaimerBody.font = .preferredFont(forTextStyle: .caption2)
+        disclaimerBody.textColor = .tertiaryLabel
+        disclaimerBody.numberOfLines = 0
+        disclaimerBody.translatesAutoresizingMaskIntoConstraints = false
 
         container.addSubview(card)
         card.addSubview(icon)
-        card.addSubview(title)
-        card.addSubview(body)
+        card.addSubview(disclaimerTitle)
+        card.addSubview(disclaimerBody)
 
         NSLayoutConstraint.activate([
-            card.topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
+            fullTextButton.topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
+            fullTextButton.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+
+            card.topAnchor.constraint(equalTo: fullTextButton.bottomAnchor, constant: 20),
             card.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
             card.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
             card.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -24),
 
-            icon.topAnchor.constraint(equalTo: card.topAnchor, constant: 14),
-            icon.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 14),
-            icon.widthAnchor.constraint(equalToConstant: 18),
-            icon.heightAnchor.constraint(equalToConstant: 18),
+            icon.topAnchor.constraint(equalTo: card.topAnchor, constant: 12),
+            icon.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 12),
+            icon.widthAnchor.constraint(equalToConstant: 16),
+            icon.heightAnchor.constraint(equalToConstant: 16),
 
-            title.centerYAnchor.constraint(equalTo: icon.centerYAnchor),
-            title.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 6),
+            disclaimerTitle.centerYAnchor.constraint(equalTo: icon.centerYAnchor),
+            disclaimerTitle.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 6),
 
-            body.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 8),
-            body.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 14),
-            body.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -14),
-            body.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -14),
+            disclaimerBody.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 6),
+            disclaimerBody.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 12),
+            disclaimerBody.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -12),
+            disclaimerBody.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -12),
         ])
 
-        container.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 160)
+        container.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 200)
         container.setNeedsLayout()
         container.layoutIfNeeded()
-        let target = CGSize(width: view.bounds.width, height: UIView.layoutFittingCompressedSize.height)
-        let height = container.systemLayoutSizeFitting(target, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel).height
-        container.frame.size.height = height
+        let fittingSize = CGSize(width: view.bounds.width,
+                                  height: UIView.layoutFittingCompressedSize.height)
+        container.frame.size.height = container.systemLayoutSizeFitting(
+            fittingSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
         return container
+    }
+
+    // MARK: - Full Text Sheet
+
+    @objc private func openFullTextSheet() {
+        let sheetVC = FullTextSheetViewController(text: rawOCRText)
+        let nav = UINavigationController(rootViewController: sheetVC)
+        nav.modalPresentationStyle = .pageSheet
+        if let sheet = nav.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        present(nav, animated: true)
     }
 
     // MARK: - Loading State
@@ -298,13 +370,9 @@ final class RecordSummaryViewController: UIViewController {
     // MARK: - Summary Generation
 
     private func generateSummary() {
-
         DispatchQueue.global(qos: .userInitiated).async {
-
             let text = RecordTextExtractor.extract(from: self.localFileURL)
-
             DispatchQueue.main.async {
-
                 self.hideLoadingState()
 
                 guard text.count > 80 else {
@@ -316,6 +384,7 @@ final class RecordSummaryViewController: UIViewController {
                     return
                 }
 
+                self.rawOCRText = text
                 let parsed = RecordSummarizer.summarize(text: text)
 
                 guard !parsed.isEmpty else {
@@ -328,7 +397,6 @@ final class RecordSummaryViewController: UIViewController {
                 }
 
                 self.sections = parsed
-
                 UIView.animate(withDuration: 0.35) {
                     self.tableView.alpha = 1
                 }
@@ -340,7 +408,6 @@ final class RecordSummaryViewController: UIViewController {
     // MARK: - Empty State
 
     private func showEmptyState(icon: String, title: String, message: String) {
-
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
 
@@ -351,14 +418,14 @@ final class RecordSummaryViewController: UIViewController {
 
         let titleLabel = UILabel()
         titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        titleLabel.font = .preferredFont(forTextStyle: .title3)
         titleLabel.textColor = .secondaryLabel
         titleLabel.textAlignment = .center
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let bodyLabel = UILabel()
         bodyLabel.text = message
-        bodyLabel.font = .systemFont(ofSize: 15)
+        bodyLabel.font = .preferredFont(forTextStyle: .subheadline)
         bodyLabel.textColor = .tertiaryLabel
         bodyLabel.textAlignment = .center
         bodyLabel.numberOfLines = 0
@@ -391,9 +458,7 @@ final class RecordSummaryViewController: UIViewController {
         ])
 
         container.alpha = 0
-        UIView.animate(withDuration: 0.35) {
-            container.alpha = 1
-        }
+        UIView.animate(withDuration: 0.35) { container.alpha = 1 }
     }
 }
 
@@ -410,10 +475,11 @@ extension RecordSummaryViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SummaryItemCell.reuseID, for: indexPath) as! SummaryItemCell
-        let section = sections[indexPath.section]
-        let meta = Self.meta(for: section.title)
-        cell.configure(text: section.items[indexPath.row], accentColor: meta.color)
+        let cell = tableView.dequeueReusableCell(withIdentifier: SummaryItemCell.reuseID,
+                                                  for: indexPath) as! SummaryItemCell
+        let color = brandColor(for: indexPath.section)
+        cell.configure(text: sections[indexPath.section].items[indexPath.row],
+                       accentColor: color)
         return cell
     }
 }
@@ -423,15 +489,22 @@ extension RecordSummaryViewController: UITableViewDataSource {
 extension RecordSummaryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: SummarySectionHeaderView.reuseID) as! SummarySectionHeaderView
+        let header = tableView.dequeueReusableHeaderFooterView(
+            withIdentifier: SummarySectionHeaderView.reuseID) as! SummarySectionHeaderView
         let s = sections[section]
-        let meta = Self.meta(for: s.title)
-        header.configure(title: s.title, iconName: meta.icon, color: meta.color)
+        let color = brandColor(for: section)
+        header.configure(title: s.title,
+                         iconName: Self.icon(for: s.title),
+                         color: color)
         return header
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        48
+        UITableView.automaticDimension
+    }
+
+    func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+        44
     }
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -439,7 +512,95 @@ extension RecordSummaryViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - Summary Section Header
+// MARK: - Full Text Sheet (Writing Tools)
+
+final class FullTextSheetViewController: UIViewController {
+
+    private let text: String
+
+    init(text: String) {
+        self.text = text
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        title = "Full Document Text"
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Done", style: .done, target: self, action: #selector(closeSelf)
+        )
+        navigationItem.rightBarButtonItem?.tintColor = RecordSummaryViewController.brandPink
+
+        // Info banner
+        let banner = UIView()
+        banner.backgroundColor = RecordSummaryViewController.brandBlue.withAlphaComponent(0.1)
+        banner.layer.cornerRadius = 10
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(banner)
+
+        let bannerIcon = UIImageView(image: UIImage(systemName: "sparkles"))
+        bannerIcon.tintColor = RecordSummaryViewController.brandBlue
+        bannerIcon.contentMode = .scaleAspectFit
+        bannerIcon.translatesAutoresizingMaskIntoConstraints = false
+        banner.addSubview(bannerIcon)
+
+        let bannerLabel = UILabel()
+        bannerLabel.text = "Select text and use Writing Tools to summarize, extract key points, or rewrite."
+        bannerLabel.font = .preferredFont(forTextStyle: .caption1)
+        bannerLabel.textColor = .secondaryLabel
+        bannerLabel.numberOfLines = 0
+        bannerLabel.translatesAutoresizingMaskIntoConstraints = false
+        banner.addSubview(bannerLabel)
+
+        let textView = UITextView()
+        textView.text = text
+        textView.font = .preferredFont(forTextStyle: .body)
+        textView.textColor = .label
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.isScrollEnabled = true
+        textView.backgroundColor = .clear
+        textView.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        textView.translatesAutoresizingMaskIntoConstraints = false
+
+        if #available(iOS 18.1, *) {
+            textView.writingToolsBehavior = .complete
+        }
+
+        view.addSubview(textView)
+
+        NSLayoutConstraint.activate([
+            banner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
+            banner.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            banner.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
+            bannerIcon.leadingAnchor.constraint(equalTo: banner.leadingAnchor, constant: 12),
+            bannerIcon.topAnchor.constraint(equalTo: banner.topAnchor, constant: 10),
+            bannerIcon.widthAnchor.constraint(equalToConstant: 18),
+            bannerIcon.heightAnchor.constraint(equalToConstant: 18),
+
+            bannerLabel.leadingAnchor.constraint(equalTo: bannerIcon.trailingAnchor, constant: 8),
+            bannerLabel.trailingAnchor.constraint(equalTo: banner.trailingAnchor, constant: -12),
+            bannerLabel.topAnchor.constraint(equalTo: banner.topAnchor, constant: 10),
+            bannerLabel.bottomAnchor.constraint(equalTo: banner.bottomAnchor, constant: -10),
+
+            textView.topAnchor.constraint(equalTo: banner.bottomAnchor, constant: 4),
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+
+    @objc private func closeSelf() {
+        dismiss(animated: true)
+    }
+}
+
+// MARK: - Section Header (HIG: left-aligned label, no truncation)
 
 private final class SummarySectionHeaderView: UITableViewHeaderFooterView {
 
@@ -447,7 +608,6 @@ private final class SummarySectionHeaderView: UITableViewHeaderFooterView {
 
     private let iconView = UIImageView()
     private let titleLabel = UILabel()
-    private let pillBackground = UIView()
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -455,43 +615,30 @@ private final class SummarySectionHeaderView: UITableViewHeaderFooterView {
         iconView.contentMode = .scaleAspectFit
         iconView.translatesAutoresizingMaskIntoConstraints = false
 
-        pillBackground.layer.cornerRadius = 14
-        pillBackground.clipsToBounds = true
-        pillBackground.translatesAutoresizingMaskIntoConstraints = false
-
-        titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
-        titleLabel.lineBreakMode = .byTruncatingTail
-        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        titleLabel.font = .systemFont(ofSize: 15, weight: .semibold)
+        titleLabel.numberOfLines = 0           // ← no truncation
+        titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        contentView.addSubview(pillBackground)
-        pillBackground.addSubview(iconView)
-        pillBackground.addSubview(titleLabel)
+        contentView.addSubview(iconView)
+        contentView.addSubview(titleLabel)
 
         NSLayoutConstraint.activate([
-            pillBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            pillBackground.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            pillBackground.heightAnchor.constraint(equalToConstant: 28),
-            pillBackground.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor),
-            pillBackground.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor),
+            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
+            iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 20),
+            iconView.heightAnchor.constraint(equalToConstant: 20),
 
-            iconView.leadingAnchor.constraint(equalTo: pillBackground.leadingAnchor, constant: 10),
-            iconView.centerYAnchor.constraint(equalTo: pillBackground.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 16),
-            iconView.heightAnchor.constraint(equalToConstant: 16),
-
-            titleLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 6),
-            titleLabel.trailingAnchor.constraint(equalTo: pillBackground.trailingAnchor, constant: -12),
-            titleLabel.centerYAnchor.constraint(equalTo: pillBackground.centerYAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 8),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6),
         ])
     }
 
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
+    required init?(coder: NSCoder) { fatalError() }
 
     func configure(title: String, iconName: String, color: UIColor) {
-        // Clean up OCR section titles
         let cleaned = title
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: .newlines)
@@ -500,16 +647,16 @@ private final class SummarySectionHeaderView: UITableViewHeaderFooterView {
         titleLabel.textColor = color
         iconView.image = UIImage(systemName: iconName)
         iconView.tintColor = color
-        pillBackground.backgroundColor = color.withAlphaComponent(0.12)
     }
 }
 
-// MARK: - Summary Item Cell
+// MARK: - Item Cell (colored bullet + text)
 
 private final class SummaryItemCell: UITableViewCell {
 
     static let reuseID = "SummaryItemCell"
 
+    private let bulletView = UIView()
     private let itemLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -518,33 +665,40 @@ private final class SummaryItemCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .secondarySystemGroupedBackground
 
-        itemLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        bulletView.layer.cornerRadius = 3
+        bulletView.translatesAutoresizingMaskIntoConstraints = false
+
+        itemLabel.font = .preferredFont(forTextStyle: .subheadline)
         itemLabel.textColor = .label
         itemLabel.numberOfLines = 0
         itemLabel.translatesAutoresizingMaskIntoConstraints = false
 
+        contentView.addSubview(bulletView)
         contentView.addSubview(itemLabel)
 
         NSLayoutConstraint.activate([
-            itemLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            bulletView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            bulletView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            bulletView.widthAnchor.constraint(equalToConstant: 6),
+            bulletView.heightAnchor.constraint(equalToConstant: 6),
+
+            itemLabel.leadingAnchor.constraint(equalTo: bulletView.trailingAnchor, constant: 10),
             itemLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             itemLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             itemLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
         ])
     }
 
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
+    required init?(coder: NSCoder) { fatalError() }
 
     func configure(text: String, accentColor: UIColor) {
-        // Strip existing bullet prefixes and other OCR artifacts
+        bulletView.backgroundColor = accentColor
+
         var cleaned = text
         while cleaned.hasPrefix("•") || cleaned.hasPrefix("·") || cleaned.hasPrefix("-") || cleaned.hasPrefix(":") {
             cleaned = String(cleaned.dropFirst())
         }
         cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
-        // Collapse multiple spaces
         while cleaned.contains("  ") {
             cleaned = cleaned.replacingOccurrences(of: "  ", with: " ")
         }
