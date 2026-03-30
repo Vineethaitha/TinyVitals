@@ -42,7 +42,7 @@ class AIQueryViewController: UIViewController {
 
         vc.mode = .aiResults
         vc.aiFilteredFiles = records
-        vc.title = "AI Results"
+//        vc.title = "AI Results"
 
         navigationController?.pushViewController(vc, animated: true)
     }

@@ -29,7 +29,7 @@ final class SymptomsHistoryViewController: UIViewController, UITableViewDelegate
         super.viewDidLoad()
 
 //        view.backgroundColor = .systemBackground
-        title = "Symptoms History"
+//        title = "Symptoms History"
 
         setupNavigation()
         setupCalendar()

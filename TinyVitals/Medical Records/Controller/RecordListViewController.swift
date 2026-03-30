@@ -110,7 +110,7 @@ class RecordListViewController: UIViewController {
         addFileButton.clipsToBounds = true
         addFileButton.setImage(UIImage(systemName: "doc.badge.plus"), for: .normal)
         
-        title = folderName 
+//        title = folderName 
         
         tableView.dataSource = self
         tableView.delegate = self

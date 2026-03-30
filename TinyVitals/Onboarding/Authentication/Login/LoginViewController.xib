@@ -10,7 +10,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LoginViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
-                <outlet property="appleSignUpButton" destination="0JV-OR-dhw" id="m64-fl-WPZ"/>
                 <outlet property="emailTextField" destination="UoH-1B-roM" id="wrW-IU-lJC"/>
                 <outlet property="googleSignUpButton" destination="WXk-BT-sXs" id="UGm-vR-4zq"/>
                 <outlet property="loginButton" destination="hrK-Xp-FcK" id="y0f-cO-bw3"/>
@@ -27,7 +26,7 @@
                     <rect key="frame" x="0.0" y="118" width="393" height="666"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Abo-Fl-i7r">
-                            <rect key="frame" x="0.0" y="0.0" width="393" height="682"/>
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="612"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mp5-s2-P92">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="200"/>
@@ -213,38 +212,8 @@
                                         <constraint firstItem="eY3-qJ-Aac" firstAttribute="centerY" secondItem="hEG-uw-URl" secondAttribute="centerY" id="j25-Rs-nAS"/>
                                     </constraints>
                                 </view>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tx2-F5-p0B">
-                                    <rect key="frame" x="0.0" y="492" width="393" height="70"/>
-                                    <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0JV-OR-dhw">
-                                            <rect key="frame" x="20" y="10" width="353" height="50"/>
-                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="xMv-2x-hnK"/>
-                                            </constraints>
-                                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <state key="normal" title="Button"/>
-                                            <buttonConfiguration key="configuration" style="plain" image="apple.logo" catalog="system" title="  Sign Up with Apple">
-                                                <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="17"/>
-                                            </buttonConfiguration>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="25"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
-                                        </button>
-                                    </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="0JV-OR-dhw" secondAttribute="trailing" constant="20" id="Gbe-so-7mM"/>
-                                        <constraint firstItem="0JV-OR-dhw" firstAttribute="centerX" secondItem="tx2-F5-p0B" secondAttribute="centerX" id="blg-Ft-Z0z"/>
-                                        <constraint firstAttribute="height" constant="70" id="c2q-GP-eyi"/>
-                                        <constraint firstItem="0JV-OR-dhw" firstAttribute="centerY" secondItem="tx2-F5-p0B" secondAttribute="centerY" id="cMg-4L-kLa"/>
-                                        <constraint firstItem="0JV-OR-dhw" firstAttribute="leading" secondItem="tx2-F5-p0B" secondAttribute="leading" constant="20" id="ofg-j4-1Jj"/>
-                                    </constraints>
-                                </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mLD-Bl-mG7">
-                                    <rect key="frame" x="0.0" y="562" width="393" height="70"/>
+                                    <rect key="frame" x="0.0" y="492" width="393" height="70"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WXk-BT-sXs">
                                             <rect key="frame" x="20" y="10" width="353" height="50"/>
@@ -254,7 +223,7 @@
                                             </constraints>
                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <state key="normal" title="Button"/>
-                                            <buttonConfiguration key="configuration" style="plain" image="Google" title="  Sign Up with Google">
+                                            <buttonConfiguration key="configuration" style="plain" image="Google" title="  continue with Google">
                                                 <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="17"/>
                                             </buttonConfiguration>
                                             <userDefinedRuntimeAttributes>
@@ -278,7 +247,7 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gw0-bf-m37">
-                                    <rect key="frame" x="0.0" y="632" width="393" height="50"/>
+                                    <rect key="frame" x="0.0" y="562" width="393" height="50"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't have an account?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HOg-HI-KTF">
                                             <rect key="frame" x="70" y="14.999999999999998" width="190" height="20.333333333333329"/>
@@ -340,7 +309,6 @@
     </objects>
     <resources>
         <image name="Google" width="24" height="24"/>
-        <image name="apple.logo" catalog="system" width="105" height="128"/>
         <image name="happy-family-with-children-mother-father-and-kids-cute-cartoon-characters-isolated-colorful-illustration-in-flat-style-free-png" width="1211" height="980"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

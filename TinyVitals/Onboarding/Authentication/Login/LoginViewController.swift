@@ -16,7 +16,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var appleSignUpButton: UIButton!
+    @IBOutlet weak var appleSignUpButton: UIButton?
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     
@@ -28,12 +28,14 @@ class LoginViewController: UIViewController {
         loginButton.setTitle("Login", for: .normal)
         loginButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         
-        appleSignUpButton.configuration = nil
-        appleSignUpButton.layer.cornerRadius = appleSignUpButton.frame.height / 2
-        appleSignUpButton.clipsToBounds = true
-        appleSignUpButton.setTitle("  Sign up with Apple", for: .normal)
-        appleSignUpButton.setImage(UIImage(systemName: "apple.logo"), for: .normal)
-        appleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        appleSignUpButton?.configuration = nil
+        if let appleBtn = appleSignUpButton {
+            appleBtn.layer.cornerRadius = appleBtn.frame.height / 2
+            appleBtn.clipsToBounds = true
+            appleBtn.setTitle("  Sign up with Apple", for: .normal)
+            appleBtn.setImage(UIImage(systemName: "apple.logo"), for: .normal)
+            appleBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        }
         
         setupLoader()
 

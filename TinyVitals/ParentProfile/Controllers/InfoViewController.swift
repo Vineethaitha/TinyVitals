@@ -23,6 +23,7 @@ final class InfoViewController: UIViewController {
     private let closeButton = UIButton(type: .system)
     private let containerView = UIView()
     private let divider = UIView()
+    private let loader = UIActivityIndicatorView(style: .large)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,8 +76,14 @@ final class InfoViewController: UIViewController {
         view.addSubview(divider)
         view.addSubview(containerView)
         containerView.addSubview(textView)
+        
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+        view.addSubview(loader)
 
         NSLayoutConstraint.activate([
+            loader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
 
@@ -103,137 +110,49 @@ final class InfoViewController: UIViewController {
 
 
     private func configureContent() {
-        var title = ""
-        var body = ""
-        var headings: [String] = []
+        guard let type = type else { return }
+        
+        textView.isHidden = true
+        titleLabel.isHidden = true
+        divider.isHidden = true
+        containerView.isHidden = true
+        
+        loader.startAnimating()
 
+        let fetchType: String
         switch type {
-
-        case .about:
-            title = "About TinyVitals"
-            body =
-            """
-            TinyVitals – Smarter Care for Growing Kids
-
-            TinyVitals is a modern child health tracking app designed to help parents monitor growth, symptoms, and overall well-being in one secure place.
-
-            Parenting can feel overwhelming. TinyVitals simplifies health tracking by helping you:
-
-            • Track weight and height growth trends
-            • Log symptoms and temperature readings
-            • Monitor severity and notes
-            • Manage multiple child profiles
-            • View growth comparisons against standard benchmarks
-
-            Our mission is to provide clarity, confidence, and peace of mind for parents through thoughtful design and secure technology.
-
-            TinyVitals is built with privacy, security, and simplicity at its core.
-
-            This app is currently in beta. We appreciate your feedback as we continue improving the experience.
-            """
-            headings = ["TinyVitals – Smarter Care for Growing Kids"]
-
-        case .terms:
-            title = "Terms & Conditions"
-            body =
-            """
-            By using TinyVitals, you agree to the following terms and conditions.
-
-            Medical Disclaimer
-            TinyVitals does not provide medical advice, diagnosis, or treatment. The information recorded in the app is for tracking purposes only. Always consult a qualified healthcare professional for medical decisions.
-
-            User Responsibility
-            You are responsible for the accuracy of the data you enter, including growth measurements, symptoms, and medical notes.
-
-            Account & Data Security
-            You are responsible for maintaining the confidentiality of your account and device access.
-
-            Service Updates
-            We may update features, functionality, or policies to improve the app experience. Continued use of the app implies acceptance of these updates.
-
-            Misuse of the app may result in restricted access.
-            """
-            headings = [
-                "Medical Disclaimer",
-                "User Responsibility",
-                "Account & Data Security",
-                "Service Updates"
-            ]
-
-        case .privacy:
-            title = "Privacy Policy"
-            body =
-            """
-            Your child’s health information is sensitive. TinyVitals is designed with privacy as a top priority.
-
-            Data Collection
-            We collect only the information you explicitly provide, such as:
-            • Child’s name and date of birth
-            • Growth measurements
-            • Symptom logs and notes
-            • Uploaded images
-            • Account email for authentication
-
-            Data Usage
-            Your data is used solely to provide core app functionality.
-
-            Data Storage & Security
-            Data is stored securely using encrypted services. We do not sell, rent, or share your data for advertising or marketing purposes.
-
-            Third-Party Services
-            TinyVitals uses secure backend services for authentication and storage but does not integrate third-party advertising or tracking systems.
-
-            User Control
-            You can edit or delete your data at any time within the app.
-
-            Your data always belongs to you.
-            """
-            headings = [
-                "Data Collection",
-                "Data Usage",
-                "Data Storage & Security",
-                "Third-Party Services",
-                "User Control"
-            ]
-
-        case .help:
-            title = "Help & Support"
-            body =
-            """
-            We’re here to help you get the most out of TinyVitals.
-
-            Common Tasks
-            • Add or edit a child profile
-            • Update growth measurements
-            • Log symptoms and temperature
-            • Upload health-related images
-
-            Tips for Best Experience
-            • Update measurements regularly for accurate trends
-            • Record symptoms as soon as they occur
-            • Review growth charts periodically
-
-            Support
-            If you experience issues or have feature suggestions, please contact us:
-
-            Email: tinyvitals.app@gmail.com
-
-            We typically respond within 24–48 hours.
-
-            TinyVitals continues to evolve based on real parent feedback.
-            """
-            headings = [
-                "Common Tasks",
-                "Tips for Best Experience",
-                "Support"
-            ]
-
-        case .none:
-            return
+        case .about: fetchType = "about"
+        case .terms: fetchType = "terms"
+        case .privacy: fetchType = "privacy"
+        case .help: fetchType = "help"
         }
-
-        titleLabel.text = title
-        applyStyledText(body: body, headings: headings)
+        
+        Task {
+            do {
+                let content = try await ContentService.shared.fetchContent(for: fetchType)
+                
+                await MainActor.run {
+                    self.loader.stopAnimating()
+                    self.textView.isHidden = false
+                    self.titleLabel.isHidden = false
+                    self.divider.isHidden = false
+                    self.containerView.isHidden = false
+                    
+                    self.titleLabel.text = content.title
+                    self.applyStyledText(body: content.body, headings: content.headings)
+                }
+            } catch {
+                await MainActor.run {
+                    self.loader.stopAnimating()
+                    self.titleLabel.text = "Error"
+                    self.titleLabel.isHidden = false
+                    self.textView.text = "Failed to load content. Please check your connection."
+                    self.textView.isHidden = false
+                    self.containerView.isHidden = false
+                }
+                print("Failed to fetch info content:", error)
+            }
+        }
     }
 
     

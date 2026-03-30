@@ -75,7 +75,7 @@ class HomeScreenViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Home"
+//        self.title = "Home"
         
         setupSummaryCards()
         setupCardGestures()

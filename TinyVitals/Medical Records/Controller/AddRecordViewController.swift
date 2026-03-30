@@ -37,7 +37,7 @@ class AddRecordViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Add Record"
+//        title = "Add Record"
         
         addButton.configuration = nil
         addButton.layer.cornerRadius = addButton.frame.height / 2
