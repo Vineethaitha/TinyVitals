@@ -44,26 +44,7 @@ class HomeScreenViewController: UIViewController {
     @IBOutlet weak var heightUpdateLabel: UILabel!
     
 
-    let articles: [Article] = [
-        Article(
-            title: "Healthy Living",
-            subtitle: "By HealthyChildren.org",
-            animationName: "Food Choice",
-            url: "https://www.healthychildren.org"
-        ),
-        Article(
-            title: "Healthy Habits for Healthy Kids",
-            subtitle: "By Mississippi State health department",
-            animationName: "Kids Learning From Home",
-            url: "https://msdh.ms.gov"
-        ),
-        Article(
-            title: "Healthy Sleep Habits",
-            subtitle: "By Stanford Children's Health",
-            animationName: "pink baby",
-            url: "https://www.stanfordchildrens.org"
-        )
-    ]
+    var articles: [Article] = []
 
     
     private var autoScrollTimer: Timer?
@@ -110,11 +91,39 @@ class HomeScreenViewController: UIViewController {
         dueDaysLabel.superview?.addGestureRecognizer(upcomingTap)
         dueDaysLabel.superview?.isUserInteractionEnabled = true
 
-//        if activeChild != nil {
-//            refreshForActiveChild()
-//        }
+        fetchDisplayArticles()
 
-
+    }
+    
+    private func fetchDisplayArticles() {
+        Task {
+            do {
+                let dtos = try await ArticleService.shared.fetchArticles()
+                let fetchedArticles = dtos.map { dto in
+                    Article(
+                        title: dto.title,
+                        subtitle: dto.subtitle,
+                        mediaType: dto.mediaType,
+                        mediaURL: dto.mediaUrl,
+                        url: dto.url
+                    )
+                }
+                
+                await MainActor.run {
+                    self.articles = fetchedArticles
+                    self.pageControl.numberOfPages = fetchedArticles.count
+                    self.articlesCollectionView.reloadData()
+                    
+                    if fetchedArticles.isEmpty {
+                        self.stopAutoScroll()
+                    } else {
+                        self.startAutoScroll()
+                    }
+                }
+            } catch {
+                print("❌ Failed to fetch articles: \\(error)")
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -643,7 +652,8 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
         cell.configure(
             title: item.title,
             subtitle: item.subtitle,
-            animationName: item.animationName
+            mediaType: item.mediaType,
+            mediaURL: item.mediaURL
         )
 
         return cell

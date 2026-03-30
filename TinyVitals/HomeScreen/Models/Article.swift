@@ -11,7 +11,8 @@ import UIKit
 struct Article {
     let title: String
     let subtitle: String
-    let animationName: String
+    let mediaType: String
+    let mediaURL: String
     let url: String
 }
 

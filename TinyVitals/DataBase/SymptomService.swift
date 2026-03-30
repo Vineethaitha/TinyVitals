@@ -34,6 +34,15 @@ final class SymptomService {
             .value
     }
 
+    // FETCH SYMPTOMS MASTER
+    func fetchSymptomsMaster() async throws -> [SymptomMasterDTO] {
+        try await client
+            .from("symptoms_master")
+            .select()
+            .execute()
+            .value
+    }
+
     // DELETE
     func deleteSymptom(id: UUID) async throws {
         try await client
