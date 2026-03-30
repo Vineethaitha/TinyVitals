@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseCore
+import AppIntents
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,6 +22,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Ask for notification permission as soon as the app launches
         NotificationService.shared.requestPermission()
+        
+        // Force iOS to register Siri shortcuts on launch
+        if #available(iOS 16.0, *) {
+            TinyVitalsShortcuts.updateAppShortcutParameters()
+        }
         
         return true
     }

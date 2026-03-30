@@ -333,7 +333,7 @@
 				DEVELOPMENT_TEAM = K75YG36RDS;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TinyVitals/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TinyVitals;
+				INFOPLIST_KEY_CFBundleDisplayName = "Tiny Vitals";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.medical";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -373,7 +373,7 @@
 				DEVELOPMENT_TEAM = K75YG36RDS;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TinyVitals/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TinyVitals;
+				INFOPLIST_KEY_CFBundleDisplayName = "Tiny Vitals";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.medical";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

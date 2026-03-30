@@ -39,7 +39,7 @@ final class LottieContainerView: UIView {
 
             animView.play()
             self.animationView = animView
-        }, animationCache: LRUAnimationCache.sharedCache)
+        }, animationCache: DefaultAnimationCache.sharedCache)
     }
 
     func showImage(from urlString: String) {
