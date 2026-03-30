@@ -18,6 +18,7 @@ class ParentProfileViewController: UIViewController {
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var userEmail: UILabel!
     @IBOutlet weak var logoutView: UIView!
+    @IBOutlet weak var deleteAccountView: UIView!
 
     private let activityIndicator = UIActivityIndicatorView(style: .large)
 
@@ -40,11 +41,10 @@ class ParentProfileViewController: UIViewController {
         logoutView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(infoTapped(_:)))
         )
-        
-//        deleteAccountView.isUserInteractionEnabled = true
-//        deleteAccountView.addGestureRecognizer(
-//            UITapGestureRecognizer(target: self, action: #selector(deleteAccountTapped))
-//        )
+        deleteAccountView?.isUserInteractionEnabled = true
+        deleteAccountView?.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(deleteAccountTapped))
+        )
 
 
     }
@@ -265,84 +265,110 @@ class ParentProfileViewController: UIViewController {
         }
     }
     
-//    @objc private func deleteAccountTapped() {
-//
-//        Haptics.notification(.warning)
-//
-//        let alert = UIAlertController(
-//            title: "Delete Account",
-//            message: "This action cannot be undone. All your data will be permanently deleted.",
-//            preferredStyle: .alert
-//        )
-//
-//        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-//
-//        let delete = UIAlertAction(title: "Delete", style: .destructive) { _ in
-//            self.performAccountDeletion()
-//        }
-//
-//        alert.addAction(cancel)
-//        alert.addAction(delete)
-//
-//        present(alert, animated: true)
-//    }
-//
-//    private func performAccountDeletion() {
-//
-//        showLoader()
-//
-//        Task {
-//            do {
-//                try await SupabaseAuthService.shared.client.functions.invoke(
-//                    "delete-user"
-//                )
-//
-//                await SupabaseAuthService.shared.logout()
-//
-//                await MainActor.run {
-//                    self.hideLoader()
-//
-//                    AppState.shared.clear()
-//
-//                    guard
-//                        let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-//                        let window = scene.windows.first
-//                    else { return }
-//
-//                    let loginVC = LoginViewController(
-//                        nibName: "LoginViewController",
-//                        bundle: nil
-//                    )
-//
-//                    let nav = UINavigationController(rootViewController: loginVC)
-//
-//                    UIView.transition(
-//                        with: window,
-//                        duration: 0.35,
-//                        options: .transitionCrossDissolve,
-//                        animations: {
-//                            window.rootViewController = nav
-//                            window.makeKeyAndVisible()
-//                        }
-//                    )
-//                }
-//
-//            } catch {
-//
-//                await MainActor.run {
-//                    self.hideLoader()
-//
-//                    let errorAlert = UIAlertController(
-//                        title: "Deletion Failed",
-//                        message: error.localizedDescription,
-//                        preferredStyle: .alert
-//                    )
-//                    errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
-//                    self.present(errorAlert, animated: true)
-//                }
-//            }
-//        }
-//    }
+    @objc private func deleteAccountTapped() {
+
+        Haptics.notification(.warning)
+
+        let alert = UIAlertController(
+            title: "Delete Account",
+            message: "This action cannot be undone. All your data will be permanently deleted.",
+            preferredStyle: .alert
+        )
+
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+
+        let delete = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            self.performAccountDeletion()
+        }
+
+        alert.addAction(cancel)
+        alert.addAction(delete)
+
+        present(alert, animated: true)
+    }
+
+    private func performAccountDeletion() {
+
+        showLoader()
+
+        Task {
+            do {
+                let session = try await SupabaseAuthService.shared.client.auth.session
+                let userId = session.user.id
+                
+                struct ChildModel: Decodable {
+                    let id: UUID
+                }
+                
+                let response = try await SupabaseAuthService.shared.client
+                    .from("children")
+                    .select("id")
+                    .eq("user_id", value: userId)
+                    .execute()
+                
+                let children = try JSONDecoder().decode([ChildModel].self, from: response.data)
+                
+                for child in children {
+                    let childId = child.id
+                    _ = try? await SupabaseAuthService.shared.client.from("child_vaccinations").delete().eq("child_id", value: childId).execute()
+                    _ = try? await SupabaseAuthService.shared.client.from("growth_logs").delete().eq("child_id", value: childId).execute()
+                    _ = try? await SupabaseAuthService.shared.client.from("medical_records").delete().eq("child_id", value: childId).execute()
+                    _ = try? await SupabaseAuthService.shared.client.from("record_folders").delete().eq("child_id", value: childId).execute()
+                    _ = try? await SupabaseAuthService.shared.client.from("symptom_logs").delete().eq("child_id", value: childId).execute()
+                }
+
+                if !children.isEmpty {
+                    _ = try await SupabaseAuthService.shared.client.from("children").delete().eq("user_id", value: userId).execute()
+                }
+
+                try await SupabaseAuthService.shared.client.rpc("delete_user").execute()
+
+                await SupabaseAuthService.shared.logout()
+
+                await MainActor.run {
+                    self.hideLoader()
+
+                    AppState.shared.clear()
+
+                    guard
+                        let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                        let window = scene.windows.first
+                    else { return }
+
+                    let loginVC = LoginViewController(
+                        nibName: "LoginViewController",
+                        bundle: nil
+                    )
+
+                    let nav = UINavigationController(rootViewController: loginVC)
+
+                    UIView.transition(
+                        with: window,
+                        duration: 0.35,
+                        options: .transitionCrossDissolve,
+                        animations: {
+                            window.rootViewController = nav
+                            window.makeKeyAndVisible()
+                        }
+                    )
+                }
+
+            } catch {
+
+                await MainActor.run {
+                    self.hideLoader()
+
+                    let errorAlert = UIAlertController(
+                        title: "Deletion Failed",
+                        message: error.localizedDescription,
+                        preferredStyle: .alert
+                    )
+                    errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(errorAlert, animated: true)
+                }
+            }
+        }
+    }
 
 
     
