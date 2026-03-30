@@ -82,14 +82,19 @@ class ParentProfileViewController: UIViewController {
             handleLogout()
             return
         }
+        
+        if tag == 2 || tag == 3 {
+            if let url = URL(string: "https://tinyvitals-77c2d.firebaseapp.com/") {
+                UIApplication.shared.open(url)
+            }
+            return
+        }
 
         let vc = InfoViewController()
         vc.modalPresentationStyle = .pageSheet
 
         switch tag {
         case 1: vc.type = .about
-        case 2: vc.type = .terms
-        case 3: vc.type = .privacy
         case 4: vc.type = .help
         default: return
         }
