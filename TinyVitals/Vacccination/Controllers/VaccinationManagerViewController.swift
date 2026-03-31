@@ -713,7 +713,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                 x: 0,
                 y: 0,
                 width: vaccinesTableView.bounds.width,
-                height: 220   // reduced wasted space
+                height: 300
             )
 
         header.configure(

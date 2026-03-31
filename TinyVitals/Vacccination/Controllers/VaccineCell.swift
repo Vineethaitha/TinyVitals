@@ -44,18 +44,21 @@ class VaccineCell: UITableViewCell {
         switch vaccine.status {
         case .completed:
             cardView.backgroundColor =
-                UIColor.systemGreen.withAlphaComponent(0.15)
+                UIColor.systemGreen.withAlphaComponent(0.12)
 
         case .skipped:
             cardView.backgroundColor =
-                UIColor.systemRed.withAlphaComponent(0.15)
+                UIColor.systemRed.withAlphaComponent(0.12)
 
         case .rescheduled:
+            // Brand Blue — matches rescheduled ring
             cardView.backgroundColor =
-                UIColor.systemBlue.withAlphaComponent(0.15)
+                UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 0.12)
 
         case .upcoming:
-            cardView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 157/255, alpha: 0.15)
+            // Brand Pink — matches upcoming ring
+            cardView.backgroundColor =
+                UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.12)
         }
     }
 

@@ -52,6 +52,7 @@ class HomeScreenViewController: UIViewController {
 
 
     private var nextVaccineGroup: String?
+    private var milestoneSection: UIView?
 
 
     override func viewDidLoad() {
@@ -92,6 +93,10 @@ class HomeScreenViewController: UIViewController {
         dueDaysLabel.superview?.isUserInteractionEnabled = true
 
         fetchDisplayArticles()
+
+        // Hide the entire "Vaccination Progress" section from Home
+        // (the ring now lives only in the Vaccines tab)
+        vaccinationProgressContainer.superview?.superview?.isHidden = true
 
     }
     
@@ -421,6 +426,53 @@ class HomeScreenViewController: UIViewController {
         tabBarController?.selectedIndex = 3
     }
 
+    // MARK: - Milestone Card
+
+    private func setupMilestoneSection() {
+        guard let child = activeChild else { return }
+
+        // If card already exists just update it
+        if let card = milestoneSection?.viewWithTag(999) as? MilestoneCardView {
+            card.configure(dob: child.dob)
+            return
+        }
+
+        // Find the main vertical stack view
+        // hierarchy: vaccinationProgressContainer → card → section → stackView
+        guard let stackView = vaccinationProgressContainer.superview?
+                .superview?.superview as? UIStackView else { return }
+
+        // Build section wrapper (mimics other sections: title + card)
+        let section = UIView()
+        section.translatesAutoresizingMaskIntoConstraints = false
+
+        let title = UILabel()
+        title.text = "Milestones"
+        title.font = .systemFont(ofSize: 17, weight: .semibold)
+        title.translatesAutoresizingMaskIntoConstraints = false
+        section.addSubview(title)
+
+        let card = MilestoneCardView()
+        card.tag = 999
+        card.configure(dob: child.dob)
+        card.translatesAutoresizingMaskIntoConstraints = false
+        section.addSubview(card)
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: section.topAnchor),
+            title.leadingAnchor.constraint(equalTo: section.leadingAnchor, constant: 20),
+
+            card.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 8),
+            card.leadingAnchor.constraint(equalTo: section.leadingAnchor, constant: 20),
+            card.trailingAnchor.constraint(equalTo: section.trailingAnchor, constant: -20),
+            card.bottomAnchor.constraint(equalTo: section.bottomAnchor, constant: -10),
+        ])
+
+        // Insert after the hidden vaccination progress section (index 1)
+        stackView.insertArrangedSubview(section, at: 1)
+        milestoneSection = section
+    }
+
     func refreshForActiveChild() {
         guard isViewLoaded else { return }
         guard let child = activeChild else { return }
@@ -438,8 +490,10 @@ class HomeScreenViewController: UIViewController {
             heightValueLabel.text = "-- ft"
         }
 
-        // Vaccination progress
+        // Vaccination progress (upcoming card data only)
         setupVaccinationProgress()
+        // Milestone card
+        setupMilestoneSection()
         // Growth status
         updateGrowthSummary()
     }
