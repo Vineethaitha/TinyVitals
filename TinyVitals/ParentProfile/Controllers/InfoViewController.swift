@@ -138,8 +138,31 @@ final class InfoViewController: UIViewController {
                     self.divider.isHidden = false
                     self.containerView.isHidden = false
                     
+                    var finalBody = content.body
+                    var finalHeadings = content.headings
+                    
+                    if type == .about {
+                        let attributions = """
+                        
+                        
+                        Third-Party Attributions
+                        
+                        This application uses Lottie animations provided by LottieFiles (lottiefiles.com) and its community creators under the Lottie Simple License and CC-BY 4.0. We extend our gratitude to the following creators for their work used in this app:
+                        • Heart Dementia Doctor animation
+                        • Happy Boy animation
+                        • Empty State & Other UI animations
+                        
+                        Open Source Libraries
+                        • Lottie by Airbnb (Apache License 2.0)
+                        • Supabase Swift Client (MIT License)
+                        """
+                        finalBody += attributions
+                        finalHeadings.append("Third-Party Attributions")
+                        finalHeadings.append("Open Source Libraries")
+                    }
+                    
                     self.titleLabel.text = content.title
-                    self.applyStyledText(body: content.body, headings: content.headings)
+                    self.applyStyledText(body: finalBody, headings: finalHeadings)
                 }
             } catch {
                 await MainActor.run {
