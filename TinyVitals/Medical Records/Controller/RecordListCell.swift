@@ -67,7 +67,7 @@ class RecordListCell: UITableViewCell {
                 }
 
             } catch {
-                print("❌ Thumbnail load failed:", error)
+//                print("❌ Thumbnail load failed:", error)
             }
         }
     }

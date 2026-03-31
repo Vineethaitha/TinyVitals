@@ -296,7 +296,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                 DispatchQueue.main.async {
                     self.hideLoader()
                 }
-                print("❌ Child creation failed:", error)
+//                print("❌ Child creation failed:", error)
             }
 
         }
@@ -473,7 +473,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                 }
 
             } catch {
-                print("❌ Failed to delete child:", error)
+//                print("❌ Failed to delete child:", error)
             }
         }
     }
@@ -585,7 +585,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                 await MainActor.run {
                     hideLoader()
                 }
-                print("❌ Failed to update child:", error)
+//                print("❌ Failed to update child:", error)
             }
         }
     }

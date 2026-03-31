@@ -189,7 +189,7 @@ class RecordListViewController: UIViewController {
                         }
 
                     } catch {
-                        print("Reload records failed:", error)
+//                        print("Reload records failed:", error)
                     }
                 }
             }
@@ -333,7 +333,7 @@ class RecordListViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Preview failed:", error)
+//                print("❌ Preview failed:", error)
             }
         }
     }
@@ -399,7 +399,7 @@ class RecordListViewController: UIViewController {
                     }
 
                 } catch {
-                    print("❌ Bulk delete failed:", error)
+//                    print("❌ Bulk delete failed:", error)
                 }
             }
         })
@@ -481,7 +481,7 @@ class RecordListViewController: UIViewController {
                     }
 
                 } catch {
-                    print(" Share download failed:", error)
+//                    print(" Share download failed:", error)
                 }
             }
 
@@ -655,7 +655,7 @@ class RecordListViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Delete failed:", error)
+//                print("❌ Delete failed:", error)
             }
         }
     }
@@ -896,7 +896,7 @@ class RecordListViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Summary load failed:", error)
+//                print("❌ Summary load failed:", error)
             }
         }
     }

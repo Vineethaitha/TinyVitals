@@ -130,7 +130,7 @@ class GrowthGraphViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Failed to load growth data:", error)
+//                print("❌ Failed to load growth data:", error)
                 await MainActor.run {
                     hideLoader()
                 }
@@ -171,7 +171,7 @@ class GrowthGraphViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Failed to load growth data:", error)
+//                print("❌ Failed to load growth data:", error)
                 await MainActor.run {
                     hideLoader()
                 }
@@ -239,7 +239,9 @@ class GrowthGraphViewController: UIViewController {
         let difference = actualValue - optimalValue
         let absDifference = abs(difference)
 
-        let threshold = metricSegment.selectedSegmentIndex == 0 ? 1.0 : 0.3
+        // Medical Standard: Use a dynamic percentage (10%) rather than a static 1kg / 0.3ft 
+        // because 1kg is massive for a newborn but tiny for a 5-year-old.
+        let threshold = optimalValue * 0.10
 
         // ---------- STATUS ----------
         if absDifference <= threshold {
@@ -366,7 +368,7 @@ extension GrowthGraphViewController: AddMeasureDelegate {
                 }
 
             } catch {
-                print("❌ Failed to update child:", error)
+//                print("❌ Failed to update child:", error)
             }
         }
     }

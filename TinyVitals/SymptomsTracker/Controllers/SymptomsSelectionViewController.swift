@@ -74,7 +74,7 @@ final class SymptomsSelectionViewController: UIViewController {
                     self.selectedCollectionView.reloadData()
                 }
             } catch {
-                print("❌ Failed to fetch symptoms: \\(error)")
+//                print("❌ Failed to fetch symptoms: \(error)")
             }
         }
     }

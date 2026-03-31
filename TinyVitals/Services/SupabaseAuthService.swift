@@ -148,14 +148,14 @@ final class SupabaseAuthService: AuthService {
                 
                 // After signInWithOAuth returns, the session is already established
                 let session = try await client.auth.session
-                print("✅ Google sign-in successful:", session.user.id)
+//                print("✅ Google sign-in successful:", session.user.id)
                 
                 DispatchQueue.main.async {
                     completion(.success(session.user.id.uuidString))
                 }
 
             } catch {
-                print("❌ Google OAuth error:", error)
+//                print("❌ Google OAuth error:", error)
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }

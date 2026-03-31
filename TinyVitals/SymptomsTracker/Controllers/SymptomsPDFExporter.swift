@@ -64,7 +64,7 @@ final class SymptomsPDFExporter {
 
             return url
         } catch {
-            print("PDF generation failed:", error)
+//            print("PDF generation failed:", error)
             return nil
         }
     }

@@ -93,7 +93,7 @@ final class SymptomDetailViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Failed to load symptom image:", error)
+//                print("❌ Failed to load symptom image:", error)
                 DispatchQueue.main.async {
                     self.photoImageView.isHidden = true
                 }

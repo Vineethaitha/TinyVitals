@@ -378,7 +378,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                 await loadFoldersForActiveChild(childId)
 
             } catch {
-                print("❌ Folder create failed:", error)
+//                print("❌ Folder create failed:", error)
             }
         }
     }
@@ -404,7 +404,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             }
 
         } catch {
-            print("❌ Failed to load folders:", error)
+//            print("❌ Failed to load folders:", error)
         }
     }
     
@@ -423,7 +423,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
             }
 
         } catch {
-            print("❌ Failed to load records:", error)
+//            print("❌ Failed to load records:", error)
         }
     }
 
@@ -499,14 +499,14 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                     await self.loadFoldersForActiveChild(childId)
 
                     guard let child = self.activeChild else {
-                        print("⚠️ activeChild missing after rename")
+//                        print("⚠️ activeChild missing after rename")
                         return
                     }
 
                     await self.loadRecordsForActiveChild(child)
 
                 } catch {
-                    print("❌ Folder rename failed:", error)
+//                    print("❌ Folder rename failed:", error)
                 }
             }
         })
@@ -549,7 +549,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                     await self.loadRecordsForActiveChild(child)
 
                 } catch {
-                    print("❌ Folder delete failed:", error)
+//                    print("❌ Folder delete failed:", error)
                 }
             }
         })
@@ -598,7 +598,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                 await loadRecordsForActiveChild(child)
 
             } catch {
-                print("❌ Failed to load child data:", error)
+//                print("❌ Failed to load child data:", error)
             }
         }
     }
@@ -617,7 +617,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                 await loadRecordsForActiveChild(child)
 
             } catch {
-                print("❌ Failed to load child data:", error)
+//                print("❌ Failed to load child data:", error)
             }
             
             await MainActor.run {

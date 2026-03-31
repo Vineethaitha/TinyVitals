@@ -831,10 +831,10 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                     self.pendingPreselectGroup = nil
                 }
 
-                print("✅ Loaded vaccines from backend:", vaccines.count)
+//                print("✅ Loaded vaccines from backend:", vaccines.count)
 
             } catch {
-                print("❌ fetch vaccines failed:", error)
+//                print("❌ fetch vaccines failed:", error)
             }
         }
     }

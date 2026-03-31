@@ -173,7 +173,7 @@ final class InfoViewController: UIViewController {
                     self.textView.isHidden = false
                     self.containerView.isHidden = false
                 }
-                print("Failed to fetch info content:", error)
+//                print("Failed to fetch info content:", error)
             }
         }
     }

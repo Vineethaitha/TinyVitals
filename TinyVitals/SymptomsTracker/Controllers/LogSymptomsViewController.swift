@@ -256,10 +256,10 @@ final class LogSymptomsViewController: UIViewController {
                 navigationController?.popViewController(animated: true)
                 
             } catch {
-                print("❌ Symptom save failed:", error)
+//                print("❌ Symptom save failed:", error)
             }
             
-            print("🚨 Testing storage upload")
+//            print("🚨 Testing storage upload")
             
         }
     }

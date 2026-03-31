@@ -70,7 +70,7 @@ class ChildSelectionViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("🟡 actionsDelegate =", actionsDelegate as Any)
+//        print("🟡 actionsDelegate =", actionsDelegate as Any)
     }
     
     private func setupEmptyStateUI() {

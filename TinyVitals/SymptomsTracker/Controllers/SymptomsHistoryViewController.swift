@@ -251,7 +251,7 @@ extension SymptomsHistoryViewController: UICalendarSelectionSingleDateDelegate {
                 }
 
             } catch {
-                print("❌ Failed to load symptoms history:", error)
+//                print("❌ Failed to load symptoms history:", error)
             }
         }
     }
@@ -292,7 +292,7 @@ extension SymptomsHistoryViewController: UICalendarSelectionSingleDateDelegate {
                 }
 
             } catch {
-                print("❌ Failed to load today symptoms:", error)
+//                print("❌ Failed to load today symptoms:", error)
             }
         }
     }

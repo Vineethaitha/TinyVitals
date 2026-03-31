@@ -64,7 +64,7 @@ class RecordCardCell: UICollectionViewCell {
                 self.imageViewThumb.image = image
 
             } catch {
-                print("❌ Thumbnail load failed:", error)
+//                print("❌ Thumbnail load failed:", error)
             }
         }
     }

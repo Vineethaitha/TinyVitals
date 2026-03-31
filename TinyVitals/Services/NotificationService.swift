@@ -15,11 +15,11 @@ class NotificationService {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
                 if let error = error {
-                    print("Notification permission error: \(error)")
+//                    print("Notification permission error: \(error)")
                 } else if granted {
-                    print("Notification permission granted.")
+//                    print("Notification permission granted.")
                 } else {
-                    print("Notification permission denied.")
+//                    print("Notification permission denied.")
                 }
             }
     }
@@ -105,7 +105,7 @@ class NotificationService {
             
             UNUserNotificationCenter.current().add(request) { error in
                 if let error = error {
-                    print("Error scheduling notification for \(ageGroup): \(error)")
+//                    print("Error scheduling notification for \(ageGroup): \(error)")
                 }
             }
         }

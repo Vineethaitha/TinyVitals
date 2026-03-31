@@ -337,7 +337,7 @@ extension MainTabBarController: ChildSelectionDelegate {
 
 extension MainTabBarController: ChildSelectionActions {
     func requestAddChild() {
-        print("🔥 requestAddChild received in MainTabBarController")
+//        print("🔥 requestAddChild received in MainTabBarController")
         presentAddChild()
     }
 }

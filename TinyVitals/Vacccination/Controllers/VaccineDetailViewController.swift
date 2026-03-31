@@ -445,7 +445,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
                 : notesTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines)
 
             guard let recordUUID = UUID(uuidString: vaccine.id) else {
-                print("❌ invalid record id")
+//                print("❌ invalid record id")
                 return
             }
 
@@ -482,7 +482,7 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
                     }
 
                 } catch {
-                    print("❌ vaccine save failed:", error)
+//                    print("❌ vaccine save failed:", error)
                 }
             }
         }

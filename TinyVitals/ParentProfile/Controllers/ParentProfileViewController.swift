@@ -125,7 +125,7 @@ class ParentProfileViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Failed to fetch user info:", error)
+//                print("❌ Failed to fetch user info:", error)
             }
         }
     }

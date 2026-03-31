@@ -238,7 +238,7 @@ class splashScreenViewController: UIViewController {
                 }
                 
             } catch {
-                print("❌ Failed to fetch children:", error)
+//                print("❌ Failed to fetch children:", error)
                 goToAddChildFlow()
             }
         }

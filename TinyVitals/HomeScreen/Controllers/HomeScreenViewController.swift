@@ -126,7 +126,7 @@ class HomeScreenViewController: UIViewController {
                     }
                 }
             } catch {
-                print("❌ Failed to fetch articles: \\(error)")
+//                print("❌ Failed to fetch articles: \\(error)")
             }
         }
     }
@@ -411,7 +411,7 @@ class HomeScreenViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ vaccination progress load failed:", error)
+//                print("❌ vaccination progress load failed:", error)
             }
         }
     }
@@ -597,7 +597,7 @@ class HomeScreenViewController: UIViewController {
                 }
 
             } catch {
-                print("❌ Failed to load summary growth:", error)
+//                print("❌ Failed to load summary growth:", error)
             }
         }
     }

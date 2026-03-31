@@ -98,7 +98,7 @@ class AddRecordViewController: UIViewController,
                     }
 
                 } catch {
-                    print("Preview load failed:", error)
+//                    print("Preview load failed:", error)
                 }
             }
         }
@@ -259,7 +259,7 @@ class AddRecordViewController: UIViewController,
                     self.loader.stopAnimating()
                     self.view.isUserInteractionEnabled = true
                 }
-                print("❌ Record save failed:", error)
+//                print("❌ Record save failed:", error)
             }
         }
     }

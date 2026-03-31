@@ -169,7 +169,7 @@ final class GrowthService {
         }
         
         let sortedMonths = latestPerMonth.keys.sorted()
-        print("Growth points:", sortedMonths)
+//        print("Growth points:", sortedMonths)
 
         return sortedMonths.compactMap { month -> GrowthPoint? in
             

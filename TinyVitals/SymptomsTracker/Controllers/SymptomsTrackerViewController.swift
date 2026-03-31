@@ -363,7 +363,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                 }
 
             } catch {
-                print("❌ Failed to load symptoms:", error)
+//                print("❌ Failed to load symptoms:", error)
 
                 await MainActor.run {
                     self.hideLoader()
@@ -494,7 +494,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                         }
 
                     } catch {
-                        print("❌ Delete failed:", error)
+//                        print("❌ Delete failed:", error)
 
                         await MainActor.run {
                             self.hideLoader()

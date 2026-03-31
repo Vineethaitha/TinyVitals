@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Handle OAuth redirect if app was launched from URL
         if let urlContext = connectionOptions.urlContexts.first {
-            print("🔥 App opened via URL:", urlContext.url)
+//            print("🔥 App opened via URL:", urlContext.url)
             handleOAuthCallback(urlContext.url)
         }
     }
@@ -39,36 +39,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else { return }
         
-        print("🔥 URL CALLBACK RECEIVED:", url)
+//        print("🔥 URL CALLBACK RECEIVED:", url)
         
         // Handle the OAuth callback
         handleOAuthCallback(url)
     }
     
     func handleOAuthCallback(_ url: URL) {
-        print("🔥 CALLBACK URL:", url)
-        print("🔥 URL scheme:", url.scheme ?? "nil")
-        print("🔥 URL host:", url.host ?? "nil")
-        print("🔥 URL path:", url.path)
-        print("🔥 URL query:", url.query ?? "nil")
-        print("🔥 URL fragment:", url.fragment ?? "nil")
+//        print("🔥 CALLBACK URL:", url)
+//        print("🔥 URL scheme:", url.scheme ?? "nil")
+//        print("🔥 URL host:", url.host ?? "nil")
+//        print("🔥 URL path:", url.path)
+//        print("🔥 URL query:", url.query ?? "nil")
+//        print("🔥 URL fragment:", url.fragment ?? "nil")
         
         // Log all query parameters
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
            let queryItems = components.queryItems {
             for item in queryItems {
-                print("🔥 Query param: \(item.name) = \(item.value ?? "nil")")
+//                print("🔥 Query param: \(item.name) = \(item.value ?? "nil")")
             }
         }
 
         Task {
             do {
-                print("🔄 Exchanging OAuth callback for session via session(from:)")
+//                print("🔄 Exchanging OAuth callback for session via session(from:)")
 
                 // Use the SDK's session(from:) which handles PKCE code verifier automatically
                 let session = try await SupabaseAuthService.shared.client.auth.session(from: url)
 
-                print("✅ LOGIN SUCCESS:", session.user.id)
+//                print("✅ LOGIN SUCCESS:", session.user.id)
 
                 DispatchQueue.main.async {
                     AppState.shared.userId = session.user.id.uuidString
@@ -95,7 +95,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         }
                     }
                 } catch {
-                    print("❌ Failed to fetch children during OAuth callback:", error)
+//                    print("❌ Failed to fetch children during OAuth callback:", error)
                     await MainActor.run {
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                            let window = windowScene.windows.first {
@@ -106,10 +106,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 }
 
             } catch {
-                print("❌ OAuth exchange failed:")
-                print("❌ Error type:", type(of: error))
-                print("❌ Error description:", error.localizedDescription)
-                print("❌ Full error:", String(describing: error))
+//                print("❌ OAuth exchange failed:")
+//                print("❌ Error type:", type(of: error))
+//                print("❌ Error description:", error.localizedDescription)
+//                print("❌ Full error:", String(describing: error))
                 
                 await MainActor.run {
                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
