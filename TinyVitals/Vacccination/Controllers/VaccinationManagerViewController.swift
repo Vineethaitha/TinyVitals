@@ -665,7 +665,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
         vc.allVaccines = self.allVaccines
         vc.activeChild = self.activeChild
-//        vc.title = "Vaccination Calendar"
+        vc.title = "Vaccination Calendar"
 
         vc.onVaccineUpdated = { [weak self] in
             guard let self = self else { return }

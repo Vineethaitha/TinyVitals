@@ -391,7 +391,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         switch mode {
 
         case .add:
-//            title = "Add Child"
+            title = "Add Child"
             navigationItem.leftBarButtonItem = UIBarButtonItem(
                 barButtonSystemItem: .close,
                 target: self,
@@ -400,7 +400,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             navigationItem.rightBarButtonItem = nil
 
         case .view:
-//            title = "Child Profile"
+            title = "Child Profile"
 
             let deleteButton = UIBarButtonItem(
                 title: "Delete",
@@ -420,7 +420,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             navigationItem.rightBarButtonItems = [editButton, deleteButton]
 
         case .edit:
-//            title = "Edit Child"
+            title = "Edit Child"
             navigationItem.rightBarButtonItem = UIBarButtonItem(
                 title: "Save",
                 style: .plain,

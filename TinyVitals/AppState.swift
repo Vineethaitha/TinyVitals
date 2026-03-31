@@ -122,7 +122,7 @@ struct UpcomingVaccineIntent: AppIntent {
 @available(iOS 16.0, *)
 struct LogFeverIntent: AppIntent {
     static let title: LocalizedStringResource = "Log Fever"
-    static let description = IntentDescription("Log a fever for a child in Tiny Vitals.")
+    static let description = IntentDescription("Log a fever for a child in TinyVitals.")
 
     @Parameter(title: "Child's Name", requestValueDialog: "Which child has a fever?")
     var childName: String
@@ -164,7 +164,7 @@ struct LogFeverIntent: AppIntent {
 @available(iOS 16.0, *)
 struct CheckWeightIntent: AppIntent {
     static let title: LocalizedStringResource = "Check Weight"
-    static let description = IntentDescription("Check a child's latest weight in Tiny Vitals.")
+    static let description = IntentDescription("Check a child's latest weight in TinyVitals.")
 
     @Parameter(title: "Child's Name", requestValueDialog: "Whose weight do you want to check?")
     var childName: String
@@ -189,7 +189,7 @@ struct CheckWeightIntent: AppIntent {
 @available(iOS 16.0, *)
 struct CheckPrescriptionsIntent: AppIntent {
     static let title: LocalizedStringResource = "Check Prescriptions"
-    static let description = IntentDescription("Check for recent prescriptions in Tiny Vitals.")
+    static let description = IntentDescription("Check for recent prescriptions in TinyVitals.")
 
     @Parameter(title: "Child's Name", requestValueDialog: "Whose prescriptions do you want to check?")
     var childName: String
@@ -223,7 +223,7 @@ struct CheckPrescriptionsIntent: AppIntent {
 @available(iOS 16.0, *)
 struct LogGenericSymptomIntent: AppIntent {
     static let title: LocalizedStringResource = "Log a Symptom"
-    static let description = IntentDescription("Log any generic symptom for a child in Tiny Vitals.")
+    static let description = IntentDescription("Log any generic symptom for a child in TinyVitals.")
 
     @Parameter(title: "Child's Name", requestValueDialog: "Which child has a symptom?")
     var childName: String
