@@ -45,10 +45,10 @@ final class VaccinationHeaderView: UIView {
         guard !didSetupLegend else { return }
         didSetupLegend = true
 
-        legendStack.axis = .horizontal
+        legendStack.axis = .vertical
         legendStack.alignment = .center
         legendStack.distribution = .equalSpacing
-        legendStack.spacing = 12
+        legendStack.spacing = 8
         legendStack.translatesAutoresizingMaskIntoConstraints = false
 
         // Insert into the parent UIStackView (ring's superview from XIB)
@@ -94,6 +94,8 @@ final class VaccinationHeaderView: UIView {
         let colors = VaccinationProgressRingView.ringColors
         let labels = VaccinationProgressRingView.ringLabels
 
+        var activePairs: [UIView] = []
+
         for i in 0..<4 {
             guard counts[i] > 0 else { continue }
 
@@ -114,7 +116,30 @@ final class VaccinationHeaderView: UIView {
             pair.spacing = 4
             pair.alignment = .center
 
-            legendStack.addArrangedSubview(pair)
+            activePairs.append(pair)
+        }
+        
+        let row1 = UIStackView()
+        row1.axis = .horizontal
+        row1.spacing = 16
+        
+        let row2 = UIStackView()
+        row2.axis = .horizontal
+        row2.spacing = 16
+        
+        for (index, pair) in activePairs.enumerated() {
+            if index < 2 {
+                row1.addArrangedSubview(pair)
+            } else {
+                row2.addArrangedSubview(pair)
+            }
+        }
+        
+        if !row1.arrangedSubviews.isEmpty {
+            legendStack.addArrangedSubview(row1)
+        }
+        if !row2.arrangedSubviews.isEmpty {
+            legendStack.addArrangedSubview(row2)
         }
     }
 }
