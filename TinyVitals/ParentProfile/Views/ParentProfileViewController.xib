@@ -160,7 +160,7 @@
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fo7-UE-laN">
                                                     <rect key="frame" x="0.0" y="50.333333333333314" width="353" height="49"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="text.page" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="aD2-9l-WMx">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="text.document" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="aD2-9l-WMx">
                                                             <rect key="frame" x="20" y="17.333333333333329" width="15" height="14.666666666666668"/>
                                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <constraints>
@@ -232,7 +232,7 @@
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EfA-Ee-MdX">
                                                     <rect key="frame" x="0.0" y="150.66666666666669" width="353" height="49"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="headset.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="lAz-Jk-tB6">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="questionmark.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="lAz-Jk-tB6">
                                                             <rect key="frame" x="20" y="17.666666666666664" width="15" height="13.666666666666668"/>
                                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <constraints>
@@ -268,8 +268,8 @@
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7tI-Io-6QW">
                                                     <rect key="frame" x="0.0" y="200.66666666666663" width="353" height="49.333333333333343"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone.and.arrow.forward.outward" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="uBU-kg-zRj">
-                                                            <rect key="frame" x="20" y="17.333333333333332" width="17" height="14.333333333333332"/>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rectangle.portrait.and.arrow.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="uBU-kg-zRj">
+                                                            <rect key="frame" x="20" y="17.333333333333329" width="15" height="14.666666666666668"/>
                                                             <color key="tintColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="15" id="2jn-WS-9N8"/>
@@ -387,13 +387,13 @@
     </objects>
     <resources>
         <image name="chevron.right" catalog="system" width="97" height="128"/>
-        <image name="headset.circle" catalog="system" width="128" height="123"/>
         <image name="info.circle" catalog="system" width="128" height="123"/>
-        <image name="iphone.and.arrow.forward.outward" catalog="system" width="125" height="128"/>
         <image name="lock.shield" catalog="system" width="121" height="128"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="person" catalog="system" width="128" height="121"/>
-        <image name="text.page" catalog="system" width="115" height="128"/>
+        <image name="questionmark.circle" catalog="system" width="128" height="123"/>
+        <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="109"/>
+        <image name="text.document" catalog="system" width="115" height="128"/>
         <image name="trash" catalog="system" width="117" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

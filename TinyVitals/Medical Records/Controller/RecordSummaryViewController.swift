@@ -153,7 +153,7 @@ final class RecordSummaryViewController: UIViewController {
         gradient.colors = [Self.brandPink.cgColor, Self.brandBlue.cgColor]
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
         gradient.endPoint   = CGPoint(x: 1, y: 0.5)
-        gradient.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 110)
+        gradient.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 110)
         card.layer.insertSublayer(gradient, at: 0)
 
         // Sparkle
@@ -531,7 +531,7 @@ final class FullTextSheetViewController: UIViewController {
         title = "Full Document Text"
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Done", style: .done, target: self, action: #selector(closeSelf)
+            title: "Done", style: .prominent, target: self, action: #selector(closeSelf)
         )
         navigationItem.rightBarButtonItem?.tintColor = RecordSummaryViewController.brandPink
 
