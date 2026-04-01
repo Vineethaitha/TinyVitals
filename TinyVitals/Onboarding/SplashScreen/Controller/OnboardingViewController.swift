@@ -650,7 +650,7 @@ final class OnboardingViewController: UIViewController {
                      detail: "Store & access anytime", color: brandPink),
             CardData(icon: "syringe.fill", title: "Vaccination Calendar",
                      detail: "Smart reminders & schedules", color: brandBlue),
-            CardData(icon: "clock.badge.checkmark.fill", title: "Health Timeline",
+            CardData(icon: "clock.badge.checkmark.fill", title: "Symptoms Tracker",
                      detail: "Complete history at a glance", color: brandGreen),
         ]
 
