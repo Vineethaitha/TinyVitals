@@ -16,7 +16,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var appleSignUpButton: UIButton?
+//    @IBOutlet weak var appleSignUpButton: UIButton?
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     
@@ -28,33 +28,33 @@ class LoginViewController: UIViewController {
         loginButton.setTitle("Login", for: .normal)
         loginButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         
-        appleSignUpButton?.configuration = nil
-        if let appleBtn = appleSignUpButton {
-            appleBtn.layer.cornerRadius = appleBtn.frame.height / 2
-            appleBtn.clipsToBounds = true
-            appleBtn.setTitle("  Sign up with Apple", for: .normal)
-            appleBtn.setImage(UIImage(systemName: "apple.logo"), for: .normal)
-            appleBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-        }
+//        appleSignUpButton?.configuration = nil
+//        if let appleBtn = appleSignUpButton {
+//            appleBtn.layer.cornerRadius = appleBtn.frame.height / 2
+//            appleBtn.clipsToBounds = true
+//            appleBtn.setTitle("  Sign up with Apple", for: .normal)
+//            appleBtn.setImage(UIImage(systemName: "apple.logo"), for: .normal)
+//            appleBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+//        }
         
         setupLoader()
 
         hideKeyboardWhenTappedAround()
         
-        googleSignUpButton.configuration = nil
-        googleSignUpButton.clipsToBounds = true
-        googleSignUpButton.setTitle("  Sign up with Google", for: .normal)
-        googleSignUpButton.setTitleColor(.label, for: .normal)
-        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+//        googleSignUpButton.configuration = nil
+//        googleSignUpButton.clipsToBounds = true
+//        googleSignUpButton.setTitle("  Sign up with Google", for: .normal)
+//        googleSignUpButton.setTitleColor(.label, for: .normal)
+//        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 
         let size = CGSize(width: 24, height: 24)
         let image = UIImage(named: "GoogleLogo")?
             .resize(to: size)
             .withRenderingMode(.alwaysOriginal)
 
-        googleSignUpButton.setImage(image, for: .normal)
-        googleSignUpButton.imageView?.contentMode = .scaleAspectFit
-        googleSignUpButton.tintColor = .clear
+//        googleSignUpButton.setImage(image, for: .normal)
+//        googleSignUpButton.imageView?.contentMode = .scaleAspectFit
+//        googleSignUpButton.tintColor = .clear
 
     }
 
@@ -125,53 +125,53 @@ class LoginViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    @IBAction func googleSignUpTapped(_ sender: UIButton) {
-        Haptics.impact(.light)
-        showLoader()
-
-        SupabaseAuthService.shared.signInWithGoogle(presentingVC: self) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let userId):
-                AppState.shared.userId = userId
-                
-                Task {
-                    do {
-                        let userUUID = UUID(uuidString: userId)!
-                        let dtos = try await ChildService.shared.fetchChildren(userId: userUUID)
-                        let profiles = dtos.map { ChildProfile(dto: $0) }
-                        
-                        AppState.shared.setChildren(profiles)
-                        
-                        if let first = profiles.first {
-                            AppState.shared.setActiveChild(first)
-                        }
-                        
-                        DispatchQueue.main.async {
-                            self.hideLoader()
-                            self.navigateToHome()
-                        }
-                        
-                    } catch {
-                        DispatchQueue.main.async {
-                            self.hideLoader()
-                            self.navigateToHome()
-                        }
-                    }
-                }
-                
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    self.hideLoader()
-                    self.showAlert(
-                        title: "Google Sign-In Failed",
-                        message: error.localizedDescription
-                    )
-                }
-            }
-        }
-    }
+//    @IBAction func googleSignUpTapped(_ sender: UIButton) {
+//        Haptics.impact(.light)
+//        showLoader()
+//
+//        SupabaseAuthService.shared.signInWithGoogle(presentingVC: self) { [weak self] result in
+//            guard let self = self else { return }
+//            
+//            switch result {
+//            case .success(let userId):
+//                AppState.shared.userId = userId
+//                
+//                Task {
+//                    do {
+//                        let userUUID = UUID(uuidString: userId)!
+//                        let dtos = try await ChildService.shared.fetchChildren(userId: userUUID)
+//                        let profiles = dtos.map { ChildProfile(dto: $0) }
+//                        
+//                        AppState.shared.setChildren(profiles)
+//                        
+//                        if let first = profiles.first {
+//                            AppState.shared.setActiveChild(first)
+//                        }
+//                        
+//                        DispatchQueue.main.async {
+//                            self.hideLoader()
+//                            self.navigateToHome()
+//                        }
+//                        
+//                    } catch {
+//                        DispatchQueue.main.async {
+//                            self.hideLoader()
+//                            self.navigateToHome()
+//                        }
+//                    }
+//                }
+//                
+//            case .failure(let error):
+//                DispatchQueue.main.async {
+//                    self.hideLoader()
+//                    self.showAlert(
+//                        title: "Google Sign-In Failed",
+//                        message: error.localizedDescription
+//                    )
+//                }
+//            }
+//        }
+//    }
     
     @objc private func handleAuthenticationSuccess() {
         NotificationCenter.default.removeObserver(

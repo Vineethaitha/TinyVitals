@@ -153,7 +153,12 @@ final class VaccinationCalendarViewController : UIViewController {
     
     private func setupEmptyStateAnimation() {
         let animation = LottieAnimation.named("Injection")
-        let animationView = LottieAnimationView(animation: animation)
+        
+        let configuration = LottieConfiguration(renderingEngine: .mainThread)
+        let animationView = LottieAnimationView(
+            animation: animation,
+            configuration: configuration
+        )
 
         animationView.translatesAutoresizingMaskIntoConstraints = false
         animationView.contentMode = .scaleAspectFit

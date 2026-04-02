@@ -21,7 +21,8 @@ final class EmptyStateAnimationView: UIView {
         actionTitle: String? = nil,
         action: (() -> Void)? = nil
     ) {
-        self.animationView = LottieAnimationView(name: animationName)
+        let configuration = LottieConfiguration(renderingEngine: .mainThread)
+        self.animationView = LottieAnimationView(name: animationName, configuration: configuration)
         self.action = action
         super.init(frame: .zero)
 

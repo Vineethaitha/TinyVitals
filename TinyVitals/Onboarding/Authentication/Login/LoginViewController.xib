@@ -11,7 +11,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LoginViewController" customModule="TinyVitals" customModuleProvider="target">
             <connections>
                 <outlet property="emailTextField" destination="UoH-1B-roM" id="wrW-IU-lJC"/>
-                <outlet property="googleSignUpButton" destination="WXk-BT-sXs" id="UGm-vR-4zq"/>
                 <outlet property="loginButton" destination="hrK-Xp-FcK" id="y0f-cO-bw3"/>
                 <outlet property="passwordTextField" destination="kRq-qg-S9W" id="tvK-4x-rqr"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -26,7 +25,7 @@
                     <rect key="frame" x="0.0" y="118" width="393" height="666"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Abo-Fl-i7r">
-                            <rect key="frame" x="0.0" y="30" width="393" height="642"/>
+                            <rect key="frame" x="0.0" y="30" width="393" height="572"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mp5-s2-P92">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="200"/>
@@ -212,42 +211,8 @@
                                         <constraint firstItem="eY3-qJ-Aac" firstAttribute="centerY" secondItem="hEG-uw-URl" secondAttribute="centerY" id="j25-Rs-nAS"/>
                                     </constraints>
                                 </view>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mLD-Bl-mG7">
-                                    <rect key="frame" x="0.0" y="522" width="393" height="70"/>
-                                    <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WXk-BT-sXs">
-                                            <rect key="frame" x="20" y="10" width="353" height="50"/>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="3i1-nt-CWA"/>
-                                            </constraints>
-                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <state key="normal" title="Button"/>
-                                            <buttonConfiguration key="configuration" style="plain" image="Google" title="  continue with Google">
-                                                <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="17"/>
-                                            </buttonConfiguration>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="25"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.borderWidth" value="YES"/>
-                                            </userDefinedRuntimeAttributes>
-                                            <connections>
-                                                <action selector="googleSignUpTapped:" destination="-1" eventType="touchUpInside" id="bhE-6E-MUF"/>
-                                            </connections>
-                                        </button>
-                                    </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    <constraints>
-                                        <constraint firstItem="WXk-BT-sXs" firstAttribute="leading" secondItem="mLD-Bl-mG7" secondAttribute="leading" constant="20" id="654-qD-BmQ"/>
-                                        <constraint firstAttribute="height" constant="70" id="JkI-yi-wCK"/>
-                                        <constraint firstItem="WXk-BT-sXs" firstAttribute="centerY" secondItem="mLD-Bl-mG7" secondAttribute="centerY" id="P6S-cy-NsN"/>
-                                        <constraint firstAttribute="trailing" secondItem="WXk-BT-sXs" secondAttribute="trailing" constant="20" id="RL3-TR-F7N"/>
-                                        <constraint firstItem="WXk-BT-sXs" firstAttribute="centerX" secondItem="mLD-Bl-mG7" secondAttribute="centerX" id="UbO-ES-uVG"/>
-                                    </constraints>
-                                </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gw0-bf-m37">
-                                    <rect key="frame" x="0.0" y="592" width="393" height="50"/>
+                                    <rect key="frame" x="0.0" y="522" width="393" height="50"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't have an account?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HOg-HI-KTF">
                                             <rect key="frame" x="70" y="14.999999999999998" width="190" height="20.333333333333329"/>
@@ -308,7 +273,6 @@
         </view>
     </objects>
     <resources>
-        <image name="Google" width="24" height="24"/>
         <image name="happy-family-with-children-mother-father-and-kids-cute-cartoon-characters-isolated-colorful-illustration-in-flat-style-free-png" width="1211" height="980"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
