@@ -7,6 +7,7 @@
 
 import UIKit
 import QuickLook
+import Supabase
 
 
 class CalendarRecordsViewController: UIViewController {
@@ -37,9 +38,12 @@ class CalendarRecordsViewController: UIViewController {
         alpha: 1
     )
 
+    private let loader = UIActivityIndicatorView(style: .large)
+    private let loaderContainer = UIView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLoader()
 
         guard let childId = activeChild?.id else {
             assertionFailure("CalendarRecordsViewController opened without activeChild")
@@ -125,14 +129,14 @@ class CalendarRecordsViewController: UIViewController {
         )
 
         // Preview
-        alert.addAction(UIAlertAction(title: "Preview", style: .default) { _ in
-            self.previewRecord(record)
-        })
+//        alert.addAction(UIAlertAction(title: "Preview", style: .default) { _ in
+//            self.previewRecord(record)
+//        })
 
         // Edit
-        alert.addAction(UIAlertAction(title: "Edit", style: .default) { _ in
-            self.openEditRecord(record)
-        })
+//        alert.addAction(UIAlertAction(title: "Edit", style: .default) { _ in
+//            self.openEditRecord(record)
+//        })
 
         // Delete
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
@@ -145,18 +149,72 @@ class CalendarRecordsViewController: UIViewController {
     }
 
     func previewRecord(_ record: MedicalFile) {
+        showLoader()
+        Task {
+            do {
+                let signedURL = try await MedicalRecordService.shared.getSignedFileURL(path: record.filePath)
+                let localURL: URL
 
-        if let pdfURL = record.pdfURL {
-            previewURL = pdfURL
-        } else if let image = record.thumbnail {
-            previewURL = saveTempImage(image)
+                if record.fileType == "image" {
+                    let image = try await MedicalRecordService.shared.downloadImage(from: signedURL)
+                    guard let url = saveTempImage(image) else { 
+                        DispatchQueue.main.async { self.hideLoader() }
+                        return 
+                    }
+                    localURL = url
+                } else {
+                    localURL = try await MedicalRecordService.shared.downloadFile(from: signedURL, fileType: record.fileType)
+                }
+
+                DispatchQueue.main.async {
+                    self.hideLoader()
+                    self.previewURL = localURL
+                    let previewVC = QLPreviewController()
+                    previewVC.dataSource = self
+                    self.present(previewVC, animated: true)
+                }
+            } catch {
+                DispatchQueue.main.async { self.hideLoader() }
+            }
         }
+    }
 
-        guard previewURL != nil else { return }
+    func presentSummary(for record: MedicalFile) {
+        showLoader()
+        Task {
+            do {
+                let signedURL = try await MedicalRecordService.shared.getSignedFileURL(path: record.filePath)
+                let localURL: URL
 
-        let previewVC = QLPreviewController()
-        previewVC.dataSource = self
-        present(previewVC, animated: true)
+                if record.fileType == "image" {
+                    let image = try await MedicalRecordService.shared.downloadImage(from: signedURL)
+                    guard let url = saveTempImage(image) else { 
+                        DispatchQueue.main.async { self.hideLoader() }
+                        return 
+                    }
+                    localURL = url
+                } else {
+                    localURL = try await MedicalRecordService.shared.downloadFile(from: signedURL, fileType: record.fileType)
+                }
+
+                DispatchQueue.main.async {
+                    self.hideLoader()
+                    let summaryVC = RecordSummaryViewController(
+                        record: record,
+                        localFileURL: localURL
+                    )
+                    let nav = UINavigationController(rootViewController: summaryVC)
+                    nav.modalPresentationStyle = .pageSheet
+                    if let sheet = nav.sheetPresentationController {
+                        sheet.detents = [.medium(), .large()]
+                        sheet.prefersGrabberVisible = true
+                    }
+                    self.present(nav, animated: true)
+                }
+            } catch {
+                DispatchQueue.main.async { self.hideLoader() }
+            }
+        }
     }
     
     func openEditRecord(_ record: MedicalFile) {
@@ -186,19 +244,25 @@ class CalendarRecordsViewController: UIViewController {
 
 
     func deleteRecord(_ record: MedicalFile) {
-
         guard let childId = activeChild?.id else { return }
 
-        store.filesByChild[childId]?.removeAll {
-            $0.id == record.id
-        }
+        showLoader()
+        Task {
+            do {
+                try await MedicalRecordService.shared.deleteRecord(id: UUID(uuidString: record.id)!)
+                try await SupabaseAuthService.shared.client.storage.from("medical-records").remove(paths: [record.filePath])
 
-        selectedDateRecords.removeAll {
-            $0.id == record.id
+                await MainActor.run {
+                    self.hideLoader()
+                    self.store.filesByChild[childId]?.removeAll { $0.id == record.id }
+                    self.selectedDateRecords.removeAll { $0.id == record.id }
+                    self.groupRecordsByDate(childId: childId)
+                    self.tableView.reloadData()
+                }
+            } catch {
+                await MainActor.run { self.hideLoader() }
+            }
         }
-
-        groupRecordsByDate(childId: childId)
-        tableView.reloadData()
     }
 
 
@@ -226,6 +290,36 @@ class CalendarRecordsViewController: UIViewController {
         }
 
         tableView.backgroundView = nil
+    }
+
+    private func setupLoader() {
+        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
+        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.8)
+        loaderContainer.isHidden = true
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.hidesWhenStopped = true
+        loaderContainer.addSubview(loader)
+        view.addSubview(loaderContainer)
+        NSLayoutConstraint.activate([
+            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
+        ])
+    }
+
+    private func showLoader() {
+        loaderContainer.isHidden = false
+        loader.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+
+    private func hideLoader() {
+        loader.stopAnimating()
+        loaderContainer.isHidden = true
+        view.isUserInteractionEnabled = true
     }
     
     private func setupNavigation() {
@@ -358,9 +452,14 @@ extension CalendarRecordsViewController: UITableViewDataSource {
             for: indexPath
         ) as! RecordListCell
 
-        cell.configure(with: selectedDateRecords[indexPath.row])
+        let record = selectedDateRecords[indexPath.row]
+        cell.configure(with: record)
 
-        cell.selectionStyle = .none
+        cell.onSummaryTap = { [weak self] in
+            self?.presentSummary(for: record)
+        }
+
+        cell.selectionStyle = .default
 
         cell.gestureRecognizers?.forEach { cell.removeGestureRecognizer($0) }
 
@@ -384,22 +483,9 @@ extension CalendarRecordsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
         tableView.deselectRow(at: indexPath, animated: true)
-
         let record = selectedDateRecords[indexPath.row]
-
-        if let pdfURL = record.pdfURL {
-            previewURL = pdfURL
-        } else if let image = record.thumbnail {
-            previewURL = saveTempImage(image)
-        }
-
-        guard previewURL != nil else { return }
-
-        let previewVC = QLPreviewController()
-        previewVC.dataSource = self
-        present(previewVC, animated: true)
+        previewRecord(record)
     }
 }
 
