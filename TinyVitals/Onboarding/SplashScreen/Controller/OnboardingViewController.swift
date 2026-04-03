@@ -919,7 +919,7 @@ final class OnboardingViewController: UIViewController {
         }
 
         let orbitItems: [OrbitItem] = [
-            OrbitItem(icon: "sparkles", title: "AI Summaries", color: brandPink),
+            OrbitItem(icon: "sparkles", title: "MileStones", color: brandPink),
             OrbitItem(icon: "stethoscope", title: "Symptoms", color: brandBlue),
             OrbitItem(icon: "bell.badge.fill", title: "Smart Alerts", color: UIColor(red: 255/255, green: 179/255, blue: 64/255, alpha: 1)),
             OrbitItem(icon: "waveform.path", title: "Patterns", color: brandGreen),

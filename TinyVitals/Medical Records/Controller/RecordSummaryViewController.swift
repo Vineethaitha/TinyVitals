@@ -165,7 +165,7 @@ final class RecordSummaryViewController: UIViewController {
 
         // Title
         let titleLabel = UILabel()
-        titleLabel.text = "AI Summary"
+        titleLabel.text = "Summary"
         titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
         titleLabel.textColor = .white
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
