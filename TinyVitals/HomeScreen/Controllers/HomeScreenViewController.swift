@@ -458,6 +458,19 @@ class HomeScreenViewController: UIViewController {
         card.translatesAutoresizingMaskIntoConstraints = false
         section.addSubview(card)
 
+        // Tap handler → present detail sheet
+        card.onTap = { [weak self] in
+            guard let self, let child = self.activeChild else { return }
+            let detailVC = MilestoneDetailViewController(dob: child.dob)
+            let nav = UINavigationController(rootViewController: detailVC)
+            nav.modalPresentationStyle = .pageSheet
+            if let sheet = nav.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+                sheet.prefersGrabberVisible = true
+            }
+            self.present(nav, animated: true)
+        }
+
         NSLayoutConstraint.activate([
             title.topAnchor.constraint(equalTo: section.topAnchor),
             title.leadingAnchor.constraint(equalTo: section.leadingAnchor, constant: 20),

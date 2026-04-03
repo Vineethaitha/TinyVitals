@@ -5,145 +5,135 @@
 
 import UIKit
 
-private final class GradientView: UIView {
-    override class var layerClass: AnyClass { CAGradientLayer.self }
-    var gradientLayer: CAGradientLayer { layer as! CAGradientLayer }
-}
-
 final class MilestoneCardView: UIView {
 
-    // MARK: - Brand colors
+    // MARK: - Brand color
 
     private let brandPink = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
-    private let brandBlue = UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 1)
 
-    // MARK: - UI Elements
+    // MARK: - Callback
 
-    private let cardView        = UIView()
-    private let titleLabel      = UILabel()     // Main milestone (Pink, bold)
-    private let subtitleLabel   = UILabel()     // Category & Age (Black, medium)
-    private let descLabel       = UILabel()     // Description (Gray, regular)
-    
-    private let progressTrack   = UIView()
-    private let progressFill    = GradientView()
-    
-    private let prevLabel       = UILabel()
-    private let nextLabel       = UILabel()
+    var onTap: (() -> Void)?
 
-    private var fillWidthConstraint: NSLayoutConstraint?
+    // MARK: - UI
+
+    private let cardView      = UIView()
+    private let iconView      = UIImageView()
+    private let titleLabel    = UILabel()
+    private let subtitleLabel = UILabel()
+    private let descLabel     = UILabel()
+    private let ringView      = CircularProgressRing()
+    private let fractionLabel = UILabel()
+    private let chevronView   = UIImageView()
 
     // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         buildUI()
+        addTap()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         buildUI()
+        addTap()
     }
 
-    // MARK: - Build UI
+    // MARK: - Layout
 
     private func buildUI() {
         backgroundColor = .clear
 
-        // ── Card ──
+        // Card
         cardView.backgroundColor = .systemBackground
         cardView.layer.cornerRadius = 20
         cardView.layer.masksToBounds = true
         pin(cardView, to: self)
 
-        // ── Title (matches "17 days left" styling: 20pt Bold Pink) ──
-        titleLabel.font = .boldSystemFont(ofSize: 20)
-        titleLabel.textColor = brandPink
+        // Icon (SF Symbol, tinted with category color)
+        iconView.contentMode = .scaleAspectFit
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+        cardView.addSubview(iconView)
+
+        // Title — milestone name
+        titleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        titleLabel.textColor = .label
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(titleLabel)
 
-        // ── Subtitle (matches "Vaccine Group" styling: 15pt Medium Black) ──
-        subtitleLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        subtitleLabel.textColor = .label
+        // Subtitle — category + expected age
+        subtitleLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        subtitleLabel.textColor = .secondaryLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(subtitleLabel)
 
-        // ── Description ──
+        // Description
         descLabel.font = .systemFont(ofSize: 13, weight: .regular)
-        descLabel.textColor = .secondaryLabel
+        descLabel.textColor = .tertiaryLabel
         descLabel.numberOfLines = 2
         descLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(descLabel)
 
-        // ── Progress track ──
-        progressTrack.backgroundColor = UIColor.systemGray5
-        progressTrack.layer.cornerRadius = 3
-        progressTrack.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(progressTrack)
+        // Progress ring
+        ringView.translatesAutoresizingMaskIntoConstraints = false
+        cardView.addSubview(ringView)
 
-        // ── Progress fill (gradient: brand pink → brand blue) ──
-        progressFill.layer.cornerRadius = 3
-        progressFill.clipsToBounds = true
-        progressFill.translatesAutoresizingMaskIntoConstraints = false
-        progressTrack.addSubview(progressFill)
+        // Fraction label (inside ring)
+        fractionLabel.font = .monospacedDigitSystemFont(ofSize: 10, weight: .semibold)
+        fractionLabel.textColor = brandPink
+        fractionLabel.textAlignment = .center
+        fractionLabel.translatesAutoresizingMaskIntoConstraints = false
+        cardView.addSubview(fractionLabel)
 
-        progressFill.gradientLayer.colors = [brandPink.cgColor, brandBlue.cgColor]
-        progressFill.gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        progressFill.gradientLayer.endPoint   = CGPoint(x: 1, y: 0.5)
+        // Chevron
+        let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .medium)
+        chevronView.image = UIImage(systemName: "chevron.right", withConfiguration: config)
+        chevronView.tintColor = .tertiaryLabel
+        chevronView.contentMode = .scaleAspectFit
+        chevronView.translatesAutoresizingMaskIntoConstraints = false
+        cardView.addSubview(chevronView)
 
-        // ── Bottom labels ──
-        prevLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        prevLabel.textColor = .tertiaryLabel
-        prevLabel.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(prevLabel)
-
-        nextLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        nextLabel.textColor = brandPink
-        nextLabel.textAlignment = .right
-        nextLabel.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(nextLabel)
-
-        // ── Constraints ──
-        let p: CGFloat = 20
+        let pad: CGFloat = 16
 
         NSLayoutConstraint.activate([
+            // Icon
+            iconView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: pad),
+            iconView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
+            iconView.widthAnchor.constraint(equalToConstant: 32),
+            iconView.heightAnchor.constraint(equalToConstant: 32),
+
             // Title
-            titleLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 16),
-            titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: p),
-            titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -p),
+            titleLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 18),
+            titleLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: ringView.leadingAnchor, constant: -8),
 
             // Subtitle
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-            subtitleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: p),
-            subtitleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -p),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 3),
+            subtitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            subtitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: ringView.leadingAnchor, constant: -8),
 
             // Description
-            descLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 6),
-            descLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: p),
-            descLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -p),
+            descLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 8),
+            descLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: pad),
+            descLabel.trailingAnchor.constraint(equalTo: ringView.leadingAnchor, constant: -8),
+            descLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -18),
 
-            // Progress Track
-            progressTrack.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 16),
-            progressTrack.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: p),
-            progressTrack.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -p),
-            progressTrack.heightAnchor.constraint(equalToConstant: 6),
+            // Ring
+            ringView.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
+            ringView.trailingAnchor.constraint(equalTo: chevronView.leadingAnchor, constant: -12),
+            ringView.widthAnchor.constraint(equalToConstant: 40),
+            ringView.heightAnchor.constraint(equalToConstant: 40),
 
-            // Progress Fill
-            progressFill.topAnchor.constraint(equalTo: progressTrack.topAnchor),
-            progressFill.leadingAnchor.constraint(equalTo: progressTrack.leadingAnchor),
-            progressFill.bottomAnchor.constraint(equalTo: progressTrack.bottomAnchor),
+            // Fraction (centered inside ring)
+            fractionLabel.centerXAnchor.constraint(equalTo: ringView.centerXAnchor),
+            fractionLabel.centerYAnchor.constraint(equalTo: ringView.centerYAnchor),
 
-            // Prev / Next Labels
-            prevLabel.topAnchor.constraint(equalTo: progressTrack.bottomAnchor, constant: 10),
-            prevLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: p),
-            prevLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -16),
-
-            nextLabel.centerYAnchor.constraint(equalTo: prevLabel.centerYAnchor),
-            nextLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -p),
-            nextLabel.leadingAnchor.constraint(greaterThanOrEqualTo: prevLabel.trailingAnchor, constant: 10)
+            // Chevron
+            chevronView.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
+            chevronView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -pad),
+            chevronView.widthAnchor.constraint(equalToConstant: 8),
         ])
-
-        fillWidthConstraint = progressFill.widthAnchor.constraint(equalToConstant: 0)
-        fillWidthConstraint?.isActive = true
     }
 
     // MARK: - Configure
@@ -152,42 +142,59 @@ final class MilestoneCardView: UIView {
         let snap = MilestoneService.snapshot(for: dob)
         guard let current = snap.current else { return }
 
-        // Main Title (e.g. "Walks Independently")
+        // SF Symbol icon with category color
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
+        iconView.image = UIImage(systemName: current.category.icon, withConfiguration: symbolConfig)
+        iconView.tintColor = current.category.color
+
+        // Title
         titleLabel.text = current.title
-        
-        // Subtitle (e.g. "Motor Development • 15 months")
+
+        // Subtitle — "Motor · Expected by 1 year 3 mo"
         let mo = current.ageMonths
-        let ageText = mo >= 12
-            ? "\(mo / 12) year\(mo / 12 > 1 ? "s" : "") \(mo % 12 > 0 ? "\(mo % 12) mo" : "")"
-            : "\(mo) months"
-        subtitleLabel.text = "\(current.category.rawValue) Development • \(ageText)"
+        let ageText: String
+        if mo >= 12 {
+            let yrs = mo / 12
+            let rem = mo % 12
+            ageText = rem > 0 ? "\(yrs)y \(rem)m" : "\(yrs) year\(yrs > 1 ? "s" : "")"
+        } else {
+            ageText = "\(mo) months"
+        }
+        subtitleLabel.text = "\(current.category.rawValue) · Expected by \(ageText)"
 
         // Description
         descLabel.text = current.description
 
-        // Progress fill
-        fillWidthConstraint?.isActive = false
-        fillWidthConstraint = progressFill.widthAnchor.constraint(
-            equalTo: progressTrack.widthAnchor,
-            multiplier: max(CGFloat(snap.progress), 0.02)
-        )
-        fillWidthConstraint?.isActive = true
+        // Ring
+        ringView.trackColor = .systemGray5
+        ringView.progressColor = brandPink
+        ringView.setProgress(CGFloat(snap.progress), animated: true)
 
-        // Previous milestone
-        if let prev = snap.previous {
-            prevLabel.text = "✓ \(prev.title) (\(prev.ageMonths) mo)"
-        } else {
-            prevLabel.text = "Starting the journey!"
-        }
-
-        // Next milestone
-        if let next = snap.next {
-            nextLabel.text = "\(next.title) (\(next.ageMonths) mo) →"
-        } else {
-            nextLabel.text = "All done! 🎉"
-        }
+        // Percentage fraction
+        let pct = Int(snap.progress * 100)
+        fractionLabel.text = "\(pct)%"
 
         setNeedsLayout()
+    }
+
+    // MARK: - Tap
+
+    private func addTap() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tapped))
+        addGestureRecognizer(tap)
+        isUserInteractionEnabled = true
+    }
+
+    @objc private func tapped() {
+        Haptics.impact(.light)
+        UIView.animate(withDuration: 0.08, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
+        }) { _ in
+            UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5) {
+                self.transform = .identity
+            }
+        }
+        onTap?()
     }
 
     // MARK: - Helpers
@@ -201,5 +208,71 @@ final class MilestoneCardView: UIView {
             child.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
             child.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
         ])
+    }
+}
+
+// MARK: - Circular Progress Ring
+
+final class CircularProgressRing: UIView {
+
+    var trackColor: UIColor = .systemGray5 {
+        didSet { trackLayer.strokeColor = trackColor.cgColor }
+    }
+    var progressColor: UIColor = .systemPink {
+        didSet { progressLayer.strokeColor = progressColor.cgColor }
+    }
+
+    private let trackLayer = CAShapeLayer()
+    private let progressLayer = CAShapeLayer()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+
+    private func setup() {
+        backgroundColor = .clear
+        trackLayer.fillColor = UIColor.clear.cgColor
+        trackLayer.lineWidth = 3.5
+        trackLayer.lineCap = .round
+        layer.addSublayer(trackLayer)
+
+        progressLayer.fillColor = UIColor.clear.cgColor
+        progressLayer.lineWidth = 3.5
+        progressLayer.lineCap = .round
+        progressLayer.strokeEnd = 0
+        layer.addSublayer(progressLayer)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let radius = (min(bounds.width, bounds.height) - 4) / 2
+        let path = UIBezierPath(
+            arcCenter: center, radius: radius,
+            startAngle: -.pi / 2, endAngle: 1.5 * .pi, clockwise: true
+        )
+        trackLayer.path = path.cgPath
+        trackLayer.strokeColor = trackColor.cgColor
+        progressLayer.path = path.cgPath
+        progressLayer.strokeColor = progressColor.cgColor
+    }
+
+    func setProgress(_ value: CGFloat, animated: Bool) {
+        let clamped = min(max(value, 0), 1)
+        if animated {
+            let anim = CABasicAnimation(keyPath: "strokeEnd")
+            anim.fromValue = progressLayer.strokeEnd
+            anim.toValue = clamped
+            anim.duration = 0.5
+            anim.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            progressLayer.add(anim, forKey: "progress")
+        }
+        progressLayer.strokeEnd = clamped
     }
 }

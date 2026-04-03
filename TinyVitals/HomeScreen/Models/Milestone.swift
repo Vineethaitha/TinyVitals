@@ -17,7 +17,7 @@ enum MilestoneCategory: String {
 
     var color: UIColor {
         switch self {
-        case .motor:     return .systemGreen
+        case .motor:     return UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 1)
         case .social:    return UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         case .language:  return UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 1)
         case .cognitive: return .systemPurple
