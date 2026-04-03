@@ -7,12 +7,13 @@
 
 import UIKit
 import Supabase
+import SafariServices
 
 class LoginViewController: UIViewController {
     
     private let authService: AuthService = SupabaseAuthService.shared
 
-    @IBOutlet weak var googleSignUpButton: UIButton!
+//    @IBOutlet weak var googleSignUpButton: UIButton!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
@@ -56,6 +57,13 @@ class LoginViewController: UIViewController {
 //        googleSignUpButton.imageView?.contentMode = .scaleAspectFit
 //        googleSignUpButton.tintColor = .clear
 
+    }
+    
+    @IBAction func openPrivacyPolicy(_ sender: UIButton) {
+        if let url = URL(string: "https://tinyvitals-77c2d.firebaseapp.com/") {
+            let vc = SFSafariViewController(url: url)
+            present(vc, animated: true, completion: nil)
+        }
     }
 
     @IBAction func signUpButtonTapped(_ sender: UIButton) {

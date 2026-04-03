@@ -41,7 +41,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BcF-DU-xrk">
                             <rect key="frame" x="0.0" y="0.0" width="353" height="50"/>
                             <subviews>
-                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email or Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kRN-vR-Hp8">
+                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kRN-vR-Hp8">
                                     <rect key="frame" x="0.0" y="0.0" width="353" height="50"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits" textContentType="email"/>
@@ -160,15 +160,27 @@
                         <action selector="createAccountButtonTapped:" destination="-1" eventType="touchUpInside" id="Fdn-n2-Pbo"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-hL-40f">
+                    <rect key="frame" x="77.000000000000014" y="595.33333333333337" width="239.33333333333337" height="29.666666666666629"/>
+                    <state key="normal" title="Button"/>
+                    <buttonConfiguration key="configuration" style="plain" title="Terms of Service and Privacy Policy">
+                        <fontDescription key="titleFontDescription" type="system" pointSize="13"/>
+                    </buttonConfiguration>
+                    <connections>
+                        <action selector="openPrivacyPolicy:" destination="-1" eventType="touchUpInside" id="ZC6-gt-yp5"/>
+                    </connections>
+                </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
+                <constraint firstItem="Wv0-hL-40f" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="16i-kd-kGT"/>
                 <constraint firstItem="9XC-7L-5uI" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="10" id="2fB-Vv-RUY"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="APW-kg-Ewd" secondAttribute="trailing" constant="20" id="2os-AT-7eV"/>
                 <constraint firstItem="pSZ-NW-pAR" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="AGe-ag-nfJ"/>
                 <constraint firstItem="APW-kg-Ewd" firstAttribute="top" secondItem="tFT-1Y-80A" secondAttribute="bottom" constant="60" id="C2W-b0-6bJ"/>
                 <constraint firstAttribute="trailing" secondItem="9XC-7L-5uI" secondAttribute="trailing" constant="10" id="Vm1-8Z-W8w"/>
+                <constraint firstItem="APW-kg-Ewd" firstAttribute="bottom" secondItem="Wv0-hL-40f" secondAttribute="top" constant="-40" id="efw-ed-4mL"/>
                 <constraint firstItem="tFT-1Y-80A" firstAttribute="top" secondItem="9XC-7L-5uI" secondAttribute="bottom" constant="30" id="gJ7-eI-YkS"/>
                 <constraint firstItem="pSZ-NW-pAR" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="ksn-8d-Qsy"/>
                 <constraint firstItem="tFT-1Y-80A" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="lmZ-pz-w6t"/>

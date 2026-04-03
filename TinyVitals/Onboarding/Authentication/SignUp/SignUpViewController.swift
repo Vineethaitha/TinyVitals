@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import SafariServices
+
 
 class SignUpViewController: UIViewController, UITextFieldDelegate {
     
@@ -47,6 +49,13 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         confirmPasswordTextField.delegate = self
         setupConfirmPasswordIcon()
         setupLoader()
+    }
+    
+    @IBAction func openPrivacyPolicy(_ sender: UIButton) {
+        if let url = URL(string: "https://tinyvitals-77c2d.firebaseapp.com/") {
+            let vc = SFSafariViewController(url: url)
+            present(vc, animated: true, completion: nil)
+        }
     }
     
     private func setupConfirmPasswordIcon() {
