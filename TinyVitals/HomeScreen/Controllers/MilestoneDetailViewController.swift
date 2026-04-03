@@ -75,7 +75,7 @@ final class MilestoneDetailViewController: UIViewController {
         // Title
         let titleLabel = UILabel()
         titleLabel.text = current.title
-        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        titleLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 20, weight: .bold))
         titleLabel.textColor = .label
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         card.addSubview(titleLabel)
@@ -91,7 +91,7 @@ final class MilestoneDetailViewController: UIViewController {
             ageStr = "\(mo) months"
         }
         subtitleLabel.text = "\(current.category.rawValue) · Expected by \(ageStr)"
-        subtitleLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        subtitleLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13, weight: .regular))
         subtitleLabel.textColor = .secondaryLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         card.addSubview(subtitleLabel)
@@ -106,7 +106,7 @@ final class MilestoneDetailViewController: UIViewController {
         // Percentage
         let pctLabel = UILabel()
         pctLabel.text = "\(Int(snap.progress * 100))%"
-        pctLabel.font = .monospacedDigitSystemFont(ofSize: 12, weight: .bold)
+        pctLabel.font = UIFontMetrics.default.scaledFont(for: .monospacedDigitSystemFont(ofSize: 12, weight: .bold))
         pctLabel.textColor = brandPink
         pctLabel.textAlignment = .center
         pctLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -115,7 +115,7 @@ final class MilestoneDetailViewController: UIViewController {
         // Count
         let countLabel = UILabel()
         countLabel.text = "\(snap.achievedCount) of \(snap.totalCount) achieved"
-        countLabel.font = .systemFont(ofSize: 12)
+        countLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 12))
         countLabel.textColor = .tertiaryLabel
         countLabel.translatesAutoresizingMaskIntoConstraints = false
         card.addSubview(countLabel)
@@ -239,27 +239,27 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
             content.image = UIImage(systemName: "star.fill")
             content.imageProperties.tintColor = brandPink
             content.textProperties.color = brandPink
-            content.textProperties.font = .systemFont(ofSize: 15, weight: .bold)
+            content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .bold))
             content.secondaryTextProperties.color = brandPink.withAlphaComponent(0.7)
-            content.secondaryTextProperties.font = .systemFont(ofSize: 13)
+            content.secondaryTextProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13))
             cell.backgroundColor = brandPink.withAlphaComponent(0.06)
         } else if isAchieved {
             // Done
             content.image = UIImage(systemName: "checkmark.circle.fill")
             content.imageProperties.tintColor = brandBlue
             content.textProperties.color = .label
-            content.textProperties.font = .systemFont(ofSize: 15, weight: .medium)
+            content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .medium))
             content.secondaryTextProperties.color = .secondaryLabel
-            content.secondaryTextProperties.font = .systemFont(ofSize: 13)
+            content.secondaryTextProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13))
             cell.backgroundColor = .secondarySystemGroupedBackground
         } else {
             // Upcoming
             content.image = UIImage(systemName: "circle")
             content.imageProperties.tintColor = .systemGray4
             content.textProperties.color = .tertiaryLabel
-            content.textProperties.font = .systemFont(ofSize: 15, weight: .regular)
+            content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .regular))
             content.secondaryTextProperties.color = .quaternaryLabel
-            content.secondaryTextProperties.font = .systemFont(ofSize: 13)
+            content.secondaryTextProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13))
             cell.backgroundColor = .secondarySystemGroupedBackground
         }
 

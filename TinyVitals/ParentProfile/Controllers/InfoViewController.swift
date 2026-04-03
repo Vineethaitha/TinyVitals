@@ -37,13 +37,13 @@ final class InfoViewController: UIViewController {
 
         // Close button
         closeButton.setTitle("Close", for: .normal)
-        closeButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        closeButton.titleLabel?.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 17, weight: .medium))
         closeButton.tintColor = .systemPink
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
 
         // Title
-        titleLabel.font = .systemFont(ofSize: 28, weight: .bold)
+        titleLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 28, weight: .bold))
         titleLabel.textColor = .label
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
@@ -54,14 +54,14 @@ final class InfoViewController: UIViewController {
         // Container (card)
         containerView.backgroundColor = .systemBackground
         containerView.layer.cornerRadius = 20
-        containerView.layer.shadowColor = UIColor.black.cgColor
+        containerView.layer.shadowColor = UIColor.label.cgColor
         containerView.layer.shadowOpacity = 0.05
         containerView.layer.shadowRadius = 10
         containerView.layer.shadowOffset = CGSize(width: 0, height: 4)
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         // Text view
-        textView.font = .systemFont(ofSize: 16)
+        textView.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 16))
         textView.textColor = .label
         textView.isEditable = false
         textView.isScrollEnabled = true
@@ -182,8 +182,8 @@ final class InfoViewController: UIViewController {
     private func applyStyledText(body: String, headings: [String]) {
         let attributed = NSMutableAttributedString(string: body)
 
-        let bodyFont = UIFont.systemFont(ofSize: 16)
-        let headingFont = UIFont.systemFont(ofSize: 19, weight: .semibold)
+        let bodyFont = UIFontMetrics.default.scaledFont(for: UIFont.systemFont(ofSize: 16))
+        let headingFont = UIFontMetrics.default.scaledFont(for: UIFont.systemFont(ofSize: 19, weight: .semibold))
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 6

@@ -368,8 +368,8 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
         NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: previewVC.view.safeAreaLayoutGuide.topAnchor, constant: 16),
             closeButton.trailingAnchor.constraint(equalTo: previewVC.view.trailingAnchor, constant: -20),
-            closeButton.widthAnchor.constraint(equalToConstant: 30),
-            closeButton.heightAnchor.constraint(equalToConstant: 30)
+            closeButton.widthAnchor.constraint(equalToConstant: 44),
+            closeButton.heightAnchor.constraint(equalToConstant: 44)
         ])
 
         present(previewVC, animated: true)

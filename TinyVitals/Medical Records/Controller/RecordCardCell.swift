@@ -19,7 +19,7 @@ class RecordCardCell: UICollectionViewCell {
 
         containerView.layer.cornerRadius = 16
         containerView.layer.masksToBounds = false
-        containerView.layer.shadowColor = UIColor.black.cgColor
+        containerView.layer.shadowColor = UIColor.label.cgColor
         containerView.layer.shadowOpacity = 0.06
         containerView.layer.shadowOffset = CGSize(width: 0, height: 4)
         containerView.layer.shadowRadius = 8

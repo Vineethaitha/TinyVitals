@@ -57,19 +57,19 @@ final class MilestoneCardView: UIView {
         cardView.addSubview(iconView)
 
         // Title — milestone name
-        titleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        titleLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
         titleLabel.textColor = .label
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(titleLabel)
 
         // Subtitle — category + expected age
-        subtitleLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        subtitleLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13, weight: .regular))
         subtitleLabel.textColor = .secondaryLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(subtitleLabel)
 
         // Description
-        descLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        descLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13, weight: .regular))
         descLabel.textColor = .tertiaryLabel
         descLabel.numberOfLines = 2
         descLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -80,7 +80,7 @@ final class MilestoneCardView: UIView {
         cardView.addSubview(ringView)
 
         // Fraction label (inside ring)
-        fractionLabel.font = .monospacedDigitSystemFont(ofSize: 10, weight: .semibold)
+        fractionLabel.font = UIFontMetrics.default.scaledFont(for: .monospacedDigitSystemFont(ofSize: 10, weight: .semibold))
         fractionLabel.textColor = brandPink
         fractionLabel.textAlignment = .center
         fractionLabel.translatesAutoresizingMaskIntoConstraints = false

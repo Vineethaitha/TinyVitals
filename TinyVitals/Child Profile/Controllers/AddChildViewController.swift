@@ -685,7 +685,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
     private func setupLoader() {
         loaderContainer.frame = view.bounds
-        loaderContainer.backgroundColor = UIColor.black.withAlphaComponent(0.25)
+        loaderContainer.backgroundColor = UIColor.label.withAlphaComponent(0.25)
         loaderContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         loaderContainer.isHidden = true
 

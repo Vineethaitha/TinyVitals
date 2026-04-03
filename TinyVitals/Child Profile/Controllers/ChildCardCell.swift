@@ -85,7 +85,7 @@ class ChildCardCell: UICollectionViewCell {
 
         // Shadow container
         avatarShadowView.backgroundColor = .clear
-        avatarShadowView.layer.shadowColor = UIColor.black.cgColor
+        avatarShadowView.layer.shadowColor = UIColor.label.cgColor
         avatarShadowView.layer.shadowOpacity = 0.18
         avatarShadowView.layer.shadowOffset = CGSize(width: 0, height: 4)
         avatarShadowView.layer.shadowRadius = 8

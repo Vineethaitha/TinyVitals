@@ -27,7 +27,7 @@ class LoginViewController: UIViewController {
         loginButton.layer.cornerRadius = loginButton.frame.height / 2
         loginButton.clipsToBounds = true
         loginButton.setTitle("Login", for: .normal)
-        loginButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        loginButton.titleLabel?.font = UIFontMetrics.default.scaledFont(for: UIFont.systemFont(ofSize: 16, weight: .semibold))
         
 //        appleSignUpButton?.configuration = nil
 //        if let appleBtn = appleSignUpButton {

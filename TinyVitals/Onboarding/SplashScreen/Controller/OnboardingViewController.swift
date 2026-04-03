@@ -99,9 +99,14 @@ final class OnboardingViewController: UIViewController {
     private let actionButton = UIButton(type: .system)
     private let brandTitleLabel = UILabel()
 
+    private let termsContainer = UIView()
+    private let checkboxButton = UIButton(type: .custom)
+    private let termsTextView = UITextView()
+
     private var pages: [OnboardingPageView] = []
     private var currentPage = 0
     private var hasAnimatedPage: [Bool] = [false, false, false]
+    private var isTermsAccepted = false
 
     // Page 1 elements
     private var chartLayer: CAShapeLayer?
@@ -122,13 +127,18 @@ final class OnboardingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = lightBg
-        navigationController?.setNavigationBarHidden(true, animated: false)
 
         setupBrandTitle()
         setupScrollView()
         setupPages()
         setupPageControl()
         setupActionButton()
+        setupTermsAndConditions()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -190,7 +200,7 @@ final class OnboardingViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: brandTitleLabel.bottomAnchor, constant: 8),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -120),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -140),
         ])
     }
 
@@ -248,7 +258,7 @@ final class OnboardingViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -88),
+            pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -130),
         ])
     }
 
@@ -297,9 +307,11 @@ final class OnboardingViewController: UIViewController {
             Haptics.impact(.light)
         } else {
             // Get Started — go to login
+            guard isTermsAccepted else { return }
             Haptics.impact(.heavy)
             animateButtonPress {
                 let loginVC = LoginViewController(nibName: "LoginViewController", bundle: nil)
+                self.navigationController?.setNavigationBarHidden(false, animated: true)
                 self.navigationController?.pushViewController(loginVC, animated: true)
             }
         }
@@ -331,15 +343,90 @@ final class OnboardingViewController: UIViewController {
             config?.baseBackgroundColor = brandPink
         }
 
+        let shouldEnable = currentPage < 2 || isTermsAccepted
+
         UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.85,
                        initialSpringVelocity: 0.5, options: .curveEaseOut) {
             self.actionButton.configuration = config
             self.actionButton.transform = CGAffineTransform(scaleX: 1.04, y: 1.04)
+            self.termsContainer.alpha = self.currentPage == 2 ? 1.0 : 0.0
+            self.actionButton.alpha = shouldEnable ? 1.0 : 0.5
         } completion: { _ in
             UIView.animate(withDuration: 0.2) {
                 self.actionButton.transform = .identity
             }
         }
+        
+        self.actionButton.isEnabled = shouldEnable
+    }
+
+    // MARK: - Terms and Conditions
+
+    private func setupTermsAndConditions() {
+        termsContainer.translatesAutoresizingMaskIntoConstraints = false
+        termsContainer.alpha = 0 // Hidden by default initially
+        view.addSubview(termsContainer)
+
+        checkboxButton.translatesAutoresizingMaskIntoConstraints = false
+        checkboxButton.setImage(UIImage(systemName: "square"), for: .normal)
+        checkboxButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .selected)
+        checkboxButton.tintColor = brandPink
+        checkboxButton.addTarget(self, action: #selector(toggleTerms), for: .touchUpInside)
+        termsContainer.addSubview(checkboxButton)
+
+        termsTextView.translatesAutoresizingMaskIntoConstraints = false
+        termsTextView.isEditable = false
+        termsTextView.isSelectable = true
+        termsTextView.isScrollEnabled = false
+        termsTextView.backgroundColor = .clear
+        termsTextView.textContainerInset = .zero
+        termsTextView.textContainer.lineFragmentPadding = 0
+        termsTextView.delegate = self
+        
+        let text = "By continuing you agree to our Terms and Conditions and Privacy Policy."
+        let attributedString = NSMutableAttributedString(string: text)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .left
+        
+        let fullRange = NSRange(location: 0, length: text.count)
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 11), range: fullRange)
+        attributedString.addAttribute(.foregroundColor, value: UIColor.darkGray, range: fullRange)
+        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
+
+        let termsRange = (text as NSString).range(of: "Terms and Conditions")
+        attributedString.addAttribute(.link, value: "https://tinyvitals-77c2d.firebaseapp.com/terms.html", range: termsRange)
+        
+        let privacyRange = (text as NSString).range(of: "Privacy Policy")
+        attributedString.addAttribute(.link, value: "https://tinyvitals-77c2d.firebaseapp.com/privacy.html", range: privacyRange)
+        
+        termsTextView.linkTextAttributes = [
+            .foregroundColor: UIColor.systemBlue
+        ]
+        termsTextView.attributedText = attributedString
+        termsContainer.addSubview(termsTextView)
+
+        NSLayoutConstraint.activate([
+            termsContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            termsContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            termsContainer.bottomAnchor.constraint(equalTo: actionButton.topAnchor, constant: -12),
+
+            checkboxButton.leadingAnchor.constraint(equalTo: termsContainer.leadingAnchor),
+            checkboxButton.topAnchor.constraint(equalTo: termsContainer.topAnchor),
+            checkboxButton.widthAnchor.constraint(equalToConstant: 24),
+            checkboxButton.heightAnchor.constraint(equalToConstant: 24),
+
+            termsTextView.leadingAnchor.constraint(equalTo: checkboxButton.trailingAnchor, constant: 8),
+            termsTextView.trailingAnchor.constraint(equalTo: termsContainer.trailingAnchor),
+            termsTextView.topAnchor.constraint(equalTo: termsContainer.topAnchor, constant: 4),
+            termsTextView.bottomAnchor.constraint(equalTo: termsContainer.bottomAnchor)
+        ])
+    }
+
+    @objc private func toggleTerms() {
+        isTermsAccepted.toggle()
+        checkboxButton.isSelected = isTermsAccepted
+        Haptics.selection()
+        updateButtonTitle()
     }
 
     // MARK: - Page Animation Triggers
@@ -1052,6 +1139,15 @@ final class OnboardingViewController: UIViewController {
     }
 }
 
+
+// MARK: - UITextViewDelegate
+
+extension OnboardingViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        UIApplication.shared.open(URL)
+        return false
+    }
+}
 
 // MARK: - UIScrollViewDelegate
 

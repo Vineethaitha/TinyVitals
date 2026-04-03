@@ -340,7 +340,7 @@
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="350" id="SxA-tU-gDm"/>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="350" id="SxA-tU-gDm"/>
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -353,7 +353,7 @@
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemGray6Color"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="400" id="3vN-lr-MkZ"/>
+                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="400" id="3vN-lr-MkZ"/>
                                         <constraint firstItem="oKI-nx-Z63" firstAttribute="leading" secondItem="XdC-WR-3Yg" secondAttribute="leading" constant="20" id="c6e-oL-Pk6"/>
                                         <constraint firstAttribute="trailing" secondItem="oKI-nx-Z63" secondAttribute="trailing" constant="20" id="kW2-PM-yYL"/>
                                         <constraint firstItem="oKI-nx-Z63" firstAttribute="top" secondItem="XdC-WR-3Yg" secondAttribute="top" constant="20" id="vuF-rI-oN1"/>

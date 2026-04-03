@@ -538,7 +538,7 @@ final class CalendarTagDecorationView: UIView {
             pill.frame = CGRect(x: 0, y: yOffset, width: 32, height: 12)
 
             // subtle depth
-            pill.layer.shadowColor = UIColor.black.cgColor
+            pill.layer.shadowColor = UIColor.label.cgColor
             pill.layer.shadowOpacity = 0.15
             pill.layer.shadowRadius = 2
             pill.layer.shadowOffset = CGSize(width: 0, height: 1)
