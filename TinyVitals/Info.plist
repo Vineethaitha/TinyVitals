@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>TinyVitals needs camera access to record milestone video memories of your child.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>TinyVitals needs microphone access to capture audio in milestone videos.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

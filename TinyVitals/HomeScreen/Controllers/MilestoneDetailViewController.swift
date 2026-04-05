@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 final class MilestoneDetailViewController: UIViewController {
 
@@ -18,6 +19,7 @@ final class MilestoneDetailViewController: UIViewController {
     private var milestones: [Milestone] { MilestoneService.milestones }
     private var achievedTitles: Set<String> = []
     private var achievedDates: [String: Date] = [:]
+    private var videoPaths: [String: String] = [:]
     private lazy var snap: MilestoneSnapshot = MilestoneService.snapshot(achievedTitles: achievedTitles, achievedDates: achievedDates)
 
     /// Called when the user marks/unmarks a milestone so the home screen can refresh.
@@ -69,6 +71,15 @@ final class MilestoneDetailViewController: UIViewController {
                 let dtos = try await MilestoneTrackingService.shared.fetchAchieved(childId: childId)
                 achievedTitles = Set(dtos.map { $0.milestone_title })
                 achievedDates = Dictionary(uniqueKeysWithValues: dtos.map { ($0.milestone_title, $0.achieved_at) })
+
+                // Load video paths
+                videoPaths = [:]
+                for dto in dtos {
+                    if let path = dto.video_path {
+                        videoPaths[dto.milestone_title] = path
+                    }
+                }
+
                 snap = MilestoneService.snapshot(achievedTitles: achievedTitles, achievedDates: achievedDates)
 
                 await MainActor.run {
@@ -353,12 +364,18 @@ final class MilestoneDetailViewController: UIViewController {
     private func performUnmark(milestone: Milestone) {
         Task {
             do {
+                // Delete video from storage if it exists
+                if let videoPath = videoPaths[milestone.title] {
+                    try? await MilestoneTrackingService.shared.deleteVideo(path: videoPath)
+                }
+
                 try await MilestoneTrackingService.shared.unmarkAchieved(
                     childId: childId,
                     title: milestone.title
                 )
                 achievedTitles.remove(milestone.title)
                 achievedDates.removeValue(forKey: milestone.title)
+                videoPaths.removeValue(forKey: milestone.title)
                 snap = MilestoneService.snapshot(achievedTitles: achievedTitles, achievedDates: achievedDates)
 
                 await MainActor.run {
@@ -375,6 +392,241 @@ final class MilestoneDetailViewController: UIViewController {
             }
         }
     }
+
+    // MARK: - Video Actions
+
+    private func showAchievedActions(for milestone: Milestone) {
+        Haptics.impact(.light)
+
+        let hasVideo = videoPaths[milestone.title] != nil
+
+        let sheet = UIAlertController(
+            title: milestone.title,
+            message: hasVideo ? "This milestone has a recorded memory." : "Would you like to record a memory?",
+            preferredStyle: .actionSheet
+        )
+
+        if hasVideo {
+            // Watch memory
+            sheet.addAction(UIAlertAction(
+                title: "Watch Memory",
+                style: .default
+            ) { [weak self] _ in
+                self?.playVideo(for: milestone)
+            })
+
+            // Re-record
+            sheet.addAction(UIAlertAction(
+                title: "Re-record Memory",
+                style: .default
+            ) { [weak self] _ in
+                self?.presentVideoRecorder(for: milestone)
+            })
+        } else {
+            // Record memory
+            sheet.addAction(UIAlertAction(
+                title: "Record Memory",
+                style: .default
+            ) { [weak self] _ in
+                self?.presentVideoRecorder(for: milestone)
+            })
+        }
+
+        // Unmark
+        sheet.addAction(UIAlertAction(
+            title: "Unmark Milestone",
+            style: .destructive
+        ) { [weak self] _ in
+            self?.showUnmarkConfirmation(for: milestone)
+        })
+
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        present(sheet, animated: true)
+    }
+
+    private func presentVideoRecorder(for milestone: Milestone) {
+        // Check camera permission
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            showRecorder(for: milestone)
+
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        self?.showRecorder(for: milestone)
+                    } else {
+                        self?.showPermissionAlert()
+                    }
+                }
+            }
+
+        case .denied, .restricted:
+            showPermissionAlert()
+
+        @unknown default:
+            break
+        }
+    }
+
+    private func showRecorder(for milestone: Milestone) {
+        let recorder = MilestoneVideoRecorderViewController()
+        recorder.delegate = self
+        recorder.modalPresentationStyle = .fullScreen
+
+        // Store which milestone we're recording for
+        objc_setAssociatedObject(
+            recorder,
+            &AssociatedKeys.milestoneTitle,
+            milestone.title,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+
+        present(recorder, animated: true)
+    }
+
+    private func showPermissionAlert() {
+        let alert = UIAlertController(
+            title: "Camera Access Required",
+            message: "TinyVitals needs camera access to record milestone memories. Please enable it in Settings.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Open Settings", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    private func playVideo(for milestone: Milestone) {
+        guard let path = videoPaths[milestone.title] else { return }
+
+        Task {
+            do {
+                let signedURL = try await MilestoneTrackingService.shared.getSignedVideoURL(path: path)
+
+                await MainActor.run {
+                    let playerVC = MilestoneVideoPlayerViewController(
+                        videoURL: signedURL,
+                        milestoneName: milestone.title
+                    )
+
+                    playerVC.onDelete = { [weak self] in
+                        self?.deleteVideo(for: milestone)
+                    }
+
+                    playerVC.modalPresentationStyle = .pageSheet
+                    if let sheet = playerVC.sheetPresentationController {
+                        sheet.detents = [.medium(), .large()]
+                        sheet.prefersGrabberVisible = true
+                    }
+
+                    self.present(playerVC, animated: true)
+                }
+            } catch {
+                await MainActor.run {
+                    let alert = UIAlertController(
+                        title: "Playback Error",
+                        message: "Could not load the video. Please try again.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+
+    private func deleteVideo(for milestone: Milestone) {
+        guard let path = videoPaths[milestone.title] else { return }
+
+        Task {
+            do {
+                try await MilestoneTrackingService.shared.deleteVideo(path: path)
+                try await MilestoneTrackingService.shared.updateVideoPath(
+                    childId: childId,
+                    title: milestone.title,
+                    videoPath: nil
+                )
+
+                videoPaths.removeValue(forKey: milestone.title)
+
+                await MainActor.run {
+                    Haptics.notification(.success)
+                    tableView.reloadData()
+                }
+            } catch {
+                await MainActor.run {
+                    let alert = UIAlertController(
+                        title: "Error",
+                        message: "Could not delete the video.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+
+    private func uploadAndSaveVideo(title: String, videoURL: URL) {
+        // Show a loading indicator
+        let hud = UIActivityIndicatorView(style: .large)
+        hud.color = brandPink
+        hud.center = view.center
+        hud.startAnimating()
+        view.addSubview(hud)
+        view.isUserInteractionEnabled = false
+
+        Task {
+            do {
+                let videoData = try Data(contentsOf: videoURL)
+                let storagePath = try await MilestoneTrackingService.shared.uploadVideo(
+                    childId: childId,
+                    title: title,
+                    videoData: videoData
+                )
+
+                try await MilestoneTrackingService.shared.updateVideoPath(
+                    childId: childId,
+                    title: title,
+                    videoPath: storagePath
+                )
+
+                videoPaths[title] = storagePath
+
+                await MainActor.run {
+                    hud.removeFromSuperview()
+                    self.view.isUserInteractionEnabled = true
+                    Haptics.notification(.success)
+                    tableView.reloadData()
+                }
+            } catch {
+                print("❌ Video upload failed:", error)
+                await MainActor.run {
+                    hud.removeFromSuperview()
+                    self.view.isUserInteractionEnabled = true
+
+                    let alert = UIAlertController(
+                        title: "Upload Failed",
+                        message: "Could not upload the video.\n\n\(error.localizedDescription)",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Associated Keys
+
+private struct AssociatedKeys {
+    static var milestoneTitle = "milestoneTitle"
 }
 
 // MARK: - DataSource & Delegate
@@ -394,6 +646,7 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
         let milestone = milestones[indexPath.row]
         let isAchieved = achievedTitles.contains(milestone.title)
         let isCurrent = milestone.title == snap.current?.title && milestone.ageMonths == snap.current?.ageMonths && !isAchieved
+        let hasVideo = videoPaths[milestone.title] != nil
 
         // Use the built-in cell content configuration (Apple HIG standard)
         var content = cell.defaultContentConfiguration()
@@ -417,13 +670,15 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
         dateFmt.timeStyle = .none
 
         if isAchieved {
-            // Achieved — show date
+            // Achieved — show date + video badge
             content.image = UIImage(systemName: "checkmark.circle.fill")
             content.imageProperties.tintColor = brandBlue
             content.textProperties.color = .label
             content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .medium))
+
             if let date = achievedDates[milestone.title] {
-                content.secondaryText = "Achieved on \(dateFmt.string(from: date))"
+                let dateStr = dateFmt.string(from: date)
+                content.secondaryText = "Achieved on \(dateStr)"
             } else {
                 content.secondaryText = milestone.description
             }
@@ -455,13 +710,61 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
         cell.contentConfiguration = content
         cell.selectionStyle = .default
 
-        // Age accessory label
+        // Age accessory — add button for achieved milestones
+        let accessoryStack = UIStackView()
+        accessoryStack.axis = .horizontal
+        accessoryStack.spacing = 12
+        accessoryStack.alignment = .center
+
+        if isAchieved {
+            let actionButton = UIButton(type: .system)
+            var config = UIButton.Configuration.tinted()
+            config.cornerStyle = .capsule
+            config.imagePadding = 6
+            
+            if hasVideo {
+                config.title = "Watch"
+                config.image = UIImage(systemName: "play.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14))
+                config.baseForegroundColor = brandPink
+                config.baseBackgroundColor = brandPink
+                
+                actionButton.addAction(UIAction { [weak self] _ in
+                    self?.playVideo(for: milestone)
+                }, for: .touchUpInside)
+            } else {
+                config.title = "Record"
+                config.image = UIImage(systemName: "video.badge.plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14))
+                config.baseForegroundColor = .systemBlue
+                config.baseBackgroundColor = .systemBlue
+                
+                actionButton.addAction(UIAction { [weak self] _ in
+                    self?.presentVideoRecorder(for: milestone)
+                }, for: .touchUpInside)
+            }
+            
+            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+                var outgoing = incoming
+                outgoing.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+                return outgoing
+            }
+            
+            actionButton.configuration = config
+            accessoryStack.addArrangedSubview(actionButton)
+        }
+
         let ageLabel = UILabel()
         ageLabel.text = ageText
         ageLabel.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
         ageLabel.textColor = isCurrent ? brandPink : .secondaryLabel
         ageLabel.sizeToFit()
-        cell.accessoryView = ageLabel
+        accessoryStack.addArrangedSubview(ageLabel)
+
+        accessoryStack.setNeedsLayout()
+        accessoryStack.layoutIfNeeded()
+        let size = accessoryStack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        accessoryStack.frame = CGRect(origin: .zero, size: size)
+
+        cell.accessoryView = accessoryStack
 
         return cell
     }
@@ -471,9 +774,27 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
         let milestone = milestones[indexPath.row]
 
         if achievedTitles.contains(milestone.title) {
-            showUnmarkConfirmation(for: milestone)
+            showAchievedActions(for: milestone)
         } else {
             showMarkSheet(for: milestone)
         }
+    }
+}
+
+// MARK: - Video Recorder Delegate
+
+extension MilestoneDetailViewController: MilestoneVideoRecorderDelegate {
+
+    func videoRecorderDidFinish(_ controller: MilestoneVideoRecorderViewController, videoURL: URL) {
+        guard let title = objc_getAssociatedObject(
+            controller,
+            &AssociatedKeys.milestoneTitle
+        ) as? String else { return }
+
+        uploadAndSaveVideo(title: title, videoURL: videoURL)
+    }
+
+    func videoRecorderDidCancel(_ controller: MilestoneVideoRecorderViewController) {
+        // Nothing to do
     }
 }

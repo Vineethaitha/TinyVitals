@@ -11,4 +11,5 @@ struct ChildMilestoneDTO: Codable {
     let milestone_title: String
     let achieved_at: Date
     let created_at: Date?
+    let video_path: String?
 }
