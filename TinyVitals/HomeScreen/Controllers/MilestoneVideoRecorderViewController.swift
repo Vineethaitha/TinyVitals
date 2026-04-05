@@ -371,7 +371,7 @@ final class MilestoneVideoRecorderViewController: UIViewController {
     }
 
     @objc private func playTapped() {
-        guard let url = recordedURL else { return }
+        guard recordedURL != nil else { return }
         previewPlayer?.seek(to: .zero)
         previewPlayer?.play()
         playButton.isHidden = true
@@ -384,6 +384,11 @@ final class MilestoneVideoRecorderViewController: UIViewController {
         previewPlayerLayer?.removeFromSuperlayer()
         previewPlayer = nil
         previewPlayerLayer = nil
+        
+        if let observer = playbackObserver {
+            NotificationCenter.default.removeObserver(observer)
+            playbackObserver = nil
+        }
 
         // Reset state
         previewContainer.isHidden = true
@@ -474,6 +479,16 @@ final class MilestoneVideoRecorderViewController: UIViewController {
         hintLabel.isHidden = true
     }
 
+    // Add property
+    private var playbackObserver: NSObjectProtocol?
+
+    // Clean up observer when deallocated
+    deinit {
+        if let observer = playbackObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
     // MARK: - Show Preview
 
     private func showPreview(url: URL) {
@@ -492,8 +507,8 @@ final class MilestoneVideoRecorderViewController: UIViewController {
         previewContainer.isHidden = false
         playButton.isHidden = false
 
-        // Loop playback
-        NotificationCenter.default.addObserver(
+        // Loop playback - Store observer token to prevent leak
+        playbackObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: player.currentItem,
             queue: .main

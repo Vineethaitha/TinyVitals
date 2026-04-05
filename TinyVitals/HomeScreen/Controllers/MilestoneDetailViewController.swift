@@ -52,7 +52,7 @@ final class MilestoneDetailViewController: UIViewController {
 
     private func setupNav() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Done", style: .done,
+            title: "Done", style: .plain,
             target: self, action: #selector(dismissSelf)
         )
         navigationItem.rightBarButtonItem?.tintColor = brandPink
@@ -626,7 +626,7 @@ final class MilestoneDetailViewController: UIViewController {
 // MARK: - Associated Keys
 
 private struct AssociatedKeys {
-    static var milestoneTitle = "milestoneTitle"
+    static var milestoneTitle: UInt8 = 0
 }
 
 // MARK: - DataSource & Delegate

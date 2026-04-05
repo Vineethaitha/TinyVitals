@@ -49,7 +49,7 @@ class LoginViewController: UIViewController {
 //        googleSignUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 
         let size = CGSize(width: 24, height: 24)
-        let image = UIImage(named: "GoogleLogo")?
+        _ = UIImage(named: "GoogleLogo")?
             .resize(to: size)
             .withRenderingMode(.alwaysOriginal)
 

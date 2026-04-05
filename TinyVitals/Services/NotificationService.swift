@@ -13,10 +13,8 @@ class NotificationService {
     
     func requestPermission() {
         UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-                if let error = error {
-//                    print("Notification permission error: \(error)")
-                } else if granted {
+            .requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                if granted {
 //                    print("Notification permission granted.")
                 } else {
 //                    print("Notification permission denied.")
@@ -103,10 +101,7 @@ class NotificationService {
                 trigger: trigger
             )
             
-            UNUserNotificationCenter.current().add(request) { error in
-                if let error = error {
-//                    print("Error scheduling notification for \(ageGroup): \(error)")
-                }
+            UNUserNotificationCenter.current().add(request) { _ in
             }
         }
     }

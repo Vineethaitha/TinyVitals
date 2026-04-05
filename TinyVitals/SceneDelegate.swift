@@ -56,7 +56,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Log all query parameters
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
            let queryItems = components.queryItems {
-            for item in queryItems {
+            for _ in queryItems {
 //                print("🔥 Query param: \(item.name) = \(item.value ?? "nil")")
             }
         }
