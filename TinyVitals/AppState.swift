@@ -120,6 +120,68 @@ struct UpcomingVaccineIntent: AppIntent {
 }
 
 @available(iOS 16.0, *)
+enum SiriVaccineStatus: String, AppEnum {
+    case completed
+    case skipped
+    case rescheduled
+
+    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Vaccination Status")
+    static let caseDisplayRepresentations: [SiriVaccineStatus: DisplayRepresentation] = [
+        .completed: "Completed",
+        .skipped: "Skipped",
+        .rescheduled: "Rescheduled"
+    ]
+}
+
+@available(iOS 16.0, *)
+struct UpdateVaccineIntent: AppIntent {
+    static let title: LocalizedStringResource = "Update Vaccination Status"
+    static let description = IntentDescription("Mark a specific vaccination as completed, rescheduled, or skipped without opening the app.")
+
+    @Parameter(title: "Child's Name", requestValueDialog: "Which child's vaccination are you updating?")
+    var childName: String
+
+    @Parameter(title: "Vaccination Name", requestValueDialog: "What is the name of the vaccination? (e.g. Polio, Flu, MMR)")
+    var vaccineName: String
+
+    @Parameter(title: "New Status", requestValueDialog: "What is the new status?")
+    var status: SiriVaccineStatus
+
+    func perform() async throws -> some IntentResult & ProvidesDialog {
+        guard let session = try? await SupabaseAuthService.shared.client.auth.session else {
+            return .result(dialog: "Please open TinyVitals and log in first.")
+        }
+        
+        guard let children = try? await ChildService.shared.fetchChildren(userId: session.user.id),
+              let child = children.first(where: { $0.name.localizedCaseInsensitiveContains(childName) }),
+              let childId = child.id else {
+            return .result(dialog: "I couldn't find a child named \(childName) in your profile.")
+        }
+        
+        guard let vaccines = try? await VaccinationService.shared.fetchVaccines(childId: childId, dob: child.dob) else {
+            return .result(dialog: "I couldn't fetch the vaccination records for \(child.name).")
+        }
+        
+        guard let match = vaccines.first(where: { $0.name.localizedCaseInsensitiveContains(vaccineName.trimmingCharacters(in: .whitespaces)) }) else {
+            return .result(dialog: "I couldn't find a vaccination matching \(vaccineName) for \(child.name).")
+        }
+        
+        guard let realRecordId = UUID(uuidString: match.id) else {
+            return .result(dialog: "I ran into a problem identifying that specific record.")
+        }
+        
+        let appStatus = VaccineStatus(rawValue: status.rawValue) ?? .completed
+        
+        do {
+            try await VaccinationService.shared.updateVaccinationStatus(recordId: realRecordId, status: appStatus)
+            return .result(dialog: "I've successfully marked \(child.name)'s \(match.name) vaccination as \(status.rawValue).")
+        } catch {
+            return .result(dialog: "There was an error updating the database. The status might not have been saved.")
+        }
+    }
+}
+
+@available(iOS 16.0, *)
 struct LogFeverIntent: AppIntent {
     static let title: LocalizedStringResource = "Log Fever"
     static let description = IntentDescription("Log a fever for a child in TinyVitals.")
@@ -281,6 +343,16 @@ struct TinyVitalsShortcuts: AppShortcutsProvider {
                 ],
                 shortTitle: "Next Vaccination",
                 systemImageName: "syringe"
+            ),
+            AppShortcut(
+                intent: UpdateVaccineIntent(),
+                phrases: [
+                    "Update vaccination status in \(.applicationName)",
+                    "Mark a vaccine as completed in \(.applicationName)",
+                    "Record a vaccination for my child in \(.applicationName)"
+                ],
+                shortTitle: "Update Vaccine",
+                systemImageName: "checkmark.seal"
             ),
             AppShortcut(
                 intent: LogFeverIntent(),

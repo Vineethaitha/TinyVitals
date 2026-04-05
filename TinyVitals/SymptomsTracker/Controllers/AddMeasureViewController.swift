@@ -50,7 +50,7 @@ final class AddMeasureViewController: UIViewController,
         case .weight: return 100.0
         case .height: return 15.0
         case .temperature: return 120.0
-        case .severity: return 22.0
+        case .severity: return 10.0
         }
     }
 
@@ -103,6 +103,7 @@ final class AddMeasureViewController: UIViewController,
         super.viewDidLoad()
 
         selectedValue = min(max(selectedInitialValue, minValue), maxValue)
+        selectedValue = (selectedValue * 10).rounded() / 10
 
         titleLabel.text = "\(titleText) (\(unitText))"
         updateValueLabel()
@@ -238,6 +239,7 @@ final class AddMeasureViewController: UIViewController,
         let clampedIndex = max(0, min(index, totalItems - 1))
 
         selectedValue = minValue + Double(clampedIndex) * step
+        selectedValue = (selectedValue * 10).rounded() / 10
         updateValueLabel()
     }
 
