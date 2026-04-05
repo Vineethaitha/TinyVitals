@@ -428,17 +428,36 @@ class HomeScreenViewController: UIViewController {
 
     // MARK: - Milestone Card
 
+    private var milestoneAchievedTitles: Set<String> = []
+
     private func setupMilestoneSection() {
         guard let child = activeChild else { return }
 
+        // Fetch achieved milestones, then build/update the card
+        Task {
+            let titles: Set<String>
+            do {
+                let dtos = try await MilestoneTrackingService.shared.fetchAchieved(childId: child.id)
+                titles = Set(dtos.map { $0.milestone_title })
+            } catch {
+                titles = []
+            }
+            milestoneAchievedTitles = titles
+
+            await MainActor.run {
+                self.buildOrUpdateMilestoneCard(child: child, achievedTitles: titles)
+            }
+        }
+    }
+
+    private func buildOrUpdateMilestoneCard(child: ChildProfile, achievedTitles: Set<String>) {
         // If card already exists just update it
         if let card = milestoneSection?.viewWithTag(999) as? MilestoneCardView {
-            card.configure(dob: child.dob)
+            card.configure(dob: child.dob, achievedTitles: achievedTitles)
             return
         }
 
         // Find the main vertical stack view
-        // hierarchy: vaccinationProgressContainer → card → section → stackView
         guard let stackView = vaccinationProgressContainer.superview?
                 .superview?.superview as? UIStackView else { return }
 
@@ -454,14 +473,17 @@ class HomeScreenViewController: UIViewController {
 
         let card = MilestoneCardView()
         card.tag = 999
-        card.configure(dob: child.dob)
+        card.configure(dob: child.dob, achievedTitles: achievedTitles)
         card.translatesAutoresizingMaskIntoConstraints = false
         section.addSubview(card)
 
         // Tap handler → present detail sheet
         card.onTap = { [weak self] in
             guard let self, let child = self.activeChild else { return }
-            let detailVC = MilestoneDetailViewController(dob: child.dob)
+            let detailVC = MilestoneDetailViewController(dob: child.dob, childId: child.id)
+            detailVC.onDismiss = { [weak self] in
+                self?.setupMilestoneSection()
+            }
             let nav = UINavigationController(rootViewController: detailVC)
             nav.modalPresentationStyle = .pageSheet
             if let sheet = nav.sheetPresentationController {

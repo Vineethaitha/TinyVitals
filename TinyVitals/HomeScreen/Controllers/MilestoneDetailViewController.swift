@@ -10,18 +10,24 @@ final class MilestoneDetailViewController: UIViewController {
     // MARK: - Properties
 
     private let dob: Date
+    private let childId: UUID
     private let brandPink = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
     private let brandBlue = UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 1)
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
 
     private var milestones: [Milestone] { MilestoneService.milestones }
-    private var ageInMonths: Int { MilestoneService.ageInMonths(from: dob) }
-    private lazy var snap: MilestoneSnapshot = MilestoneService.snapshot(for: dob)
+    private var achievedTitles: Set<String> = []
+    private var achievedDates: [String: Date] = [:]
+    private lazy var snap: MilestoneSnapshot = MilestoneService.snapshot(achievedTitles: achievedTitles, achievedDates: achievedDates)
+
+    /// Called when the user marks/unmarks a milestone so the home screen can refresh.
+    var onDismiss: (() -> Void)?
 
     // MARK: - Init
 
-    init(dob: Date) {
+    init(dob: Date, childId: UUID) {
         self.dob = dob
+        self.childId = childId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -37,7 +43,7 @@ final class MilestoneDetailViewController: UIViewController {
         title = "Milestones"
         setupNav()
         setupTable()
-        scrollToCurrent()
+        loadAchievedMilestones()
     }
 
     // MARK: - Nav
@@ -50,7 +56,31 @@ final class MilestoneDetailViewController: UIViewController {
         navigationItem.rightBarButtonItem?.tintColor = brandPink
     }
 
-    @objc private func dismissSelf() { dismiss(animated: true) }
+    @objc private func dismissSelf() {
+        onDismiss?()
+        dismiss(animated: true)
+    }
+
+    // MARK: - Data Loading
+
+    private func loadAchievedMilestones() {
+        Task {
+            do {
+                let dtos = try await MilestoneTrackingService.shared.fetchAchieved(childId: childId)
+                achievedTitles = Set(dtos.map { $0.milestone_title })
+                achievedDates = Dictionary(uniqueKeysWithValues: dtos.map { ($0.milestone_title, $0.achieved_at) })
+                snap = MilestoneService.snapshot(achievedTitles: achievedTitles, achievedDates: achievedDates)
+
+                await MainActor.run {
+                    tableView.tableHeaderView = buildHeader()
+                    tableView.reloadData()
+                    scrollToCurrent()
+                }
+            } catch {
+                // Silently fall back to empty state
+            }
+        }
+    }
 
     // MARK: - Header
 
@@ -197,6 +227,154 @@ final class MilestoneDetailViewController: UIViewController {
             }
         }
     }
+
+    // MARK: - Mark / Unmark Actions
+
+    private func showMarkSheet(for milestone: Milestone) {
+        Haptics.impact(.light)
+
+        let sheet = UIViewController()
+        sheet.view.backgroundColor = .systemBackground
+
+        // Title
+        let titleLabel = UILabel()
+        titleLabel.text = "Mark as Achieved"
+        titleLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 20, weight: .bold))
+        titleLabel.textColor = .label
+        titleLabel.textAlignment = .center
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        sheet.view.addSubview(titleLabel)
+
+        // Milestone name
+        let nameLabel = UILabel()
+        nameLabel.text = milestone.title
+        nameLabel.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .medium))
+        nameLabel.textColor = .secondaryLabel
+        nameLabel.textAlignment = .center
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        sheet.view.addSubview(nameLabel)
+
+        // Date picker
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .inline
+        datePicker.maximumDate = Date()
+        datePicker.tintColor = brandPink
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        sheet.view.addSubview(datePicker)
+
+        // Save button
+        let saveButton = UIButton(type: .system)
+        saveButton.setTitle("Mark as Achieved", for: .normal)
+        saveButton.titleLabel?.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
+        saveButton.backgroundColor = brandPink
+        saveButton.setTitleColor(.white, for: .normal)
+        saveButton.layer.cornerRadius = 14
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        sheet.view.addSubview(saveButton)
+
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: sheet.view.topAnchor, constant: 24),
+            titleLabel.centerXAnchor.constraint(equalTo: sheet.view.centerXAnchor),
+
+            nameLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            nameLabel.centerXAnchor.constraint(equalTo: sheet.view.centerXAnchor),
+
+            datePicker.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 16),
+            datePicker.leadingAnchor.constraint(equalTo: sheet.view.leadingAnchor, constant: 16),
+            datePicker.trailingAnchor.constraint(equalTo: sheet.view.trailingAnchor, constant: -16),
+
+            saveButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 16),
+            saveButton.leadingAnchor.constraint(equalTo: sheet.view.leadingAnchor, constant: 20),
+            saveButton.trailingAnchor.constraint(equalTo: sheet.view.trailingAnchor, constant: -20),
+            saveButton.heightAnchor.constraint(equalToConstant: 50),
+            saveButton.bottomAnchor.constraint(lessThanOrEqualTo: sheet.view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+        ])
+
+        // Action
+        saveButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            let selectedDate = datePicker.date
+            sheet.dismiss(animated: true) {
+                self.performMark(milestone: milestone, date: selectedDate)
+            }
+        }, for: .touchUpInside)
+
+        sheet.modalPresentationStyle = .pageSheet
+        if let sheetCtrl = sheet.sheetPresentationController {
+            sheetCtrl.detents = [.large()]
+            sheetCtrl.prefersGrabberVisible = true
+        }
+
+        present(sheet, animated: true)
+    }
+
+    private func performMark(milestone: Milestone, date: Date) {
+        Task {
+            do {
+                try await MilestoneTrackingService.shared.markAchieved(
+                    childId: childId,
+                    title: milestone.title,
+                    achievedAt: date
+                )
+                achievedTitles.insert(milestone.title)
+                achievedDates[milestone.title] = date
+                snap = MilestoneService.snapshot(achievedTitles: achievedTitles, achievedDates: achievedDates)
+
+                await MainActor.run {
+                    Haptics.impact(.medium)
+                    tableView.tableHeaderView = buildHeader()
+                    tableView.reloadData()
+                }
+            } catch {
+                await MainActor.run {
+                    let alert = UIAlertController(title: "Error", message: "Could not save the milestone.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+
+    private func showUnmarkConfirmation(for milestone: Milestone) {
+        Haptics.impact(.light)
+        let alert = UIAlertController(
+            title: "Unmark Milestone",
+            message: "Remove \"\(milestone.title)\" from achieved milestones?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Unmark", style: .destructive) { [weak self] _ in
+            self?.performUnmark(milestone: milestone)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    private func performUnmark(milestone: Milestone) {
+        Task {
+            do {
+                try await MilestoneTrackingService.shared.unmarkAchieved(
+                    childId: childId,
+                    title: milestone.title
+                )
+                achievedTitles.remove(milestone.title)
+                achievedDates.removeValue(forKey: milestone.title)
+                snap = MilestoneService.snapshot(achievedTitles: achievedTitles, achievedDates: achievedDates)
+
+                await MainActor.run {
+                    Haptics.impact(.light)
+                    tableView.tableHeaderView = buildHeader()
+                    tableView.reloadData()
+                }
+            } catch {
+                await MainActor.run {
+                    let alert = UIAlertController(title: "Error", message: "Could not unmark the milestone.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
 }
 
 // MARK: - DataSource & Delegate
@@ -214,15 +392,14 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let milestone = milestones[indexPath.row]
-        let isCurrent = milestone.title == snap.current?.title && milestone.ageMonths == snap.current?.ageMonths
-        let isAchieved = milestone.ageMonths <= ageInMonths
+        let isAchieved = achievedTitles.contains(milestone.title)
+        let isCurrent = milestone.title == snap.current?.title && milestone.ageMonths == snap.current?.ageMonths && !isAchieved
 
         // Use the built-in cell content configuration (Apple HIG standard)
         var content = cell.defaultContentConfiguration()
 
         content.text = milestone.title
-        content.secondaryText = milestone.description
-        content.secondaryTextProperties.numberOfLines = 0  // No truncation
+        content.secondaryTextProperties.numberOfLines = 0
 
         // Age text
         let mo = milestone.ageMonths
@@ -234,37 +411,49 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
             ageText = "\(mo)m"
         }
 
-        if isCurrent {
-            // Current — highlighted
-            content.image = UIImage(systemName: "star.fill")
-            content.imageProperties.tintColor = brandPink
-            content.textProperties.color = brandPink
-            content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .bold))
-            content.secondaryTextProperties.color = brandPink.withAlphaComponent(0.7)
-            content.secondaryTextProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13))
-            cell.backgroundColor = brandPink.withAlphaComponent(0.06)
-        } else if isAchieved {
-            // Done
+        // Date formatter for achieved dates
+        let dateFmt = DateFormatter()
+        dateFmt.dateStyle = .medium
+        dateFmt.timeStyle = .none
+
+        if isAchieved {
+            // Achieved — show date
             content.image = UIImage(systemName: "checkmark.circle.fill")
             content.imageProperties.tintColor = brandBlue
             content.textProperties.color = .label
             content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .medium))
-            content.secondaryTextProperties.color = .secondaryLabel
+            if let date = achievedDates[milestone.title] {
+                content.secondaryText = "Achieved on \(dateFmt.string(from: date))"
+            } else {
+                content.secondaryText = milestone.description
+            }
+            content.secondaryTextProperties.color = brandBlue
             content.secondaryTextProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13))
-            cell.backgroundColor = .secondarySystemGroupedBackground
+            cell.backgroundColor = brandBlue.withAlphaComponent(0.06)
+        } else if isCurrent {
+            // Current — next expected, highlighted
+            content.image = UIImage(systemName: "star.fill")
+            content.imageProperties.tintColor = brandPink
+            content.textProperties.color = brandPink
+            content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .bold))
+            content.secondaryText = milestone.description
+            content.secondaryTextProperties.color = brandPink.withAlphaComponent(0.7)
+            content.secondaryTextProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13))
+            cell.backgroundColor = brandPink.withAlphaComponent(0.06)
         } else {
             // Upcoming
             content.image = UIImage(systemName: "circle")
             content.imageProperties.tintColor = .systemGray4
-            content.textProperties.color = .tertiaryLabel
+            content.textProperties.color = .label
             content.textProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 15, weight: .regular))
-            content.secondaryTextProperties.color = .quaternaryLabel
+            content.secondaryText = milestone.description
+            content.secondaryTextProperties.color = .secondaryLabel
             content.secondaryTextProperties.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 13))
             cell.backgroundColor = .secondarySystemGroupedBackground
         }
 
         cell.contentConfiguration = content
-        cell.selectionStyle = .none
+        cell.selectionStyle = .default
 
         // Age accessory label
         let ageLabel = UILabel()
@@ -275,5 +464,16 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
         cell.accessoryView = ageLabel
 
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let milestone = milestones[indexPath.row]
+
+        if achievedTitles.contains(milestone.title) {
+            showUnmarkConfirmation(for: milestone)
+        } else {
+            showMarkSheet(for: milestone)
+        }
     }
 }

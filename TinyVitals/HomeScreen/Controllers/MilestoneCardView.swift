@@ -138,8 +138,8 @@ final class MilestoneCardView: UIView {
 
     // MARK: - Configure
 
-    func configure(dob: Date) {
-        let snap = MilestoneService.snapshot(for: dob)
+    func configure(dob: Date, achievedTitles: Set<String> = []) {
+        let snap = MilestoneService.snapshot(achievedTitles: achievedTitles)
         guard let current = snap.current else { return }
 
         // SF Symbol icon with category color

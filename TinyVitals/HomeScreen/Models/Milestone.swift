@@ -52,6 +52,8 @@ struct MilestoneSnapshot {
     let achievedCount: Int
     let totalCount: Int
     let progress: Double
+    let achievedTitles: Set<String>
+    let achievedDates: [String: Date]
 }
 
 // MARK: - Service
@@ -87,16 +89,17 @@ struct MilestoneService {
         max(Calendar.current.dateComponents([.month], from: dob, to: Date()).month ?? 0, 0)
     }
 
-    static func snapshot(for dob: Date) -> MilestoneSnapshot {
-        let age = ageInMonths(from: dob)
+    /// Parent-driven snapshot: progress is based on manually marked milestones.
+    static func snapshot(achievedTitles: Set<String>, achievedDates: [String: Date] = [:]) -> MilestoneSnapshot {
+        let achieved = milestones.filter { achievedTitles.contains($0.title) }.count
+
+        // "Current" = first un-achieved milestone
         var prev: Milestone?
         var curr: Milestone?
         var next: Milestone?
-        var achieved = 0
 
         for (i, m) in milestones.enumerated() {
-            if m.ageMonths <= age {
-                achieved += 1
+            if achievedTitles.contains(m.title) {
                 prev = m
             } else if curr == nil {
                 curr = m
@@ -108,12 +111,13 @@ struct MilestoneService {
         if curr == nil, let last = milestones.last {
             curr = last
             prev = milestones.count >= 2 ? milestones[milestones.count - 2] : nil
-            achieved = milestones.count
         }
 
         let progress = milestones.isEmpty ? 0 : Double(achieved) / Double(milestones.count)
         return MilestoneSnapshot(previous: prev, current: curr, next: next,
                                  achievedCount: achieved, totalCount: milestones.count,
-                                 progress: progress)
+                                 progress: progress,
+                                 achievedTitles: achievedTitles,
+                                 achievedDates: achievedDates)
     }
 }
