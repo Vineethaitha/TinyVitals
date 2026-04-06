@@ -85,6 +85,16 @@ final class MilestoneTrackingService {
     func updateVideoPath(childId: UUID, title: String, videoPath: String?) async throws {
         struct VideoPathUpdate: Codable {
             let video_path: String?
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                if let path = video_path {
+                    try container.encode(path, forKey: .video_path)
+                } else {
+                    try container.encodeNil(forKey: .video_path)
+                }
+            }
+            enum CodingKeys: String, CodingKey { case video_path }
         }
 
         try await client
