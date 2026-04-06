@@ -51,7 +51,7 @@ class SymptomTimelineCell: UITableViewCell {
         )
 
         titleLabel.text = entry.symptom.title
-        descriptionLabel.text = "Reported by parent"
+//        descriptionLabel.text = "Reported by parent"
 
         iconImageView.image = UIImage(systemName: entry.symptom.iconName)
         iconImageView.tintColor = entry.symptom.tintColor

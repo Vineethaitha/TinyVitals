@@ -393,26 +393,17 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     
     @objc private func exportPDF() {
-
         guard let child = activeChild else { return }
-
-        let childId = child.id.uuidString
-
-        guard let childEntries =
-            SymptomsDataStore.shared.entriesByChild[childId]
-        else { return }
-
-        guard let pdfURL = SymptomsPDFExporter.generatePDF(
-            from: childEntries,
-            calendar: calendar
-        ) else { return }
-
-        let activityVC = UIActivityViewController(
-            activityItems: [pdfURL],
-            applicationActivities: nil
-        )
-
-        present(activityVC, animated: true)
+        
+        let vc = SymptomShareRangeViewController()
+        vc.activeChild = child
+        
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        present(vc, animated: true)
     }
 
 

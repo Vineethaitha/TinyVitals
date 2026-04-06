@@ -92,14 +92,8 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qgr-Zm-ubV">
-                        <rect key="frame" x="156.66666666666666" y="38.666666666666664" width="39" height="18"/>
+                        <rect key="frame" x="156.66666666666666" y="50.666666666666664" width="39" height="17.999999999999993"/>
                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="awB-JO-ydo">
-                        <rect key="frame" x="156.66666666666666" y="60.666666666666664" width="33" height="15.666666666666664"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
@@ -108,14 +102,12 @@
                 <constraints>
                     <constraint firstItem="Rr4-ho-HoL" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="ICy-k0-42O"/>
                     <constraint firstItem="v6I-33-8KM" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="K7p-Qb-aNR"/>
-                    <constraint firstItem="Qgr-Zm-ubV" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" constant="-12" id="LRA-pC-R1y"/>
-                    <constraint firstItem="awB-JO-ydo" firstAttribute="leading" secondItem="v6I-33-8KM" secondAttribute="trailing" constant="10" id="NHG-U5-t3r"/>
+                    <constraint firstItem="Qgr-Zm-ubV" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="LRA-pC-R1y"/>
                     <constraint firstItem="Qgr-Zm-ubV" firstAttribute="leading" secondItem="v6I-33-8KM" secondAttribute="trailing" constant="10" id="Uba-EP-Ai9"/>
                     <constraint firstItem="Rr4-ho-HoL" firstAttribute="leading" secondItem="B1M-wV-iGR" secondAttribute="trailing" constant="20" id="UxI-jM-lH9"/>
                     <constraint firstItem="v6I-33-8KM" firstAttribute="leading" secondItem="Rr4-ho-HoL" secondAttribute="trailing" constant="30" id="XPt-ma-5uA"/>
                     <constraint firstItem="B1M-wV-iGR" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="giz-7k-EGF"/>
                     <constraint firstItem="B1M-wV-iGR" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="lge-5X-2gL"/>
-                    <constraint firstItem="awB-JO-ydo" firstAttribute="top" secondItem="Qgr-Zm-ubV" secondAttribute="bottom" constant="4" id="tey-LS-PME"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
@@ -123,7 +115,6 @@
             <connections>
                 <outlet property="bottomLineHeight" destination="OMG-fV-AUG" id="NlN-Gs-feu"/>
                 <outlet property="bottomLineView" destination="dPr-FZ-SkV" id="Iil-nB-eak"/>
-                <outlet property="descriptionLabel" destination="awB-JO-ydo" id="D0Y-sb-fI2"/>
                 <outlet property="dotView" destination="WHA-eO-FIp" id="sfP-Qw-gTJ"/>
                 <outlet property="iconImageView" destination="v6I-33-8KM" id="CV8-xk-xyB"/>
                 <outlet property="timeLabel" destination="Rr4-ho-HoL" id="ZpP-zg-ujf"/>
