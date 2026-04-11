@@ -823,7 +823,7 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
                 self.applyFilter()
                 self.updateProgressUI()
-                NotificationService.shared.updateVaccinationReminders(childName: child.name, vaccines: vaccines)
+                NotificationService.shared.updateVaccinationReminders(childId: child.id.uuidString, childName: child.name, vaccines: vaccines)
                 
                 // If home requested a preselection before data was ready
                 if let group = self.pendingPreselectGroup {
