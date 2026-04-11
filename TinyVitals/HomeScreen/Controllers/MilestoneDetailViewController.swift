@@ -425,7 +425,7 @@ final class MilestoneDetailViewController: UIViewController {
         } else {
             // Record memory
             sheet.addAction(UIAlertAction(
-                title: "Record Memory",
+                title: "Add Memory",
                 style: .default
             ) { [weak self] _ in
                 self?.presentVideoRecorder(for: milestone)
@@ -732,7 +732,7 @@ extension MilestoneDetailViewController: UITableViewDataSource, UITableViewDeleg
                     self?.playVideo(for: milestone)
                 }, for: .touchUpInside)
             } else {
-                config.title = "Record"
+                config.title = "Add"
                 config.image = UIImage(systemName: "video.badge.plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14))
                 config.baseForegroundColor = .systemBlue
                 config.baseBackgroundColor = .systemBlue

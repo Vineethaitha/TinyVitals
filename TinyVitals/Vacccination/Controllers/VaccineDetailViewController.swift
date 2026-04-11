@@ -11,10 +11,11 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     
     var activeChild: ChildProfile?
 
-
+    @IBOutlet weak var vaccineDescriptionCardView: UIView!
+    
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-    
+    @IBOutlet weak var dueDaysLabel: UILabel!
     // MARK: - Date & Time Card
     @IBOutlet weak var dateValueLabel: UILabel!
     @IBOutlet weak var timeValueLabel: UILabel!
@@ -133,6 +134,94 @@ class VaccineDetailViewController: UIViewController, UITextViewDelegate, UIImage
     func configure() {
         titleLabel.text = vaccine.name
         descriptionLabel.text = vaccine.description
+        
+        if let dueDaysLabel = dueDaysLabel {
+            dueDaysLabel.attributedText = formattedSubtitle(for: vaccine, baseFont: dueDaysLabel.font)
+        }
+        
+        if let cardView = vaccineDescriptionCardView {
+            switch vaccine.status {
+            case .completed:
+                cardView.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.12)
+            case .skipped:
+                cardView.backgroundColor = UIColor.systemRed.withAlphaComponent(0.12)
+            case .rescheduled:
+                cardView.backgroundColor = UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 0.12)
+            case .upcoming:
+                cardView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.12)
+            }
+        }
+    }
+
+    private func formattedSubtitle(for vaccine: VaccineItem, baseFont: UIFont) -> NSAttributedString {
+        let exactFormatter = DateFormatter()
+        exactFormatter.dateStyle = .medium
+        let exactStr = exactFormatter.string(from: vaccine.date)
+        
+        let statusText: String
+        var statusColor = UIColor.secondaryLabel
+        
+        let brandPink = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+        let brandBlue = UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 1)
+        
+        switch vaccine.status {
+        case .completed:
+            statusText = "Completed"
+            statusColor = UIColor { tc in tc.userInterfaceStyle == .dark ? .systemGreen : UIColor(red: 0.1, green: 0.55, blue: 0.1, alpha: 1) }
+        case .skipped:
+            statusText = "Skipped"
+            statusColor = UIColor { tc in tc.userInterfaceStyle == .dark ? .systemRed : UIColor(red: 0.75, green: 0.1, blue: 0.1, alpha: 1) }
+        case .rescheduled:
+            statusText = "Rescheduled"
+            statusColor = UIColor { tc in tc.userInterfaceStyle == .dark ? brandBlue : UIColor(red: 0.1, green: 0.45, blue: 0.75, alpha: 1) }
+        case .upcoming:
+            let cal = Calendar.current
+            let now = cal.startOfDay(for: Date())
+            let target = cal.startOfDay(for: vaccine.date)
+            
+            let components = cal.dateComponents([.day], from: now, to: target)
+            guard let days = components.day else {
+                statusText = "Upcoming"
+                break
+            }
+            
+            if days == 0 {
+                statusText = "Today"
+                statusColor = brandPink
+            } else if days == 1 {
+                statusText = "Tomorrow"
+                statusColor = brandPink
+            } else if days > 1 && days <= 60 {
+                statusText = "In \(days) days"
+                statusColor = .secondaryLabel
+            } else if days > 60 {
+                statusText = "Upcoming"
+                statusColor = .secondaryLabel
+            } else {
+                statusText = "Overdue"
+                statusColor = .systemRed
+            }
+        }
+        
+        let fullString = "\(statusText) • \(exactStr)"
+        
+        let attributed = NSMutableAttributedString(
+            string: fullString,
+            attributes: [
+                .font: baseFont,
+                .foregroundColor: UIColor.secondaryLabel
+            ]
+        )
+        
+        let statusRange = (fullString as NSString).range(of: statusText)
+        if statusRange.location != NSNotFound {
+            attributed.addAttributes([
+                .font: UIFont.systemFont(ofSize: baseFont.pointSize, weight: .bold),
+                .foregroundColor: statusColor
+            ], range: statusRange)
+        }
+        
+        return attributed
     }
 
     

@@ -18,62 +18,125 @@ class VaccineCell: UITableViewCell {
 
         cardView.backgroundColor = .clear
         titleLabel.textColor = .label
-        subtitleLabel.textColor = .secondaryLabel
-
-
         if let searchText = searchText, !searchText.isEmpty {
             titleLabel.attributedText =
                 highlightText(
                     fullText: vaccine.name,
                     searchText: searchText,
-                    baseFont: titleLabel.font
+                    baseFont: titleLabel.font,
+                    baseColor: .label
                 )
-
-            subtitleLabel.attributedText =
-                highlightText(
-                    fullText: vaccine.description,
-                    searchText: searchText,
-                    baseFont: subtitleLabel.font
-                )
-
         } else {
             titleLabel.text = vaccine.name
-            subtitleLabel.text = vaccine.description
         }
+
+        subtitleLabel.attributedText = formattedSubtitle(for: vaccine, baseFont: subtitleLabel.font, searchText: searchText)
 
         switch vaccine.status {
         case .completed:
-            cardView.backgroundColor =
-                UIColor.systemGreen.withAlphaComponent(0.12)
-
+            cardView.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.12)
         case .skipped:
-            cardView.backgroundColor =
-                UIColor.systemRed.withAlphaComponent(0.12)
-
+            cardView.backgroundColor = UIColor.systemRed.withAlphaComponent(0.12)
         case .rescheduled:
-            // Brand Blue — matches rescheduled ring
-            cardView.backgroundColor =
-                UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 0.12)
-
+            cardView.backgroundColor = UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 0.12)
         case .upcoming:
-            // Brand Pink — matches upcoming ring
-            cardView.backgroundColor =
-                UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.12)
+            cardView.backgroundColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 0.12)
         }
     }
 
+    private func formattedSubtitle(for vaccine: VaccineItem, baseFont: UIFont, searchText: String?) -> NSAttributedString {
+        let exactFormatter = DateFormatter()
+        exactFormatter.dateStyle = .medium
+        let exactStr = exactFormatter.string(from: vaccine.date)
+        
+        let statusText: String
+        var statusColor = UIColor.secondaryLabel
+        
+        let brandPink = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+        let brandBlue = UIColor(red: 112/255, green: 210/255, blue: 237/255, alpha: 1)
+        
+        switch vaccine.status {
+        case .completed:
+            statusText = "Completed"
+            statusColor = UIColor { tc in tc.userInterfaceStyle == .dark ? .systemGreen : UIColor(red: 0.1, green: 0.55, blue: 0.1, alpha: 1) }
+        case .skipped:
+            statusText = "Skipped"
+            statusColor = UIColor { tc in tc.userInterfaceStyle == .dark ? .systemRed : UIColor(red: 0.75, green: 0.1, blue: 0.1, alpha: 1) }
+        case .rescheduled:
+            statusText = "Rescheduled"
+            statusColor = UIColor { tc in tc.userInterfaceStyle == .dark ? brandBlue : UIColor(red: 0.1, green: 0.45, blue: 0.75, alpha: 1) }
+        case .upcoming:
+            let cal = Calendar.current
+            let now = cal.startOfDay(for: Date())
+            let target = cal.startOfDay(for: vaccine.date)
+            
+            let components = cal.dateComponents([.day], from: now, to: target)
+            guard let days = components.day else {
+                statusText = "Upcoming"
+                break
+            }
+            
+            if days == 0 {
+                statusText = "Today"
+                statusColor = brandPink
+            } else if days == 1 {
+                statusText = "Tomorrow"
+                statusColor = brandPink
+            } else if days > 1 && days <= 60 {
+                statusText = "In \(days) days"
+                statusColor = .secondaryLabel
+            } else if days > 60 {
+                statusText = "Upcoming"
+                statusColor = .secondaryLabel
+            } else {
+                statusText = "Overdue"
+                statusColor = .systemRed
+            }
+        }
+        
+        let fullString = "\(statusText) • \(exactStr)"
+        
+        let attributed = NSMutableAttributedString(
+            string: fullString,
+            attributes: [
+                .font: baseFont,
+                .foregroundColor: UIColor.secondaryLabel
+            ]
+        )
+        
+        let statusRange = (fullString as NSString).range(of: statusText)
+        if statusRange.location != NSNotFound {
+            attributed.addAttributes([
+                .font: UIFont.systemFont(ofSize: baseFont.pointSize, weight: .bold),
+                .foregroundColor: statusColor
+            ], range: statusRange)
+        }
+        
+        if let search = searchText, !search.isEmpty {
+            let searchRange = (fullString as NSString).range(of: search, options: .caseInsensitive)
+            if searchRange.location != NSNotFound {
+                attributed.addAttributes([
+                    .foregroundColor: UIColor.systemBlue,
+                    .font: UIFont.systemFont(ofSize: baseFont.pointSize, weight: .black)
+                ], range: searchRange)
+            }
+        }
+        
+        return attributed
+    }
 
     private func highlightText(
         fullText: String,
         searchText: String,
-        baseFont: UIFont
+        baseFont: UIFont,
+        baseColor: UIColor
     ) -> NSAttributedString {
 
         let attributed = NSMutableAttributedString(
             string: fullText,
             attributes: [
                 .font: baseFont,
-                .foregroundColor: UIColor.label
+                .foregroundColor: baseColor
             ]
         )
 

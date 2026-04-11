@@ -90,19 +90,15 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
         agePicker.dataSource = self
         agePicker.delegate = self
+        ageTextField.inputView = createPickerContainer(for: agePicker)
 
-        ageTextField.inputView = agePicker
-
-//        agePicker.selectRow(0, inComponent: 0, animated: false)
-//        agePicker.selectRow(0, inComponent: 1, animated: false)
-        
         bloodGroupPicker.dataSource = self
         bloodGroupPicker.delegate = self
-        bloodGroupTextField.inputView = bloodGroupPicker
+        bloodGroupTextField.inputView = createPickerContainer(for: bloodGroupPicker)
         
         genderPicker.dataSource = self
         genderPicker.delegate = self
-        genderTextField.inputView = genderPicker
+        genderTextField.inputView = createPickerContainer(for: genderPicker)
         
         avatarImageView.addGestureRecognizer(
             UITapGestureRecognizer(
@@ -116,6 +112,35 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 
     }
 
+    private func createPickerContainer(for picker: UIPickerView) -> UIView {
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 260))
+        container.backgroundColor = .systemGroupedBackground
+        
+        // Make the toolbar transparent so it blends perfectly into the container
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: container.frame.width, height: 44))
+        toolbar.isTranslucent = true
+        toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any) // Removes the separator line
+        
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissPicker))
+        doneButton.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
+        toolbar.setItems([flexSpace, doneButton], animated: false)
+        
+        picker.frame = CGRect(x: 0, y: 44, width: container.frame.width, height: 216)
+        
+        container.addSubview(toolbar)
+        container.addSubview(picker)
+        
+        toolbar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+        picker.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        return container
+    }
+    
+    @objc private func dismissPicker() {
+        view.endEditing(true)
+    }
     
 
 

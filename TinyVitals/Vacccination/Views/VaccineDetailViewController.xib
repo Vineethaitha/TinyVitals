@@ -14,6 +14,7 @@
                 <outlet property="datePicker" destination="4pw-8r-MsO" id="I2d-pV-PD0"/>
                 <outlet property="dateValueLabel" destination="8PH-nx-mQH" id="bb3-OU-0wY"/>
                 <outlet property="descriptionLabel" destination="zdA-3k-sJK" id="Hxa-R3-Yz2"/>
+                <outlet property="dueDaysLabel" destination="lQr-wr-OfY" id="yWb-Bs-K6U"/>
                 <outlet property="notesTextView" destination="Vwi-Qp-oWX" id="lEB-NS-BKC"/>
                 <outlet property="photoCardHeight" destination="mRE-rA-r0L" id="ifN-Z0-gfr"/>
                 <outlet property="photoCardView" destination="Oxz-Hg-TPJ" id="9Zi-eR-jcr"/>
@@ -27,6 +28,7 @@
                 <outlet property="timePicker" destination="Ku0-r7-0Ps" id="o1y-M4-Hqf"/>
                 <outlet property="timeValueLabel" destination="5iu-sX-f7l" id="1ma-Ma-aUQ"/>
                 <outlet property="titleLabel" destination="tLa-Zh-tA8" id="3j9-RU-84k"/>
+                <outlet property="vaccineDescriptionCardView" destination="sky-az-FFQ" id="ZkA-tK-bgE"/>
                 <outlet property="vaccineImageView" destination="mRE-rA-r0L" id="Zf7-9P-Erk"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -49,23 +51,31 @@
                                             <rect key="frame" x="0.0" y="0.0" width="353" height="80"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tLa-Zh-tA8" userLabel="titleLabel">
-                                                    <rect key="frame" x="20.000000000000004" y="15.666666666666659" width="58.333333333333343" height="28.666666666666671"/>
+                                                    <rect key="frame" x="20.000000000000004" y="5.666666666666659" width="58.333333333333343" height="28.666666666666671"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="24"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zdA-3k-sJK" userLabel="descriptionLabel">
-                                                    <rect key="frame" x="20" y="45.666666666666657" width="33" height="15.666666666666664"/>
+                                                    <rect key="frame" x="20" y="35.666666666666657" width="33" height="15.666666666666664"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lQr-wr-OfY">
+                                                    <rect key="frame" x="20" y="51.666666666666657" width="33" height="15.666666666666671"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <color key="backgroundColor" red="0.92941176469999998" green="0.43921568630000002" blue="0.59999999999999998" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
-                                                <constraint firstItem="tLa-Zh-tA8" firstAttribute="centerY" secondItem="sky-az-FFQ" secondAttribute="centerY" constant="-10" id="Cuk-JK-6nQ"/>
+                                                <constraint firstItem="zdA-3k-sJK" firstAttribute="top" secondItem="lQr-wr-OfY" secondAttribute="top" constant="-16" id="1lJ-XV-G0P"/>
+                                                <constraint firstItem="tLa-Zh-tA8" firstAttribute="centerY" secondItem="sky-az-FFQ" secondAttribute="centerY" constant="-20" id="Cuk-JK-6nQ"/>
                                                 <constraint firstItem="zdA-3k-sJK" firstAttribute="leading" secondItem="sky-az-FFQ" secondAttribute="leading" constant="20" id="KXc-1M-4Xb"/>
                                                 <constraint firstItem="tLa-Zh-tA8" firstAttribute="leading" secondItem="sky-az-FFQ" secondAttribute="leading" constant="20" id="KuV-aI-MkF"/>
+                                                <constraint firstItem="lQr-wr-OfY" firstAttribute="leading" secondItem="sky-az-FFQ" secondAttribute="leading" constant="20" id="ZIa-pk-7KV"/>
                                                 <constraint firstAttribute="height" constant="80" id="hVm-33-I47"/>
                                                 <constraint firstItem="zdA-3k-sJK" firstAttribute="top" secondItem="tLa-Zh-tA8" secondAttribute="bottom" constant="1.3333333333333286" id="pos-3p-zO3"/>
                                             </constraints>
@@ -443,19 +453,19 @@
     <resources>
         <image name="circle" catalog="system" width="128" height="123"/>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray4Color">
-            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray5Color">
-            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiarySystemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
