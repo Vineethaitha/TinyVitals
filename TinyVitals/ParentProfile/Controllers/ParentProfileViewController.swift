@@ -20,17 +20,10 @@ class ParentProfileViewController: UIViewController {
     @IBOutlet weak var logoutView: UIView!
     @IBOutlet weak var deleteAccountView: UIView!
 
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        activityIndicator.center = view.center
-        activityIndicator.color = .systemGray
-        activityIndicator.hidesWhenStopped = true
-        view.addSubview(activityIndicator)
-        view.bringSubviewToFront(activityIndicator)
-
-
+        
         addTap(to: aboutView, type: .about)
         addTap(to: termsView, type: .terms)
         addTap(to: privacyView, type: .privacy)
@@ -154,7 +147,7 @@ class ParentProfileViewController: UIViewController {
         
         Haptics.impact(.light)
         
-        showLoader()
+        showModernLoader(isBlocking: true)
 
         Task {
             await SupabaseAuthService.shared.logout()
@@ -191,15 +184,6 @@ class ParentProfileViewController: UIViewController {
 
 
     
-    private func showLoader() {
-        view.isUserInteractionEnabled = false
-        activityIndicator.startAnimating()
-    }
-
-    private func hideLoader() {
-        view.isUserInteractionEnabled = true
-        activityIndicator.stopAnimating()
-    }
 
     
     @IBAction func editNameTapped(_ sender: Any) {
@@ -238,7 +222,7 @@ class ParentProfileViewController: UIViewController {
     
     private func updateUserName(_ newName: String) {
 
-        showLoader()
+        showModernLoader(isBlocking: true)
 
         Task {
             do {
@@ -250,13 +234,13 @@ class ParentProfileViewController: UIViewController {
 
                 await MainActor.run {
                     self.userName.text = newName
-                    self.hideLoader()
+                    self.hideModernLoader()
                 }
 
             } catch {
 
                 await MainActor.run {
-                    self.hideLoader()
+                    self.hideModernLoader()
 
                     let errorAlert = UIAlertController(
                         title: "Update Failed",
@@ -294,7 +278,7 @@ class ParentProfileViewController: UIViewController {
 
     private func performAccountDeletion() {
 
-        showLoader()
+        showModernLoader(isBlocking: true)
 
         Task {
             do {
@@ -331,7 +315,7 @@ class ParentProfileViewController: UIViewController {
                 await SupabaseAuthService.shared.logout()
 
                 await MainActor.run {
-                    self.hideLoader()
+                    self.hideModernLoader()
 
                     AppState.shared.clear()
 
@@ -361,7 +345,7 @@ class ParentProfileViewController: UIViewController {
             } catch {
 
                 await MainActor.run {
-                    self.hideLoader()
+                    self.hideModernLoader()
 
                     let errorAlert = UIAlertController(
                         title: "Deletion Failed",

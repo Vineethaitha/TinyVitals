@@ -87,15 +87,10 @@ class RecordListViewController: UIViewController {
         return f
     }()
 
-    private let loader = UIActivityIndicatorView(style: .large)
-    private let loaderContainer = UIView()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLoader()
-
-        guard activeChild != nil else {
+         guard activeChild != nil else {
             assertionFailure("RecordListViewController opened without activeChild")
             return
         }
@@ -457,7 +452,7 @@ class RecordListViewController: UIViewController {
         guard !records.isEmpty else { return }
 
         Haptics.impact(.light)
-        showLoader()
+        showModernLoader(isBlocking: true)
 
         Task {
             var items: [Any] = []
@@ -489,7 +484,7 @@ class RecordListViewController: UIViewController {
 
             await MainActor.run {
                 
-                self.hideLoader()
+                self.hideModernLoader()
                 
                 let vc = UIActivityViewController(
                     activityItems: items,
@@ -860,6 +855,7 @@ class RecordListViewController: UIViewController {
     
     func presentSummary(for record: MedicalFile) {
 
+        showModernLoader(isBlocking: true)
         Task {
             do {
                 let signedURL = try await MedicalRecordService.shared
@@ -879,6 +875,7 @@ class RecordListViewController: UIViewController {
                 }
 
                 DispatchQueue.main.async {
+                    self.hideModernLoader()
                     let summaryVC = RecordSummaryViewController(
                         record: record,
                         localFileURL: localURL
@@ -896,44 +893,13 @@ class RecordListViewController: UIViewController {
                 }
 
             } catch {
+                DispatchQueue.main.async { self.hideModernLoader() }
 //                print("❌ Summary load failed:", error)
             }
         }
     }
     
-    private func setupLoader() {
-        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
-        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
-        loaderContainer.isHidden = true
 
-        loader.translatesAutoresizingMaskIntoConstraints = false
-        loader.hidesWhenStopped = true
-
-        loaderContainer.addSubview(loader)
-        view.addSubview(loaderContainer)
-
-        NSLayoutConstraint.activate([
-            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
-            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
-            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
-        ])
-    }
-
-    private func showLoader() {
-        loaderContainer.isHidden = false
-        loader.startAnimating()
-        view.isUserInteractionEnabled = false
-    }
-
-    private func hideLoader() {
-        loader.stopAnimating()
-        loaderContainer.isHidden = true
-        view.isUserInteractionEnabled = true
-    }
 
 
 

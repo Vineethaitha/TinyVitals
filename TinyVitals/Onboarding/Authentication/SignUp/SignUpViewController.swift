@@ -24,7 +24,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     private let eyeImageView = UIImageView()
     private var isPasswordVisible = false
     
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +47,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         passwordTextField.delegate = self
         confirmPasswordTextField.delegate = self
         setupConfirmPasswordIcon()
-        setupLoader()
     }
     
     @IBAction func openPrivacyPolicy(_ sender: UIButton) {
@@ -123,7 +121,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        self.showLoader()
+        self.showModernLoader(isBlocking: true)
         
         authService.signup(
                 email: email,
@@ -133,7 +131,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
                 guard let self = self else { return }
 
                 DispatchQueue.main.async {
-                    self.hideLoader()
+                    self.hideModernLoader()
 
                     switch result {
                     case .success(let userId):
@@ -179,23 +177,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     
 
     
-    private func setupLoader() {
-        activityIndicator.center = view.center
-        activityIndicator.color = .systemGray
-        activityIndicator.hidesWhenStopped = true
-        view.addSubview(activityIndicator)
-        view.bringSubviewToFront(activityIndicator)
-    }
-    
-    private func showLoader() {
-        self.view.isUserInteractionEnabled = false
-        self.activityIndicator.startAnimating()
-    }
 
-    private func hideLoader() {
-        self.view.isUserInteractionEnabled = true
-        self.activityIndicator.stopAnimating()
-    }
 
     /*
     // MARK: - Navigation

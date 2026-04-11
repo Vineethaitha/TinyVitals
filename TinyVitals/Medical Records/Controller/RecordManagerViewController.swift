@@ -50,14 +50,11 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
     var selectedSortOption: FolderSortOption = .nameAZ
     
-    private let loader = UIActivityIndicatorView(style: .large)
-    private let loaderContainer = UIView()
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupLoader()
         hideKeyboardWhenTappedAround()
 
         addButton.configuration = nil
@@ -606,7 +603,6 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
     private func loadDataIfPossible() {
         guard let child = activeChild else { return }
         
-        showLoader()
         
         Task {
             do {
@@ -620,46 +616,10 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 //                print("❌ Failed to load child data:", error)
             }
             
-            await MainActor.run {
-                self.hideLoader()
-            }
         }
     }
 
-    private func setupLoader() {
-        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
-        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
-        loaderContainer.isHidden = true
 
-        loader.translatesAutoresizingMaskIntoConstraints = false
-        loader.hidesWhenStopped = true
-
-        loaderContainer.addSubview(loader)
-        view.addSubview(loaderContainer)
-
-        NSLayoutConstraint.activate([
-            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
-            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
-            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
-        ])
-    }
-
-
-    private func showLoader() {
-        loaderContainer.isHidden = false
-        loader.startAnimating()
-        view.isUserInteractionEnabled = false
-    }
-
-    private func hideLoader() {
-        loader.stopAnimating()
-        loaderContainer.isHidden = true
-        view.isUserInteractionEnabled = true
-    }
 
 //    func createDefaultFoldersIfNeeded(childId: UUID) async throws {
 //

@@ -37,13 +37,10 @@ final class SymptomsPDFExporter {
             try renderer.writePDF(to: url) { context in
                 
                 var currentY: CGFloat = margins.top
-                var isFirstPage = true
-                
                 func checkPageBreak(requiredSpace: CGFloat) {
                     if currentY + requiredSpace > pageSize.height - margins.bottom {
                         context.beginPage()
                         currentY = margins.top
-                        isFirstPage = false
                     }
                 }
                 
@@ -92,9 +89,6 @@ final class SymptomsPDFExporter {
                     let dayEntries = grouped[date]!.sorted(by: { $0.date > $1.date })
                     
                     for entry in dayEntries {
-                        // Entry Box starting position
-                        let entryStartY = currentY
-                        
                         // Time & Symptom Title
                         let tf = DateFormatter()
                         tf.timeStyle = .short

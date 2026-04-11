@@ -24,14 +24,11 @@ class GrowthGraphViewController: UIViewController {
     
     var activeChild: ChildProfile?
     
-    private let loaderContainer = UIView()
-    private let loader = UIActivityIndicatorView(style: .large)
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupLoader()
 
 
         
@@ -104,8 +101,7 @@ class GrowthGraphViewController: UIViewController {
         graph.metric = .weight
         graph.childGender = child.gender
         
-        showLoader()
-
+        
         Task {
             do {
                 
@@ -126,13 +122,13 @@ class GrowthGraphViewController: UIViewController {
 
                     graph.data = points
                     updateStatusLabel(using: points)
-                    hideLoader()
+
                 }
 
             } catch {
 //                print("❌ Failed to load growth data:", error)
                 await MainActor.run {
-                    hideLoader()
+
                 }
             }
         }
@@ -146,7 +142,6 @@ class GrowthGraphViewController: UIViewController {
         graph.metric = .height
         graph.childGender = child.gender
         
-        showLoader()
         
         Task {
             do {
@@ -167,13 +162,13 @@ class GrowthGraphViewController: UIViewController {
 
                     graph.data = points
                     updateStatusLabel(using: points)
-                    hideLoader()
+
                 }
 
             } catch {
 //                print("❌ Failed to load growth data:", error)
                 await MainActor.run {
-                    hideLoader()
+
                 }
             }
         }
@@ -283,39 +278,7 @@ class GrowthGraphViewController: UIViewController {
 
 
 
-    private func setupLoader() {
-        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
-        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
-        loaderContainer.isHidden = true
 
-        loader.translatesAutoresizingMaskIntoConstraints = false
-        loader.hidesWhenStopped = true
-
-        loaderContainer.addSubview(loader)
-        view.addSubview(loaderContainer)
-
-        NSLayoutConstraint.activate([
-            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
-            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
-            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
-        ])
-    }
-
-    private func showLoader() {
-        loaderContainer.isHidden = false
-        loader.startAnimating()
-        view.isUserInteractionEnabled = false
-    }
-
-    private func hideLoader() {
-        loader.stopAnimating()
-        loaderContainer.isHidden = true
-        view.isUserInteractionEnabled = true
-    }
 
 
 

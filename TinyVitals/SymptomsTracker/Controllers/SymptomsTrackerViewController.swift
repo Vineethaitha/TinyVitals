@@ -42,14 +42,12 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     
     private var emptyLottieView: LottieAnimationView?
     
-    private let loaderContainer = UIView()
-    private let loader = UIActivityIndicatorView(style: .large)
 
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLoader()
+
 
         setupUI()
 //        showSampleData()
@@ -220,7 +218,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 //
 //        Task {
 //            do {
-//                await MainActor.run { self.showLoader() }
+//                await MainActor.run {  }
 //
 //                let dtos = try await SymptomService.shared
 //                    .fetchSymptoms(childId: child.id)
@@ -242,7 +240,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 //
 //                await MainActor.run {
 //
-//                    self.hideLoader()
+//                    
 //
 //                    if currentEntries.isEmpty {
 //
@@ -278,7 +276,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 //                print("❌ Failed to load symptoms:", error)
 //
 //                await MainActor.run {
-//                    self.hideLoader()
+//                    
 //                }
 //            }
 //        }
@@ -292,11 +290,9 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         dateLabel.text = formatter.string(from: date)
-        showLoader()
+        
         Task {
             do {
-                await MainActor.run { self.showLoader() }
-
                 let dtos = try await SymptomService.shared
                     .fetchSymptoms(childId: child.id)
 
@@ -317,7 +313,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
                 await MainActor.run {
 
-                    self.hideLoader()
+
 
                     // MARK: - Empty / Non Empty UI
                     if currentEntries.isEmpty {
@@ -366,7 +362,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 //                print("❌ Failed to load symptoms:", error)
 
                 await MainActor.run {
-                    self.hideLoader()
+
                 }
             }
         }
@@ -466,7 +462,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                 Task {
                     do {
                         await MainActor.run {
-                            self.showLoader()
+                            self.showModernLoader(isBlocking: true)
                         }
                         // 1️⃣ Delete from Supabase
                         try await SymptomService.shared
@@ -480,7 +476,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
                         // 3️⃣ Refresh UI
                         await MainActor.run {
-                            self.hideLoader()
+                            self.hideModernLoader()
                             self.updateSummary(for: self.selectedDate)
                         }
 
@@ -488,7 +484,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 //                        print("❌ Delete failed:", error)
 
                         await MainActor.run {
-                            self.hideLoader()
+                            self.hideModernLoader()
                             Haptics.notification(.error)
                         }
                     }
@@ -544,39 +540,7 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         emptyLottieView = animationView
     }
     
-    private func setupLoader() {
-        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
-        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.9)
-        loaderContainer.isHidden = true
 
-        loader.translatesAutoresizingMaskIntoConstraints = false
-        loader.hidesWhenStopped = true
-
-        loaderContainer.addSubview(loader)
-        view.addSubview(loaderContainer)
-
-        NSLayoutConstraint.activate([
-            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
-            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
-            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
-        ])
-    }
-
-    private func showLoader() {
-        loaderContainer.isHidden = false
-        loader.startAnimating()
-        view.isUserInteractionEnabled = false
-    }
-
-    private func hideLoader() {
-        loader.stopAnimating()
-        loaderContainer.isHidden = true
-        view.isUserInteractionEnabled = true
-    }
 
 
     

@@ -48,14 +48,12 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     
     private var didPickAvatarImage = false
     
-    private let loaderContainer = UIView()
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
+
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupLoader()
         Haptics.impact(.light)
         
         hideKeyboardWhenTappedAround()
@@ -200,7 +198,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         
         let dob = Calendar.current.date(byAdding: components, to: Date()) ?? Date()
         
-        showLoader()
+        showModernLoader(isBlocking: true)
         
         Task {
             do {
@@ -300,7 +298,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
 //                    self.dismiss(animated: true)
 //                }
                 DispatchQueue.main.async {
-                    self.hideLoader()
+                    self.hideModernLoader()
                     self.dismiss(animated: true) {
                         if let tabBar = UIApplication.shared
                             .connectedScenes
@@ -319,7 +317,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                 
             } catch {
                 DispatchQueue.main.async {
-                    self.hideLoader()
+                    self.hideModernLoader()
                 }
 //                print("❌ Child creation failed:", error)
             }
@@ -573,7 +571,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
             photoFilename: updatedPhotoFilename
         )
 
-        showLoader()
+        showModernLoader(isBlocking: true)
 
         Task {
             do {
@@ -602,13 +600,13 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
                 await MainActor.run {
                     AppState.shared.updateChild(updatedChild)
                     updateDelegate?.didUpdateChild(updatedChild)
-                    hideLoader()
+                    self.hideModernLoader()
                     navigationController?.popViewController(animated: true)
                 }
 
             } catch {
                 await MainActor.run {
-                    hideLoader()
+                    self.hideModernLoader()
                 }
 //                print("❌ Failed to update child:", error)
             }
@@ -708,30 +706,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         dismiss(animated: true)
     }
 
-    private func setupLoader() {
-        loaderContainer.frame = view.bounds
-        loaderContainer.backgroundColor = UIColor.label.withAlphaComponent(0.25)
-        loaderContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        loaderContainer.isHidden = true
 
-        activityIndicator.center = loaderContainer.center
-        activityIndicator.hidesWhenStopped = true
-
-        loaderContainer.addSubview(activityIndicator)
-        view.addSubview(loaderContainer)
-    }
-
-    private func showLoader() {
-        loaderContainer.isHidden = false
-        activityIndicator.startAnimating()
-        view.isUserInteractionEnabled = false
-    }
-
-    private func hideLoader() {
-        loaderContainer.isHidden = true
-        activityIndicator.stopAnimating()
-        view.isUserInteractionEnabled = true
-    }
 
 
 

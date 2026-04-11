@@ -38,13 +38,10 @@ class CalendarRecordsViewController: UIViewController {
         alpha: 1
     )
 
-    private let loader = UIActivityIndicatorView(style: .large)
-    private let loaderContainer = UIView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLoader()
-
+        
         guard let childId = activeChild?.id else {
             assertionFailure("CalendarRecordsViewController opened without activeChild")
             return
@@ -149,7 +146,7 @@ class CalendarRecordsViewController: UIViewController {
     }
 
     func previewRecord(_ record: MedicalFile) {
-        showLoader()
+        showModernLoader(isBlocking: true)
         Task {
             do {
                 let signedURL = try await MedicalRecordService.shared.getSignedFileURL(path: record.filePath)
@@ -158,7 +155,7 @@ class CalendarRecordsViewController: UIViewController {
                 if record.fileType == "image" {
                     let image = try await MedicalRecordService.shared.downloadImage(from: signedURL)
                     guard let url = saveTempImage(image) else { 
-                        DispatchQueue.main.async { self.hideLoader() }
+                        DispatchQueue.main.async { self.hideModernLoader() }
                         return 
                     }
                     localURL = url
@@ -167,20 +164,20 @@ class CalendarRecordsViewController: UIViewController {
                 }
 
                 DispatchQueue.main.async {
-                    self.hideLoader()
+                    self.hideModernLoader()
                     self.previewURL = localURL
                     let previewVC = QLPreviewController()
                     previewVC.dataSource = self
                     self.present(previewVC, animated: true)
                 }
             } catch {
-                DispatchQueue.main.async { self.hideLoader() }
+                DispatchQueue.main.async { self.hideModernLoader() }
             }
         }
     }
 
     func presentSummary(for record: MedicalFile) {
-        showLoader()
+        showModernLoader(isBlocking: true)
         Task {
             do {
                 let signedURL = try await MedicalRecordService.shared.getSignedFileURL(path: record.filePath)
@@ -189,7 +186,7 @@ class CalendarRecordsViewController: UIViewController {
                 if record.fileType == "image" {
                     let image = try await MedicalRecordService.shared.downloadImage(from: signedURL)
                     guard let url = saveTempImage(image) else { 
-                        DispatchQueue.main.async { self.hideLoader() }
+                        DispatchQueue.main.async { self.hideModernLoader() }
                         return 
                     }
                     localURL = url
@@ -198,7 +195,7 @@ class CalendarRecordsViewController: UIViewController {
                 }
 
                 DispatchQueue.main.async {
-                    self.hideLoader()
+                    self.hideModernLoader()
                     let summaryVC = RecordSummaryViewController(
                         record: record,
                         localFileURL: localURL
@@ -212,7 +209,7 @@ class CalendarRecordsViewController: UIViewController {
                     self.present(nav, animated: true)
                 }
             } catch {
-                DispatchQueue.main.async { self.hideLoader() }
+                DispatchQueue.main.async { self.hideModernLoader() }
             }
         }
     }
@@ -246,21 +243,21 @@ class CalendarRecordsViewController: UIViewController {
     func deleteRecord(_ record: MedicalFile) {
         guard let childId = activeChild?.id else { return }
 
-        showLoader()
+        showModernLoader(isBlocking: true)
         Task {
             do {
                 try await MedicalRecordService.shared.deleteRecord(id: UUID(uuidString: record.id)!)
                 try await SupabaseAuthService.shared.client.storage.from("medical-records").remove(paths: [record.filePath])
 
                 await MainActor.run {
-                    self.hideLoader()
+                    self.hideModernLoader()
                     self.store.filesByChild[childId]?.removeAll { $0.id == record.id }
                     self.selectedDateRecords.removeAll { $0.id == record.id }
                     self.groupRecordsByDate(childId: childId)
                     self.tableView.reloadData()
                 }
             } catch {
-                await MainActor.run { self.hideLoader() }
+                await MainActor.run { self.hideModernLoader() }
             }
         }
     }
@@ -292,35 +289,7 @@ class CalendarRecordsViewController: UIViewController {
         tableView.backgroundView = nil
     }
 
-    private func setupLoader() {
-        loaderContainer.translatesAutoresizingMaskIntoConstraints = false
-        loaderContainer.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.8)
-        loaderContainer.isHidden = true
-        loader.translatesAutoresizingMaskIntoConstraints = false
-        loader.hidesWhenStopped = true
-        loaderContainer.addSubview(loader)
-        view.addSubview(loaderContainer)
-        NSLayoutConstraint.activate([
-            loaderContainer.topAnchor.constraint(equalTo: view.topAnchor),
-            loaderContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loaderContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            loaderContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            loader.centerXAnchor.constraint(equalTo: loaderContainer.centerXAnchor),
-            loader.centerYAnchor.constraint(equalTo: loaderContainer.centerYAnchor)
-        ])
-    }
 
-    private func showLoader() {
-        loaderContainer.isHidden = false
-        loader.startAnimating()
-        view.isUserInteractionEnabled = false
-    }
-
-    private func hideLoader() {
-        loader.stopAnimating()
-        loaderContainer.isHidden = true
-        view.isUserInteractionEnabled = true
-    }
     
     private func setupNavigation() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(

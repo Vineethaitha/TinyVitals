@@ -19,7 +19,6 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
 //    @IBOutlet weak var appleSignUpButton: UIButton?
     
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,8 +37,6 @@ class LoginViewController: UIViewController {
 //            appleBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 //        }
         
-        setupLoader()
-
         hideKeyboardWhenTappedAround()
         
 //        googleSignUpButton.configuration = nil
@@ -81,13 +78,13 @@ class LoginViewController: UIViewController {
                 return
             }
 
-            showLoader()
+            showModernLoader(isBlocking: true)
 
             authService.login(email: email, password: password) { [weak self] result in
                 guard let self = self else { return }
 
                 DispatchQueue.main.async {
-                    self.hideLoader()
+                    self.hideModernLoader()
 
                     switch result {
                     case .success(let userId):
@@ -135,7 +132,7 @@ class LoginViewController: UIViewController {
     
 //    @IBAction func googleSignUpTapped(_ sender: UIButton) {
 //        Haptics.impact(.light)
-//        showLoader()
+//        showModernLoader(isBlocking: true)
 //
 //        SupabaseAuthService.shared.signInWithGoogle(presentingVC: self) { [weak self] result in
 //            guard let self = self else { return }
@@ -157,13 +154,13 @@ class LoginViewController: UIViewController {
 //                        }
 //                        
 //                        DispatchQueue.main.async {
-//                            self.hideLoader()
+//                            self.hideModernLoader()
 //                            self.navigateToHome()
 //                        }
 //                        
 //                    } catch {
 //                        DispatchQueue.main.async {
-//                            self.hideLoader()
+//                            self.hideModernLoader()
 //                            self.navigateToHome()
 //                        }
 //                    }
@@ -171,7 +168,7 @@ class LoginViewController: UIViewController {
 //                
 //            case .failure(let error):
 //                DispatchQueue.main.async {
-//                    self.hideLoader()
+//                    self.hideModernLoader()
 //                    self.showAlert(
 //                        title: "Google Sign-In Failed",
 //                        message: error.localizedDescription
@@ -189,7 +186,7 @@ class LoginViewController: UIViewController {
         )
         
         DispatchQueue.main.async {
-            self.hideLoader()
+            self.hideModernLoader()
             self.navigateToHome()
         }
     }
@@ -225,24 +222,7 @@ class LoginViewController: UIViewController {
         self.present(alert, animated: true)
     }
     
-    private func setupLoader() {
-        activityIndicator.center = view.center
-        activityIndicator.color = .systemGray
-        view.addSubview(activityIndicator)
-        view.bringSubviewToFront(activityIndicator)
-    }
-    
-    private func showLoader() {
-        self.view.isUserInteractionEnabled = false // Prevent accidental taps (HIG)
-        self.activityIndicator.startAnimating()
-        self.activityIndicator.isHidden = false
-    }
 
-    private func hideLoader() {
-        self.view.isUserInteractionEnabled = true
-        self.activityIndicator.stopAnimating()
-        self.activityIndicator.isHidden = true
-    }
     
 
     /*
