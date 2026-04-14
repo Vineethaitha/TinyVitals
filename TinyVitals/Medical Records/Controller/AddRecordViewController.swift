@@ -312,10 +312,40 @@ class AddRecordViewController: UIViewController,
     }
 
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        guard let url = urls.first else { return }
-        selectedFileURL = url
-        dummyImageView.isHidden = true
-        filePreviewImageView.image = generatePDFThumbnail(url: url)
+        guard let originalURL = urls.first else { return }
+        
+        let isSecured = originalURL.startAccessingSecurityScopedResource()
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(originalURL.lastPathComponent)
+        
+        do {
+            if FileManager.default.fileExists(atPath: tempURL.path) {
+                try FileManager.default.removeItem(at: tempURL)
+            }
+            try FileManager.default.copyItem(at: originalURL, to: tempURL)
+            
+            if isSecured {
+                originalURL.stopAccessingSecurityScopedResource()
+            }
+            
+            selectedFileURL = tempURL
+            dummyImageView.isHidden = true
+            
+            Task {
+                // Generate the heavy PDF thumbnail layout safely off the main thread to prevent UI freezing
+                let thumbnail = await Task.detached(priority: .userInitiated) {
+                    self.generatePDFThumbnail(url: tempURL)
+                }.value // Await result safely back to main
+                
+                await MainActor.run {
+                    self.filePreviewImageView.image = thumbnail
+                }
+            }
+            
+        } catch {
+            if isSecured {
+                originalURL.stopAccessingSecurityScopedResource()
+            }
+        }
     }
 
     func generatePDFThumbnail(url: URL) -> UIImage? {
@@ -323,10 +353,16 @@ class AddRecordViewController: UIViewController,
               let page = pdf.page(at: 1) else { return nil }
 
         let rect = page.getBoxRect(.mediaBox)
-        return UIGraphicsImageRenderer(size: rect.size).image {
+        return UIGraphicsImageRenderer(size: rect.size).image { ctx in
             UIColor.white.set()
-            $0.fill(rect)
-            $0.cgContext.drawPDFPage(page)
+            ctx.fill(rect)
+            
+            // CoreGraphics origins are bottom-left, UIKit is top-left.
+            // We must intentionally flip the context vertically before drawing.
+            ctx.cgContext.translateBy(x: 0, y: rect.size.height)
+            ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
+            
+            ctx.cgContext.drawPDFPage(page)
         }
     }
 

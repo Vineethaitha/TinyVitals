@@ -370,22 +370,31 @@ final class RecordSummaryViewController: UIViewController {
     // MARK: - Summary Generation
 
     private func generateSummary() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            let text = RecordTextExtractor.extract(from: self.localFileURL)
-            DispatchQueue.main.async {
-                self.hideLoadingState()
+        Task {
+            // First run OCR extract in the background
+            let text = await Task.detached(priority: .userInitiated) {
+                RecordTextExtractor.extract(from: self.localFileURL)
+            }.value
 
-                guard text.count > 80 else {
+            guard text.count > 80 else {
+                await MainActor.run {
+                    self.hideLoadingState()
                     self.showEmptyState(
                         icon: "doc.questionmark",
                         title: "Couldn't Read Document",
                         message: "This document appears blank or partially filled.\n\nTry uploading a typed or scanned PDF report for best results."
                     )
-                    return
                 }
+                return
+            }
 
-                self.rawOCRText = text
-                let parsed = RecordSummarizer.summarize(text: text)
+            self.rawOCRText = text
+
+            // Run FoundationModel LLM on device
+            let parsed = await RecordSummarizer.summarizeAsync(text: text)
+
+            await MainActor.run {
+                self.hideLoadingState()
 
                 guard !parsed.isEmpty else {
                     self.showEmptyState(
