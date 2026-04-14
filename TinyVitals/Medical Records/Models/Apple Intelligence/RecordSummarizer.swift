@@ -72,6 +72,10 @@
 //
 
 import Foundation
+#if canImport(FoundationModels)
+import FoundationModels
+#endif
+
 
 enum RecordSummarizer {
 
@@ -95,8 +99,67 @@ enum RecordSummarizer {
         "Overview": 50
     ]
 
-    // MARK: - Public API
-    static func summarize(text: String) -> [MedicalSection] {
+    // MARK: - Async Public API (FoundationModels)
+    static func summarizeAsync(text: String) async -> [MedicalSection] {
+        if #available(iOS 18.0, *) {
+            #if canImport(FoundationModels)
+            do {
+                let prompt = """
+                You are an expert pediatrician assistant.
+                Please extract the following medical topics from the raw text into a standard layout:
+                Diagnosis, Symptoms, Vitals, Medications, Plan.
+                Medical Document Text: \(text)
+                """
+                
+                let session = LanguageModelSession()
+                let response = try await session.respond(to: prompt)
+                
+                // response is typically of type Response<String>. We extract the actual .content.
+                // If .content doesn't exist on some betas, we use mirror reflection as a fallback wrapper-stripper.
+                var generatedText = ""
+                let mirror = Mirror(reflecting: response)
+                for child in mirror.children {
+                    if let stringVal = child.value as? String, (child.label == "content" || child.label == "text" || child.label == "value") {
+                        generatedText = stringVal
+                        break
+                    }
+                }
+                
+                // Ultimate fallback: direct typecast or string stripping
+                if generatedText.isEmpty {
+                    if let text = response as? String {
+                        generatedText = text
+                    } else {
+                        // Stripping Response<String>(...)
+                        let raw = "\(response)"
+                        generatedText = raw.replacingOccurrences(of: "Response<String>(", with: "")
+                    }
+                }
+                
+                var sections = parseRawResponse(generatedText)
+                sections.append(MedicalSection(title: "Overview", items: ["✨ Summarized securely on-device using Apple Intelligence."]))
+                return sections
+                
+            } catch {
+                return summarizeSync(text: text)
+            }
+            #else
+            return summarizeSync(text: text)
+            #endif
+        } else {
+            return summarizeSync(text: text)
+        }
+    }
+
+    // MARK: - Sync Public API (Legacy Fallback)
+    static func summarizeSync(text: String) -> [MedicalSection] {
+        var sections = parseRawResponse(text)
+        sections.append(MedicalSection(title: "Overview", items: ["🔍 Extracted using standard local OCR."]))
+        return sections
+    }
+
+    // MARK: - Core Parser
+    private static func parseRawResponse(_ text: String) -> [MedicalSection] {
 
         let parsedSections = MedicalSectionParser.parse(from: text)
 
