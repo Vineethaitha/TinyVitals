@@ -9,47 +9,140 @@ import UIKit
 
 class RecordCardCell: UICollectionViewCell {
 
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var imageViewThumb: UIImageView!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var subtitleLabel: UILabel!
+    // MARK: - Brand Color
+    private let brandPink = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    // MARK: - UI Elements
+    let containerView = UIView()
+    let imageViewThumb = UIImageView()
+    let titleLabel = UILabel()
+    let subtitleLabel = UILabel()
 
-        containerView.layer.cornerRadius = 16
-        containerView.layer.masksToBounds = false
-        containerView.layer.shadowColor = UIColor.label.cgColor
-        containerView.layer.shadowOpacity = 0.06
-        containerView.layer.shadowOffset = CGSize(width: 0, height: 4)
-        containerView.layer.shadowRadius = 8
+    // MARK: - Init
 
-        imageViewThumb.layer.cornerRadius = 10
-        imageViewThumb.clipsToBounds = true
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
     }
-    
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupUI()
+    }
+
+    // MARK: - Setup
+
+    private func setupUI() {
+        contentView.backgroundColor = .clear
+
+        // ── Container (transparent, no card) ──
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.backgroundColor = .clear
+        contentView.addSubview(containerView)
+
+        // ── Folder Icon ──
+        let folderConfig = UIImage.SymbolConfiguration(pointSize: 72, weight: .regular)
+        imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: folderConfig)
+        imageViewThumb.tintColor = brandPink
+        imageViewThumb.contentMode = .scaleAspectFit
+        imageViewThumb.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(imageViewThumb)
+
+        // ── Title Label ──
+        titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        titleLabel.textColor = .label
+        titleLabel.textAlignment = .center
+        titleLabel.lineBreakMode = .byTruncatingMiddle
+        titleLabel.numberOfLines = 2
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(titleLabel)
+
+        // ── Subtitle Label (file count) ──
+        subtitleLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        subtitleLabel.textColor = .secondaryLabel
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(subtitleLabel)
+
+        // ── Layout ──
+        NSLayoutConstraint.activate([
+            // Container fills the cell
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+
+            // Folder icon — centered in upper area
+            imageViewThumb.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            imageViewThumb.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            imageViewThumb.widthAnchor.constraint(equalToConstant: 80),
+            imageViewThumb.heightAnchor.constraint(equalToConstant: 68),
+
+            // Title below icon
+            titleLabel.topAnchor.constraint(equalTo: imageViewThumb.bottomAnchor, constant: 4),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 2),
+            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -2),
+
+            // Subtitle below title
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1),
+            subtitleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 2),
+            subtitleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -2),
+        ])
+    }
+
+    // MARK: - Highlight / Selection Feedback
+
+    override var isHighlighted: Bool {
+        didSet {
+            UIView.animate(withDuration: 0.2, delay: 0,
+                           options: [.curveEaseInOut, .allowUserInteraction]) {
+                self.containerView.transform = self.isHighlighted
+                    ? CGAffineTransform(scaleX: 0.95, y: 0.95)
+                    : .identity
+                self.containerView.alpha = self.isHighlighted ? 0.85 : 1.0
+            }
+        }
+    }
+
+    // MARK: - Reuse
+
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageViewThumb.image = UIImage(systemName: "doc")
+        let folderConfig = UIImage.SymbolConfiguration(pointSize: 54, weight: .regular)
+        imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: folderConfig)
+        imageViewThumb.tintColor = brandPink
+        titleLabel.text = nil
+        subtitleLabel.text = nil
+        containerView.transform = .identity
+        containerView.alpha = 1.0
     }
+
+    // MARK: - Configure
 
     func configure(with folder: RecordFolder, fileCount: Int) {
         titleLabel.text = folder.name
 
-        subtitleLabel.text = (fileCount == 0) ? "No files" : "\(fileCount) files"
-        imageViewThumb.image = UIImage(systemName: "doc")
-        imageViewThumb.image = folder.icon
-        containerView.backgroundColor = folder.color
-    }
+        if fileCount == 0 {
+            subtitleLabel.text = "No items"
+        } else if fileCount == 1 {
+            subtitleLabel.text = "1 item"
+        } else {
+            subtitleLabel.text = "\(fileCount) items"
+        }
 
+        // Always use the large config for crisp rendering
+        let folderConfig = UIImage.SymbolConfiguration(pointSize: 54, weight: .regular)
+        imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: folderConfig)
+        imageViewThumb.tintColor = brandPink
+    }
 
     func loadThumbnail(file: MedicalFile) {
         guard file.fileType == "image" else {
-            imageViewThumb.image = UIImage(systemName: "doc")
+            let config = UIImage.SymbolConfiguration(pointSize: 54, weight: .regular)
+            imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: config)
             return
         }
 
-        // reset image to avoid reuse bugs
         imageViewThumb.image = UIImage(systemName: "photo")
 
         Task { @MainActor in
@@ -68,9 +161,4 @@ class RecordCardCell: UICollectionViewCell {
             }
         }
     }
-
-
-
-
 }
-
