@@ -619,11 +619,54 @@ final class OnboardingViewController: UIViewController {
         fillPath.addLine(to: CGPoint(x: chartX, y: chartY + chartHeight))
         fillPath.close()
 
-        let fillLayer = CAShapeLayer()
-        fillLayer.path = fillPath.cgPath
-        fillLayer.fillColor = brandBlue.withAlphaComponent(0.12).cgColor
+        let shapeMask = CAShapeLayer()
+        shapeMask.path = fillPath.cgPath
+
+        let fillLayer = CAGradientLayer()
+        fillLayer.frame = container.bounds
+        fillLayer.colors = [
+            brandBlue.withAlphaComponent(0.35).cgColor,
+            brandBlue.withAlphaComponent(0.0).cgColor
+        ]
+        
+        // Align gradient strictly with the chart's vertical area
+        let startY = chartY / bounds.height
+        let endY = (chartY + chartHeight) / bounds.height
+        fillLayer.startPoint = CGPoint(x: 0.5, y: startY)
+        fillLayer.endPoint = CGPoint(x: 0.5, y: endY)
+        fillLayer.mask = shapeMask
         fillLayer.opacity = 0
-        container.layer.addSublayer(fillLayer)
+
+        // Extra layer and mask to fade out the left/right hard edges
+        let edgeFadeMask = CAGradientLayer()
+        edgeFadeMask.frame = container.bounds
+        edgeFadeMask.colors = [
+            UIColor.clear.cgColor,
+            UIColor.white.cgColor,
+            UIColor.white.cgColor,
+            UIColor.clear.cgColor
+        ]
+        
+        let fadeDistance: CGFloat = 24.0 // pixels of fade on each side
+        let maskStartX = chartX / bounds.width
+        let maskFadeInEnd = (chartX + fadeDistance) / bounds.width
+        let maskFadeOutStart = (chartX + chartWidth - fadeDistance) / bounds.width
+        let maskEndX = (chartX + chartWidth) / bounds.width
+        
+        edgeFadeMask.locations = [
+            NSNumber(value: Double(maskStartX)),
+            NSNumber(value: Double(maskFadeInEnd)),
+            NSNumber(value: Double(maskFadeOutStart)),
+            NSNumber(value: Double(maskEndX))
+        ]
+        edgeFadeMask.startPoint = CGPoint(x: 0, y: 0.5)
+        edgeFadeMask.endPoint = CGPoint(x: 1, y: 0.5)
+        
+        let fillContainerLayer = CALayer()
+        fillContainerLayer.frame = container.bounds
+        fillContainerLayer.mask = edgeFadeMask
+        fillContainerLayer.addSublayer(fillLayer)
+        container.layer.addSublayer(fillContainerLayer)
 
         // Line stroke
         let lineLayer = CAShapeLayer()
@@ -1066,21 +1109,24 @@ final class OnboardingViewController: UIViewController {
 
         for (i, item) in orbitItems.enumerated() {
             let startAngle = angleStep * CGFloat(i) - .pi / 2 // start from top
-            let x = centerX + orbitRadius * cos(startAngle)
-            let y = centerY + orbitRadius * sin(startAngle)
+            let finalX = centerX + orbitRadius * cos(startAngle)
+            let finalY = centerY + orbitRadius * sin(startAngle)
 
             let pill = buildOrbitPill(icon: item.icon, title: item.title, color: item.color)
-            pill.center = CGPoint(x: x, y: y)
+            
+            // Start from the shield's center
+            pill.center = CGPoint(x: centerX, y: centerY)
             pill.alpha = 0
-            pill.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
+            pill.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
             container.addSubview(pill)
             orbitingPills.append(pill)
 
-            // Entrance animation
+            // Entrance animation: fly out to orbit position while scaling up
             let delay = 0.8 + Double(i) * 0.15
             UIView.animate(withDuration: 0.7, delay: delay,
                            usingSpringWithDamping: 0.65, initialSpringVelocity: 0.7,
                            options: .curveEaseOut) {
+                pill.center = CGPoint(x: finalX, y: finalY)
                 pill.alpha = 1
                 pill.transform = .identity
             } completion: { _ in
@@ -1137,6 +1183,11 @@ final class OnboardingViewController: UIViewController {
             label.trailingAnchor.constraint(equalTo: pill.trailingAnchor, constant: -12),
             label.centerYAnchor.constraint(equalTo: pill.centerYAnchor),
         ])
+
+        // Calculate size based on constraints, then re-enable auto-resizing so we can animate `center` freely
+        let fittedSize = pill.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        pill.translatesAutoresizingMaskIntoConstraints = true
+        pill.bounds = CGRect(origin: .zero, size: fittedSize)
 
         return pill
     }
