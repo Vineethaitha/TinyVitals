@@ -39,8 +39,8 @@ final class LogSymptomsViewController: UIViewController {
     
     private var currentWeight: Double = 1.5
     private var currentHeight: Double = 1.5
-    private var currentTemperature: Double = 98.6
-    private var currentSeverity: Double = 1
+    private var currentTemperature: Double?
+    private var currentSeverity: Double?
 
     // Notes
     @IBOutlet weak var notesTextView: UITextView!
@@ -189,7 +189,7 @@ final class LogSymptomsViewController: UIViewController {
             bundle: nil
         )
         vc.measureType = .temperature
-        vc.selectedInitialValue = currentTemperature
+        vc.selectedInitialValue = currentTemperature ?? 98.6
         vc.delegate = self
         present(vc, animated: true)
     }
@@ -198,7 +198,7 @@ final class LogSymptomsViewController: UIViewController {
         Haptics.impact(.light)
         let vc = AddMeasureViewController(nibName: "AddMeasureViewController", bundle: nil)
         vc.measureType = .severity
-        vc.selectedInitialValue = currentSeverity
+        vc.selectedInitialValue = currentSeverity ?? 1.0
         vc.delegate = self
         present(vc, animated: true)
     }
@@ -216,7 +216,12 @@ final class LogSymptomsViewController: UIViewController {
         
         Haptics.impact(.light)
         guard let child = activeChild else { return }
-        guard !selectedSymptoms.isEmpty else { return }
+        guard !selectedSymptoms.isEmpty else {
+            let alert = UIAlertController(title: "No Symptoms Selected", message: "Please select at least one symptom to save.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+            return
+        }
 
         Task {
             do {
@@ -244,7 +249,7 @@ final class LogSymptomsViewController: UIViewController {
                         height: currentHeight,
                         weight: currentWeight,
                         temperature: currentTemperature,
-                        severity: Int(currentSeverity),
+                        severity: currentSeverity != nil ? Int(currentSeverity!) : nil,
                         notes: notesTextView.text == notesPlaceholder ? nil : notesTextView.text,
                         image_path: imagePath
                     )
@@ -271,6 +276,8 @@ final class LogSymptomsViewController: UIViewController {
             nibName: "SymptomsSelectionViewController",
             bundle: nil
         )
+
+        vc.selectedSymptoms = Set(self.selectedSymptoms)
 
         vc.onApply = { selected in
             self.selectedSymptoms = selected
@@ -325,15 +332,17 @@ final class LogSymptomsViewController: UIViewController {
             for: .normal
         )
 
-        addTemperatureButton.setTitle(
-            String(format: "%.1f °F", currentTemperature),
-            for: .normal
-        )
+        if let temp = currentTemperature {
+            addTemperatureButton.setTitle(String(format: "%.1f °F", temp), for: .normal)
+        } else {
+            addTemperatureButton.setTitle("Add Temp", for: .normal)
+        }
 
-        addSeverityButton.setTitle(
-            "Severity \(Int(currentSeverity))",
-            for: .normal
-        )
+        if let sev = currentSeverity {
+            addSeverityButton.setTitle("Severity \(Int(sev))", for: .normal)
+        } else {
+            addSeverityButton.setTitle("Add Severity", for: .normal)
+        }
     }
 }
 

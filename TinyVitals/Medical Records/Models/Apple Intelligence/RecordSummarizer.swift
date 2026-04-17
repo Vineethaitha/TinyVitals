@@ -137,7 +137,7 @@ enum RecordSummarizer {
                 }
                 
                 var sections = parseRawResponse(generatedText)
-                sections.append(MedicalSection(title: "Overview", items: ["✨ Summarized securely on-device using Apple Intelligence."]))
+//                sections.append(MedicalSection(title: "Overview", items: ["✨ Summarized securely on-device using Apple Intelligence."]))
                 return sections
                 
             } catch {
@@ -154,7 +154,7 @@ enum RecordSummarizer {
     // MARK: - Sync Public API (Legacy Fallback)
     static func summarizeSync(text: String) -> [MedicalSection] {
         var sections = parseRawResponse(text)
-        sections.append(MedicalSection(title: "Overview", items: ["🔍 Extracted using standard local OCR."]))
+//        sections.append(MedicalSection(title: "Overview", items: ["🔍 Extracted using standard local OCR."]))
         return sections
     }
 

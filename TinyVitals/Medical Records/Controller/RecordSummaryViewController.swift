@@ -266,7 +266,15 @@ final class RecordSummaryViewController: UIViewController {
         disclaimerTitle.translatesAutoresizingMaskIntoConstraints = false
 
         let disclaimerBody = UILabel()
-        disclaimerBody.text = "This summary is generated using on-device OCR. It is not a substitute for professional medical advice. Always verify with original reports."
+        if #available(iOS 18.0, *) {
+            #if canImport(FoundationModels)
+            disclaimerBody.text = "This summary is generated securely on-device using Apple Intelligence. It is an AI-generated layout and is not a substitute for professional medical advice. Always verify with original reports."
+            #else
+            disclaimerBody.text = "This summary is generated using on-device OCR. It is not a substitute for professional medical advice. Always verify with original reports."
+            #endif
+        } else {
+            disclaimerBody.text = "This summary is generated using on-device OCR. It is not a substitute for professional medical advice. Always verify with original reports."
+        }
         disclaimerBody.font = .preferredFont(forTextStyle: .caption2)
         disclaimerBody.textColor = .tertiaryLabel
         disclaimerBody.numberOfLines = 0

@@ -19,7 +19,7 @@ final class SymptomsSelectionViewController: UIViewController {
     // MARK: - Data
     private var allSymptoms: [SymptomItem] = []
     private var filteredSymptoms: [SymptomItem] = []
-    private var selectedSymptoms = Set<SymptomItem>()
+    var selectedSymptoms = Set<SymptomItem>()
 
     /// Ordered version of selected symptoms (for UI stability)
     private var selectedSymptomsArray: [SymptomItem] {
@@ -42,8 +42,7 @@ final class SymptomsSelectionViewController: UIViewController {
         setupSearchBar()
         setupApplyButton()
         
-        selectedCollectionHeight.constant = 0
-        selectedCollectionView.isHidden = true
+        updateSelectedSectionVisibility()
 
         hideKeyboardWhenTappedAround()
     }
@@ -72,6 +71,7 @@ final class SymptomsSelectionViewController: UIViewController {
                     }
                     self.allCollectionView.reloadData()
                     self.selectedCollectionView.reloadData()
+                    self.updateSelectedSectionVisibility()
                 }
             } catch {
 //                print("❌ Failed to fetch symptoms: \(error)")

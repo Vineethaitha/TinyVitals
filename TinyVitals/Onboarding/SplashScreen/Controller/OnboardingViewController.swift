@@ -144,7 +144,12 @@ final class OnboardingViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateBrandTitle()
-        triggerPageAnimation(for: 0)
+        
+        if hasAnimatedPage.contains(true) {
+            restartAllIdleAnimations()
+        } else {
+            triggerPageAnimation(for: currentPage)
+        }
     }
 
     // MARK: - Brand Title (top)
@@ -432,6 +437,8 @@ final class OnboardingViewController: UIViewController {
     // MARK: - Page Animation Triggers
 
     private func triggerPageAnimation(for page: Int) {
+        guard !hasAnimatedPage[page] else { return }
+        
         pages[page].animateTextIn()
 
         switch page {
@@ -442,6 +449,49 @@ final class OnboardingViewController: UIViewController {
         }
 
         hasAnimatedPage[page] = true
+    }
+
+    private func restartAllIdleAnimations() {
+        let container = pages[2].animationContainer
+        let bounds = container.bounds
+        
+        // Ensure layout is ready
+        if bounds.width == 0 && hasAnimatedPage[2] {
+            DispatchQueue.main.async { [weak self] in
+                self?.restartAllIdleAnimations()
+            }
+            return
+        }
+        
+        // Remove existing idle animations (if any) to prevent compounding
+        for dot in chartDots { dot.layer.removeAllAnimations() }
+        chartGlowView?.layer.removeAllAnimations()
+        
+        for card in featureCards { card.layer.removeAllAnimations() }
+        
+        orbitLayer?.removeAllAnimations()
+        shieldView?.layer.removeAllAnimations()
+        shieldGlowView?.layer.removeAllAnimations()
+        for pill in orbitingPills { pill.layer.removeAllAnimations() }
+
+        // Restart Chart Idle
+        if hasAnimatedPage[0] {
+            startChartIdleAnimation()
+        }
+        
+        // Restart Cards Idle
+        if hasAnimatedPage[1] {
+            startCardsFloatingAnimation()
+        }
+        
+        // Restart Orbit & Shield Idle
+        if hasAnimatedPage[2] {
+            let centerX = bounds.midX
+            let centerY = bounds.midY - 10
+            let orbitRadius: CGFloat = 105
+            startOrbitAnimation(center: CGPoint(x: centerX, y: centerY), radius: orbitRadius, items: orbitingPills.count)
+            startShieldPulse()
+        }
     }
 
     // ═══════════════════════════════════════════
