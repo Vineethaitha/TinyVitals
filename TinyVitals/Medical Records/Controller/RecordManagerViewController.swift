@@ -801,30 +801,30 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        let columns: CGFloat = 2
-        let interItemSpacing: CGFloat = 12
-        let sectionInset: CGFloat = 8
+        let columns: CGFloat = 3
+        let interItemSpacing: CGFloat = 4
+        let sectionInset: CGFloat = 6
         let totalSpacing = (interItemSpacing * (columns - 1)) + (sectionInset * 2)
         let width = floor((collectionView.bounds.width - totalSpacing) / columns)
-        return CGSize(width: width, height: 150)
+        return CGSize(width: width, height: width + 36)
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 20
+        return 16
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 12
+        return 4
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        return UIEdgeInsets(top: 8, left: 6, bottom: 8, right: 6)
     }
 }
 

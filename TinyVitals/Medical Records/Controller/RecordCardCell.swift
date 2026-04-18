@@ -41,15 +41,15 @@ class RecordCardCell: UICollectionViewCell {
         contentView.addSubview(containerView)
 
         // ── Folder Icon ──
-        let folderConfig = UIImage.SymbolConfiguration(pointSize: 72, weight: .regular)
-        imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: folderConfig)
+        imageViewThumb.image = UIImage(systemName: "folder.fill")
         imageViewThumb.tintColor = brandPink
         imageViewThumb.contentMode = .scaleAspectFit
+        imageViewThumb.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
         imageViewThumb.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(imageViewThumb)
 
         // ── Title Label ──
-        titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        titleLabel.font = .systemFont(ofSize: 12, weight: .regular)
         titleLabel.textColor = .label
         titleLabel.textAlignment = .center
         titleLabel.lineBreakMode = .byTruncatingMiddle
@@ -58,7 +58,7 @@ class RecordCardCell: UICollectionViewCell {
         containerView.addSubview(titleLabel)
 
         // ── Subtitle Label (file count) ──
-        subtitleLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        subtitleLabel.font = .systemFont(ofSize: 11, weight: .regular)
         subtitleLabel.textColor = .secondaryLabel
         subtitleLabel.textAlignment = .center
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -72,11 +72,11 @@ class RecordCardCell: UICollectionViewCell {
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
-            // Folder icon — centered in upper area
-            imageViewThumb.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            // Folder icon — fills cell width, SF Symbol padding provides margins
+            imageViewThumb.topAnchor.constraint(equalTo: containerView.topAnchor),
             imageViewThumb.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            imageViewThumb.widthAnchor.constraint(equalToConstant: 80),
-            imageViewThumb.heightAnchor.constraint(equalToConstant: 68),
+            imageViewThumb.widthAnchor.constraint(equalTo: containerView.widthAnchor),
+            imageViewThumb.heightAnchor.constraint(equalTo: imageViewThumb.widthAnchor, multiplier: 0.85),
 
             // Title below icon
             titleLabel.topAnchor.constraint(equalTo: imageViewThumb.bottomAnchor, constant: 4),
@@ -108,8 +108,8 @@ class RecordCardCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        let folderConfig = UIImage.SymbolConfiguration(pointSize: 54, weight: .regular)
-        imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: folderConfig)
+        imageViewThumb.image = UIImage(systemName: "folder.fill")
+        imageViewThumb.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
         imageViewThumb.tintColor = brandPink
         titleLabel.text = nil
         subtitleLabel.text = nil
@@ -131,15 +131,15 @@ class RecordCardCell: UICollectionViewCell {
         }
 
         // Always use the large config for crisp rendering
-        let folderConfig = UIImage.SymbolConfiguration(pointSize: 54, weight: .regular)
-        imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: folderConfig)
+        imageViewThumb.image = UIImage(systemName: "folder.fill")
+        imageViewThumb.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
         imageViewThumb.tintColor = brandPink
     }
 
     func loadThumbnail(file: MedicalFile) {
         guard file.fileType == "image" else {
-            let config = UIImage.SymbolConfiguration(pointSize: 54, weight: .regular)
-            imageViewThumb.image = UIImage(systemName: "folder.fill", withConfiguration: config)
+            imageViewThumb.image = UIImage(systemName: "folder.fill")
+            imageViewThumb.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
             return
         }
 
