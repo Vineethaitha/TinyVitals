@@ -104,6 +104,12 @@ class HomeScreenViewController: UIViewController {
 
         // Show skeleton on first load
         showSkeleton()
+        
+        // Schedule Siri tips
+        NotificationService.shared.scheduleSiriEducationalNotifications()
+        
+        // Schedule vaccination reminders for ALL children
+        NotificationService.shared.scheduleAllVaccinationReminders()
     }
     
     private func fetchDisplayArticles() {

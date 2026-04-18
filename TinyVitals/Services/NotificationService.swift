@@ -22,6 +22,24 @@ class NotificationService {
             }
     }
     
+    /// Fetches background data and schedules vaccination reminders for all registered children in the app.
+    func scheduleAllVaccinationReminders() {
+        Task {
+            let children = AppState.shared.children
+            for child in children {
+                do {
+                    let vaccines = try await VaccinationService.shared.fetchVaccines(
+                        childId: child.id,
+                        dob: child.dob
+                    )
+                    updateVaccinationReminders(childId: child.id.uuidString, childName: child.name, vaccines: vaccines)
+                } catch {
+//                    print("❌ Failed to schedule background vaccinations for \(child.name)")
+                }
+            }
+        }
+    }
+    
     /// Re-schedules all upcoming vaccination reminders, clearing out strictly the old vaccine ones.
     func updateVaccinationReminders(childId: String, childName: String, vaccines: [VaccineItem]) {
         let center = UNUserNotificationCenter.current()
@@ -58,10 +76,11 @@ class NotificationService {
     
     private func scheduleGroupedReminder(childId: String, ageGroup: String, dueDate: Date, childName: String) {
         let reminderOffsets: [(daysBefore: Int, message: String)] = [
-            (28, "4 weeks left"),
-            (21, "3 weeks left"),
-            (14, "2 weeks left"),
-            (1, "Vaccination is tomorrow")
+            (28, "in 4 weeks"),
+            (21, "in 3 weeks"),
+            (14, "in 2 weeks"),
+            (7, "in 1 week"),
+            (1, "tomorrow")
         ]
         
         for offset in reminderOffsets {
@@ -75,14 +94,8 @@ class NotificationService {
             if reminderDate < Date() { continue }
             
             let content = UNMutableNotificationContent()
-            content.title = "\(childName)'s Vaccination Reminder"
-            
-            if offset.daysBefore == 1 {
-                content.body = "\(ageGroup) vaccinations are due tomorrow."
-            } else {
-                content.body = "\(offset.message) for \(ageGroup) vaccinations."
-            }
-            
+            content.title = "Vaccination Reminder"
+            content.body = "\(childName)'s \(ageGroup) vaccinations are due \(offset.message)."
             content.sound = .default
             
             let components = calendar.dateComponents(
@@ -96,7 +109,7 @@ class NotificationService {
             )
             
             // Create a unique identifier uniquely tied to the child
-            let uniqueId = "\(vaccinePrefix)\(childId)_\(ageGroup)_\(offset.daysBefore)days_\(Int(dueDate.timeIntervalSince1970))"
+            let uniqueId = "\(vaccinePrefix)\(childId)_\(ageGroup)_\(offset.daysBefore)days"
             let request = UNNotificationRequest(
                 identifier: uniqueId,
                 content: content,
@@ -105,6 +118,60 @@ class NotificationService {
             
             UNUserNotificationCenter.current().add(request) { _ in
             }
+        }
+    }
+    
+    /// Schedules educational push notifications every 2 days to teach the user about Siri commands.
+    func scheduleSiriEducationalNotifications() {
+        let center = UNUserNotificationCenter.current()
+        let siriPrefix = "siri_tip_"
+        
+        // 1. Check if we already have a Siri tip scheduled
+        center.getPendingNotificationRequests { requests in
+            let hasPendingSiriTip = requests.contains { $0.identifier.hasPrefix(siriPrefix) }
+            
+            // Only schedule a new one if there isn't one already waiting
+            if hasPendingSiriTip { return }
+            
+            // 2. Define the Siri tips
+            let siriTips = [
+                ("Log a fever easily with Siri", "Simply say: \"Hey Siri, log a fever in TinyVitals\""),
+                ("Check upcoming vaccinations", "Simply say: \"Hey Siri, when is the next vaccination in TinyVitals?\""),
+                ("Update a vaccine status hands-free", "Simply say: \"Hey Siri, update vaccination status in TinyVitals\""),
+                ("Check your child's weight", "Simply say: \"Hey Siri, check weight in TinyVitals\""),
+                ("Find prescriptions quickly", "Simply say: \"Hey Siri, check prescriptions in TinyVitals\""),
+                ("Log any symptom with Siri", "Simply say: \"Hey Siri, log a symptom in TinyVitals\"")
+            ]
+            
+            // 3. Get the next tip index from UserDefaults
+            let tipIndex = UserDefaults.standard.integer(forKey: "nextSiriTipIndex")
+            let tip = siriTips[tipIndex % siriTips.count]
+            
+            // Increment and save for next time
+            UserDefaults.standard.set(tipIndex + 1, forKey: "nextSiriTipIndex")
+            
+            // 4. Schedule EXACTLY ONE notification for 2 days from now
+            let content = UNMutableNotificationContent()
+            content.title = tip.0
+            content.body = tip.1
+            content.sound = .default
+            
+            let daysFromNow = 2
+            guard let targetDate = Calendar.current.date(byAdding: .day, value: daysFromNow, to: Date()) else { return }
+            
+            var components = Calendar.current.dateComponents([.year, .month, .day], from: targetDate)
+            components.hour = 10
+            components.minute = 0
+            
+            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+            
+            let request = UNNotificationRequest(
+                identifier: "\(siriPrefix)\(tipIndex)",
+                content: content,
+                trigger: trigger
+            )
+            
+            center.add(request)
         }
     }
 }
