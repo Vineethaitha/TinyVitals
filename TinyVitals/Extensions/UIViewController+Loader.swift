@@ -3,8 +3,8 @@ import UIKit
 extension UIViewController {
     
     private struct AssociatedLoaderKeys {
-        static var overlayView = "LoadingOverlayView"
-        static var activityIndicator = "LoadingActivityIndicator"
+        static var overlayView: UInt8 = 0
+        static var activityIndicator: UInt8 = 0
     }
     
     private var loaderOverlay: UIView? {

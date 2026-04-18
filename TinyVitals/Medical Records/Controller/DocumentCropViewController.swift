@@ -72,7 +72,7 @@ class DocumentCropViewController: UIViewController {
         item.leftBarButtonItem = UIBarButtonItem(
             title: "Cancel", style: .plain, target: self, action: #selector(cancelTapped))
         item.rightBarButtonItem = UIBarButtonItem(
-            title: "Done", style: .done, target: self, action: #selector(doneTapped))
+            title: "Done", style: .prominent, target: self, action: #selector(doneTapped))
         item.rightBarButtonItem?.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         nav.setItems([item], animated: false)
     }

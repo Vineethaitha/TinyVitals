@@ -363,7 +363,7 @@ class AddRecordViewController: UIViewController,
         }
     }
 
-    func generatePDFThumbnail(url: URL) -> UIImage? {
+    nonisolated func generatePDFThumbnail(url: URL) -> UIImage? {
         guard let pdf = CGPDFDocument(url as CFURL),
               let page = pdf.page(at: 1) else { return nil }
 

@@ -379,9 +379,10 @@ final class RecordSummaryViewController: UIViewController {
 
     private func generateSummary() {
         Task {
+            let url = localFileURL
             // First run OCR extract in the background
             let text = await Task.detached(priority: .userInitiated) {
-                RecordTextExtractor.extract(from: self.localFileURL)
+                RecordTextExtractor.extract(from: url)
             }.value
 
             guard text.count > 80 else {

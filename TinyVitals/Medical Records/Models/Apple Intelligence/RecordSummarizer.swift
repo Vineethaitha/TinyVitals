@@ -125,18 +125,13 @@ enum RecordSummarizer {
                     }
                 }
                 
-                // Ultimate fallback: direct typecast or string stripping
+                // Ultimate fallback: string stripping
                 if generatedText.isEmpty {
-                    if let text = response as? String {
-                        generatedText = text
-                    } else {
-                        // Stripping Response<String>(...)
-                        let raw = "\(response)"
-                        generatedText = raw.replacingOccurrences(of: "Response<String>(", with: "")
-                    }
+                    let raw = "\(response)"
+                    generatedText = raw.replacingOccurrences(of: "Response<String>(", with: "")
                 }
                 
-                var sections = parseRawResponse(generatedText)
+                let sections = parseRawResponse(generatedText)
 //                sections.append(MedicalSection(title: "Overview", items: ["✨ Summarized securely on-device using Apple Intelligence."]))
                 return sections
                 
@@ -153,7 +148,7 @@ enum RecordSummarizer {
 
     // MARK: - Sync Public API (Legacy Fallback)
     static func summarizeSync(text: String) -> [MedicalSection] {
-        var sections = parseRawResponse(text)
+        let sections = parseRawResponse(text)
 //        sections.append(MedicalSection(title: "Overview", items: ["🔍 Extracted using standard local OCR."]))
         return sections
     }

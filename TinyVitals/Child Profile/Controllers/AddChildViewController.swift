@@ -111,7 +111,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
     }
 
     private func createPickerContainer(for picker: UIPickerView) -> UIView {
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 260))
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 260))
         container.backgroundColor = .systemGroupedBackground
         
         // Make the toolbar transparent so it blends perfectly into the container
@@ -121,7 +121,7 @@ class AddChildViewController: UIViewController, AddMeasureDelegate {
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any) // Removes the separator line
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissPicker))
+        let doneButton = UIBarButtonItem(title: "Done", style: .prominent, target: self, action: #selector(dismissPicker))
         doneButton.tintColor = UIColor(red: 237/255, green: 112/255, blue: 153/255, alpha: 1)
         toolbar.setItems([flexSpace, doneButton], animated: false)
         
