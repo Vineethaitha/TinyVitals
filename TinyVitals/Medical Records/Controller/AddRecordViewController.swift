@@ -197,7 +197,10 @@ class AddRecordViewController: UIViewController,
                     } else if let image = selectedThumbnail {
                         let name = UUID().uuidString + ".jpg"
                         let path = "\(childId)/images/\(name)"
-                        let data = image.jpegData(compressionQuality: 0.8)!
+
+                        // Resize large images for faster upload
+                        let resized = self.resizeIfNeeded(image, maxDimension: 2048)
+                        let data = resized.jpegData(compressionQuality: 0.7)!
 
                         try await storage
                             .from("medical-records")
@@ -254,12 +257,13 @@ class AddRecordViewController: UIViewController,
                 }
 
             } catch {
-                // ✅ STOP LOADER ON ERROR
+                // ✅ STOP LOADER ON ERROR + SHOW ALERT
                 await MainActor.run {
                     self.loader.stopAnimating()
                     self.view.isUserInteractionEnabled = true
+                    self.showValidationAlert(message: "Failed to save record. Please try again.")
                 }
-//                print("❌ Record save failed:", error)
+                print("❌ Record save failed:", error)
             }
         }
     }
@@ -291,18 +295,29 @@ class AddRecordViewController: UIViewController,
     func pickImage() {
         let picker = UIImagePickerController()
         picker.delegate = self
+        picker.sourceType = .photoLibrary
         present(picker, animated: true)
     }
 
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        if let img = info[.originalImage] as? UIImage {
-            selectedThumbnail = img
-            filePreviewImageView.image = img
-            dummyImageView.isHidden = true
-            selectedFileURL = nil
+        guard let image = info[.originalImage] as? UIImage else {
+            picker.dismiss(animated: true)
+            return
         }
-        picker.dismiss(animated: true)
+
+        picker.dismiss(animated: true) {
+            // Present the edge-adjustable crop screen
+            let cropVC = DocumentCropViewController(image: image)
+            cropVC.onCropped = { [weak self] croppedImage in
+                guard let self else { return }
+                self.selectedThumbnail = croppedImage
+                self.filePreviewImageView.image = croppedImage
+                self.dummyImageView.isHidden = true
+                self.selectedFileURL = nil
+            }
+            self.present(cropVC, animated: true)
+        }
     }
 
     func pickDocument() {
@@ -363,6 +378,26 @@ class AddRecordViewController: UIViewController,
             ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
             
             ctx.cgContext.drawPDFPage(page)
+        }
+    }
+
+    /// Downscales the image so the longest edge is at most `maxDimension` points.
+    /// Returns the original image if it's already small enough.
+    private func resizeIfNeeded(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
+        let maxPixel = max(image.size.width, image.size.height)
+        guard maxPixel > maxDimension else { return image }
+
+        let scale = maxDimension / maxPixel
+        let newSize = CGSize(
+            width: floor(image.size.width * scale),
+            height: floor(image.size.height * scale)
+        )
+
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
 

@@ -66,8 +66,7 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
         collectionView.delegate = self
         collectionView.backgroundColor = .clear
 
-        let nib = UINib(nibName: "RecordCardCell", bundle: nil)
-        collectionView.register(nib, forCellWithReuseIdentifier: "RecordCardCell")
+        collectionView.register(RecordCardCell.self, forCellWithReuseIdentifier: "RecordCardCell")
 
 //        collectionView.register(
 //            UICollectionReusableView.self,
@@ -798,13 +797,34 @@ extension RecordManagerViewController: UICollectionViewDataSource, UICollectionV
 //    }
 
 
-    // MARK: - Cell Size
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        let width = (collectionView.bounds.width - 24) / 2
-        return CGSize(width: width, height: 160)
+        let columns: CGFloat = 3
+        let interItemSpacing: CGFloat = 4
+        let sectionInset: CGFloat = 6
+        let totalSpacing = (interItemSpacing * (columns - 1)) + (sectionInset * 2)
+        let width = floor((collectionView.bounds.width - totalSpacing) / columns)
+        return CGSize(width: width, height: width + 36)
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 16
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 4
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 8, left: 6, bottom: 8, right: 6)
     }
 }
 
