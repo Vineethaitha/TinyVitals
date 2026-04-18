@@ -94,6 +94,10 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
     private var pendingPreselectGroup: String?
 
+    // Skeleton loader
+    private var skeletonView: VaccinationsSkeletonView?
+    private var isFirstLoad = true
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDismissKeyboard()
@@ -119,6 +123,9 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
         vaccinesTableView.showsVerticalScrollIndicator = false
         vaccinesTableView.showsHorizontalScrollIndicator = false
         
+        // Show skeleton on first load
+        showVaccineSkeleton()
+
         reloadForChild()
     }
 
@@ -831,10 +838,13 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
                     self.pendingPreselectGroup = nil
                 }
 
+                self.hideVaccineSkeleton()
+
 //                print("✅ Loaded vaccines from backend:", vaccines.count)
 
             } catch {
 //                print("❌ fetch vaccines failed:", error)
+                await MainActor.run { self.hideVaccineSkeleton() }
             }
         }
     }
@@ -927,4 +937,30 @@ class VaccinationManagerViewController: UIViewController, UICollectionViewDataSo
 
 
 
+
+    // MARK: - Skeleton Loader
+
+    private func showVaccineSkeleton() {
+        guard isFirstLoad else { return }
+
+        let skeleton = VaccinationsSkeletonView()
+        skeleton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(skeleton)
+
+        NSLayoutConstraint.activate([
+            skeleton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            skeleton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            skeleton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            skeleton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+
+        skeletonView = skeleton
+        DispatchQueue.main.async { skeleton.startAnimating() }
+    }
+
+    private func hideVaccineSkeleton() {
+        guard isFirstLoad else { return }
+        isFirstLoad = false
+        skeletonView?.stopAnimating { [weak self] in self?.skeletonView = nil }
+    }
 }

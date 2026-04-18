@@ -29,6 +29,10 @@ final class SymptomsSelectionViewController: UIViewController {
     /// Callback to parent
     var onApply: (([SymptomItem]) -> Void)?
 
+    // Skeleton loader
+    private var skeletonView: SymptomsSelectionSkeletonView?
+    private var isFirstLoad = true
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +49,9 @@ final class SymptomsSelectionViewController: UIViewController {
         updateSelectedSectionVisibility()
 
         hideKeyboardWhenTappedAround()
+
+        // Show skeleton on first load
+        showSelectionSkeleton()
     }
 
     private func fetchSymptomsFromDB() {
@@ -72,9 +79,11 @@ final class SymptomsSelectionViewController: UIViewController {
                     self.allCollectionView.reloadData()
                     self.selectedCollectionView.reloadData()
                     self.updateSelectedSectionVisibility()
+                    self.hideSelectionSkeleton()
                 }
             } catch {
 //                print("❌ Failed to fetch symptoms: \(error)")
+                await MainActor.run { self.hideSelectionSkeleton() }
             }
         }
     }
@@ -234,5 +243,33 @@ extension SymptomsSelectionViewController: UICollectionViewDelegateFlowLayout {
             width: width,
             height: 48
         )
+    }
+}
+
+// MARK: - Skeleton Loader
+extension SymptomsSelectionViewController {
+
+    func showSelectionSkeleton() {
+        guard isFirstLoad else { return }
+
+        let skeleton = SymptomsSelectionSkeletonView()
+        skeleton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(skeleton)
+
+        NSLayoutConstraint.activate([
+            skeleton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            skeleton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            skeleton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            skeleton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+
+        skeletonView = skeleton
+        DispatchQueue.main.async { skeleton.startAnimating() }
+    }
+
+    func hideSelectionSkeleton() {
+        guard isFirstLoad else { return }
+        isFirstLoad = false
+        skeletonView?.stopAnimating { [weak self] in self?.skeletonView = nil }
     }
 }

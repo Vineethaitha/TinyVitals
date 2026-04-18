@@ -49,6 +49,10 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
 
     var selectedSortOption: FolderSortOption = .nameAZ
+
+    // Skeleton loader
+    private var skeletonView: RecordsSkeletonView?
+    private var isFirstLoad = true
     
 
     
@@ -76,6 +80,9 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 
         searchBarView.delegate = self
         setupSortMenu()
+
+        // Show skeleton on first load
+        showRecordsSkeleton()
     }
     
 //    override func viewWillAppear(_ animated: Bool) {
@@ -611,8 +618,11 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
                 await loadFoldersForActiveChild(child.id)
                 await loadRecordsForActiveChild(child)
 
+                await MainActor.run { self.hideRecordsSkeleton() }
+
             } catch {
 //                print("❌ Failed to load child data:", error)
+                await MainActor.run { self.hideRecordsSkeleton() }
             }
             
         }
@@ -643,6 +653,31 @@ class RecordManagerViewController: UIViewController, ActiveChildReceivable {
 //    }
 //
 
+    // MARK: - Skeleton Loader
+
+    private func showRecordsSkeleton() {
+        guard isFirstLoad else { return }
+
+        let skeleton = RecordsSkeletonView()
+        skeleton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(skeleton)
+
+        NSLayoutConstraint.activate([
+            skeleton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            skeleton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            skeleton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            skeleton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+
+        skeletonView = skeleton
+        DispatchQueue.main.async { skeleton.startAnimating() }
+    }
+
+    private func hideRecordsSkeleton() {
+        guard isFirstLoad else { return }
+        isFirstLoad = false
+        skeletonView?.stopAnimating { [weak self] in self?.skeletonView = nil }
+    }
 }
 
 extension RecordManagerViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

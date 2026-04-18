@@ -54,6 +54,10 @@ class HomeScreenViewController: UIViewController {
     private var nextVaccineGroup: String?
     private var milestoneSection: UIView?
 
+    // Skeleton loader
+    private var skeletonView: HomeSkeletonView?
+    private var isFirstLoad = true
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +102,8 @@ class HomeScreenViewController: UIViewController {
         // (the ring now lives only in the Vaccines tab)
         vaccinationProgressContainer.superview?.superview?.isHidden = true
 
+        // Show skeleton on first load
+        showSkeleton()
     }
     
     private func fetchDisplayArticles() {
@@ -332,8 +338,8 @@ class HomeScreenViewController: UIViewController {
 //            }
 //        }
 //    }
-    func setupVaccinationProgress() {
-        guard let child = activeChild else { return }
+    func setupVaccinationProgress(completion: (() -> Void)? = nil) {
+        guard let child = activeChild else { completion?(); return }
 
         Task {
             do {
@@ -394,7 +400,7 @@ class HomeScreenViewController: UIViewController {
                             "VaccinationHeaderView",
                             owner: nil,
                             options: nil
-                        )?.first as? VaccinationHeaderView else { return }
+                        )?.first as? VaccinationHeaderView else { completion?(); return }
 
                         h.frame = self.vaccinationProgressContainer.bounds
                         h.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -408,10 +414,12 @@ class HomeScreenViewController: UIViewController {
                         skipped: skipped,
                         rescheduled: rescheduled
                     )
+                    completion?()
                 }
 
             } catch {
 //                print("❌ vaccination progress load failed:", error)
+                await MainActor.run { completion?() }
             }
         }
     }
@@ -430,8 +438,8 @@ class HomeScreenViewController: UIViewController {
 
     private var milestoneAchievedTitles: Set<String> = []
 
-    private func setupMilestoneSection() {
-        guard let child = activeChild else { return }
+    private func setupMilestoneSection(completion: (() -> Void)? = nil) {
+        guard let child = activeChild else { completion?(); return }
 
         // Fetch achieved milestones, then build/update the card
         Task {
@@ -446,6 +454,7 @@ class HomeScreenViewController: UIViewController {
 
             await MainActor.run {
                 self.buildOrUpdateMilestoneCard(child: child, achievedTitles: titles)
+                completion?()
             }
         }
     }
@@ -512,6 +521,8 @@ class HomeScreenViewController: UIViewController {
         guard isViewLoaded else { return }
         guard let child = activeChild else { return }
 
+        let loadGroup = DispatchGroup()
+
         // Weight / Height summary
         if let weight = child.weight {
             weightValueLabel.text = String(format: "%.1f kg", weight)
@@ -526,11 +537,21 @@ class HomeScreenViewController: UIViewController {
         }
 
         // Vaccination progress (upcoming card data only)
-        setupVaccinationProgress()
+        loadGroup.enter()
+        setupVaccinationProgress { loadGroup.leave() }
+
         // Milestone card
-        setupMilestoneSection()
+        loadGroup.enter()
+        setupMilestoneSection { loadGroup.leave() }
+
         // Growth status
-        updateGrowthSummary()
+        loadGroup.enter()
+        updateGrowthSummary { loadGroup.leave() }
+
+        // Hide skeleton when all data loads
+        loadGroup.notify(queue: .main) { [weak self] in
+            self?.hideSkeleton()
+        }
     }
 
 
@@ -599,9 +620,9 @@ class HomeScreenViewController: UIViewController {
         }
     }
 
-    private func updateGrowthSummary() {
+    private func updateGrowthSummary(completion: (() -> Void)? = nil) {
 
-        guard let child = activeChild else { return }
+        guard let child = activeChild else { completion?(); return }
 
         Task {
             do {
@@ -629,10 +650,12 @@ class HomeScreenViewController: UIViewController {
                         points: heightPoints,
                         child: child
                     )
+                    completion?()
                 }
 
             } catch {
 //                print("❌ Failed to load summary growth:", error)
+                await MainActor.run { completion?() }
             }
         }
     }
@@ -705,6 +728,39 @@ class HomeScreenViewController: UIViewController {
             weightUpdateLabel.text = updateText
         } else {
             heightUpdateLabel.text = updateText
+        }
+    }
+
+    // MARK: - Skeleton Loader
+
+    private func showSkeleton() {
+        guard isFirstLoad else { return }
+
+        let skeleton = HomeSkeletonView()
+        skeleton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(skeleton)
+
+        NSLayoutConstraint.activate([
+            skeleton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            skeleton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            skeleton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            skeleton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+
+        skeletonView = skeleton
+
+        // Start shimmer after layout pass
+        DispatchQueue.main.async {
+            skeleton.startAnimating()
+        }
+    }
+
+    private func hideSkeleton() {
+        guard isFirstLoad else { return }
+        isFirstLoad = false
+
+        skeletonView?.stopAnimating { [weak self] in
+            self?.skeletonView = nil
         }
     }
 

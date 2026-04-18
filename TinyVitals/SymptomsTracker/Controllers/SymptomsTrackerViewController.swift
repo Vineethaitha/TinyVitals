@@ -41,6 +41,10 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var exportButton: UIButton!
     
     private var emptyLottieView: LottieAnimationView?
+
+    // Skeleton loader
+    private var skeletonView: SymptomsSkeletonView?
+    private var isFirstLoad = true
     
 
 
@@ -88,7 +92,8 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
         
         setupEmptyAnimation()
 
-        
+        // Show skeleton on first load
+        showSkeleton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -356,13 +361,16 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
                             scrollPosition: []
                         )
                     }
+
+                    // Hide skeleton after first load
+                    self.hideSkeleton()
                 }
 
             } catch {
 //                print("❌ Failed to load symptoms:", error)
 
                 await MainActor.run {
-
+                    self.hideSkeleton()
                 }
             }
         }
@@ -545,6 +553,31 @@ class SymptomsTrackerViewController: UIViewController, UITableViewDelegate {
 
     
     
+    // MARK: - Skeleton Loader
+
+    private func showSkeleton() {
+        guard isFirstLoad else { return }
+
+        let skeleton = SymptomsSkeletonView()
+        skeleton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(skeleton)
+
+        NSLayoutConstraint.activate([
+            skeleton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            skeleton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            skeleton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            skeleton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+
+        skeletonView = skeleton
+        DispatchQueue.main.async { skeleton.startAnimating() }
+    }
+
+    private func hideSkeleton() {
+        guard isFirstLoad else { return }
+        isFirstLoad = false
+        skeletonView?.stopAnimating { [weak self] in self?.skeletonView = nil }
+    }
 }
 
 
