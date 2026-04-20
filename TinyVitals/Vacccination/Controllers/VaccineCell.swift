@@ -107,7 +107,6 @@ class VaccineCell: UITableViewCell {
         let statusRange = (fullString as NSString).range(of: statusText)
         if statusRange.location != NSNotFound {
             attributed.addAttributes([
-                .font: UIFont.systemFont(ofSize: baseFont.pointSize, weight: .bold),
                 .foregroundColor: statusColor
             ], range: statusRange)
         }

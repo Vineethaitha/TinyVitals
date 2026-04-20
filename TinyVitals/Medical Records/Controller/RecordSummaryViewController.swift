@@ -231,23 +231,6 @@ final class RecordSummaryViewController: UIViewController {
     private func buildTableFooter() -> UIView {
         let container = UIView()
 
-        // "View Full Text" button
-        let fullTextButton = UIButton(type: .system)
-        fullTextButton.translatesAutoresizingMaskIntoConstraints = false
-        var btnConfig = UIButton.Configuration.filled()
-        btnConfig.cornerStyle = .capsule
-        btnConfig.baseBackgroundColor = Self.brandPink
-        btnConfig.baseForegroundColor = .white
-        btnConfig.image = UIImage(systemName: "doc.plaintext")
-        btnConfig.imagePadding = 8
-        btnConfig.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20)
-        var titleAttr = AttributedString("View Full Text")
-        titleAttr.font = .systemFont(ofSize: 15, weight: .semibold)
-        btnConfig.attributedTitle = titleAttr
-        fullTextButton.configuration = btnConfig
-        fullTextButton.addTarget(self, action: #selector(openFullTextSheet), for: .touchUpInside)
-        container.addSubview(fullTextButton)
-
         // Disclaimer
         let card = UIView()
         card.backgroundColor = .secondarySystemGroupedBackground
@@ -286,10 +269,7 @@ final class RecordSummaryViewController: UIViewController {
         card.addSubview(disclaimerBody)
 
         NSLayoutConstraint.activate([
-            fullTextButton.topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
-            fullTextButton.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-
-            card.topAnchor.constraint(equalTo: fullTextButton.bottomAnchor, constant: 20),
+            card.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
             card.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
             card.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
             card.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -24),
@@ -321,18 +301,6 @@ final class RecordSummaryViewController: UIViewController {
         return container
     }
 
-    // MARK: - Full Text Sheet
-
-    @objc private func openFullTextSheet() {
-        let sheetVC = FullTextSheetViewController(text: rawOCRText)
-        let nav = UINavigationController(rootViewController: sheetVC)
-        nav.modalPresentationStyle = .pageSheet
-        if let sheet = nav.sheetPresentationController {
-            sheet.detents = [.large()]
-            sheet.prefersGrabberVisible = true
-        }
-        present(nav, animated: true)
-    }
 
     // MARK: - Loading State
 
@@ -530,93 +498,6 @@ extension RecordSummaryViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - Full Text Sheet (Writing Tools)
-
-final class FullTextSheetViewController: UIViewController {
-
-    private let text: String
-
-    init(text: String) {
-        self.text = text
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) { fatalError() }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        title = "Full Document Text"
-
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Done", style: .prominent, target: self, action: #selector(closeSelf)
-        )
-        navigationItem.rightBarButtonItem?.tintColor = RecordSummaryViewController.brandPink
-
-        // Info banner
-        let banner = UIView()
-        banner.backgroundColor = RecordSummaryViewController.brandBlue.withAlphaComponent(0.1)
-        banner.layer.cornerRadius = 10
-        banner.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(banner)
-
-        let bannerIcon = UIImageView(image: UIImage(systemName: "sparkles"))
-        bannerIcon.tintColor = RecordSummaryViewController.brandBlue
-        bannerIcon.contentMode = .scaleAspectFit
-        bannerIcon.translatesAutoresizingMaskIntoConstraints = false
-        banner.addSubview(bannerIcon)
-
-        let bannerLabel = UILabel()
-        bannerLabel.text = "Select text and use Writing Tools to summarize, extract key points, or rewrite."
-        bannerLabel.font = .preferredFont(forTextStyle: .caption1)
-        bannerLabel.textColor = .secondaryLabel
-        bannerLabel.numberOfLines = 0
-        bannerLabel.translatesAutoresizingMaskIntoConstraints = false
-        banner.addSubview(bannerLabel)
-
-        let textView = UITextView()
-        textView.text = text
-        textView.font = .preferredFont(forTextStyle: .body)
-        textView.textColor = .label
-        textView.isEditable = false
-        textView.isSelectable = true
-        textView.isScrollEnabled = true
-        textView.backgroundColor = .clear
-        textView.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        textView.translatesAutoresizingMaskIntoConstraints = false
-
-        if #available(iOS 18.1, *) {
-            textView.writingToolsBehavior = .complete
-        }
-
-        view.addSubview(textView)
-
-        NSLayoutConstraint.activate([
-            banner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
-            banner.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            banner.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-
-            bannerIcon.leadingAnchor.constraint(equalTo: banner.leadingAnchor, constant: 12),
-            bannerIcon.topAnchor.constraint(equalTo: banner.topAnchor, constant: 10),
-            bannerIcon.widthAnchor.constraint(equalToConstant: 18),
-            bannerIcon.heightAnchor.constraint(equalToConstant: 18),
-
-            bannerLabel.leadingAnchor.constraint(equalTo: bannerIcon.trailingAnchor, constant: 8),
-            bannerLabel.trailingAnchor.constraint(equalTo: banner.trailingAnchor, constant: -12),
-            bannerLabel.topAnchor.constraint(equalTo: banner.topAnchor, constant: 10),
-            bannerLabel.bottomAnchor.constraint(equalTo: banner.bottomAnchor, constant: -10),
-
-            textView.topAnchor.constraint(equalTo: banner.bottomAnchor, constant: 4),
-            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-    }
-
-    @objc private func closeSelf() {
-        dismiss(animated: true)
-    }
-}
 
 // MARK: - Section Header (HIG: left-aligned label, no truncation)
 
